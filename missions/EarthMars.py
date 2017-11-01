@@ -7,7 +7,8 @@
 import os, sys
 sys.path.append(os.path.abspath("."))
 
-from orbtools.systems.solsystem import *
+from orbtools import *
+from sol import *
 
 ###############################################################################
 #

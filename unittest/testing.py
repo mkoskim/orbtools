@@ -21,7 +21,7 @@ import math
 def Earth_escape(altitude, v_inf):
 	r     = Earth.radius + altitude
 	v_esc = Earth.v_escape(r)
-	dv    = solve_rvrv(Earth.GM, r, None, float("inf"), v_inf)
+	dv    = solve_rvrv(Earth.GM, r, None, Inf, v_inf)
 	print "v_esc=%.2f v_inf=%7.2f dv=%.2f (d=%7.2f)" % (v_esc, v_inf, dv, dv - v_esc)
 	return dv
 
@@ -30,7 +30,7 @@ Earth_escape(300e3, 1e3)
 Earth_escape(300e3, 3e3)
 Earth_escape(300e3, 5e3)
 
-sys.exit(0)
+exit()
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

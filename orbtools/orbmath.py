@@ -652,6 +652,20 @@ class Trajectory(Orbit):
 	###########################################################################
 
 	#--------------------------------------------------------------------------
+	# Difference of angular speeds (degrees) at initial and final altitude
+	#--------------------------------------------------------------------------
+
+	@property
+	def w_diff(self):  return w_diff(self.center.GM, self.r3, self.r4)
+
+	#--------------------------------------------------------------------------
+	# Period (width) of launch window, based on initial and final altitudes
+	#--------------------------------------------------------------------------
+
+	@property
+	def P_window(self): return P_window(self.center.GM, self.r3, self.r4)
+
+	#--------------------------------------------------------------------------
 	# Launch angles (r3 -> r4 and vice versa), so that planet at r3 is at
 	# 0 degrees. Seems to be correct according to:
 	#
@@ -692,20 +706,6 @@ class Trajectory(Orbit):
 		return -(f_r4_at_departure - f_r3_at_departure)
 
 	def launch_angle(self): return self.launch_angle_up()
-
-	#--------------------------------------------------------------------------
-	# Difference of angular speeds (degrees) at initial and final altitude
-	#--------------------------------------------------------------------------
-
-	@property
-	def w_diff(self):  return w_diff(self.center.GM, self.r3, self.r4)
-
-	#--------------------------------------------------------------------------
-	# Period (width) of launch window, based on initial and final altitudes
-	#--------------------------------------------------------------------------
-
-	@property
-	def P_window(self): return P_window(self.center.GM, self.r3, self.r4)
 
 		
 """
