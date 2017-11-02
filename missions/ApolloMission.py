@@ -5,10 +5,9 @@
 ###############################################################################
 
 import os, sys
-sys.path.append(os.path.abspath("."))
+sys.path.append(os.path.abspath(".."))
 
-from orbtools import *
-from orbtools.systems.solsystem import *
+from sol import *
 
 #------------------------------------------------------------------------------
 # Create shortcuts and LLO (Low Lunar Orbit) @ 110 km
