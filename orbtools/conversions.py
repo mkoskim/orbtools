@@ -2,10 +2,10 @@
 #
 # Unit conversions. Internally, orbtools uses:
 #
-# - Mass: 		GM (G*kg)
+# - Mass: 	GM (G*kg)
 # - Distance:	m
-# - Time: 		s
-# - Speed:		m/s
+# - Time: 	s
+# - Speed:	m/s
 #
 ###############################################################################
 
@@ -15,16 +15,16 @@ from constants import *
 # Time
 #------------------------------------------------------------------------------
 
-def TasDHMS(d, h, m, s): return d*24*3600.0 + h*60*60.0 + m*60.0 + s
-def TasDays(d):  return float(d)*24*3600
-def TasYears(a): return float(a)*const_year
+def TasDHMS(d, h, m, s):    return d*24*3600.0 + h*60*60.0 + m*60.0 + s
+def TasDays(d):             return float(d)*24*3600
+def TasYears(a):            return float(a)*const_year
 
-def TtoMinutes(secs): return secs/(60.0)
-def TtoHours(secs):   return secs/(3600.0)
-def TtoDays(secs):    return secs/(24*3600.0)
-def TtoWeeks(secs):	  return TtoDays(secs)/7
-def TtoMonths(secs):  return TtoDays(secs)/30
-def TtoYears(secs):   return TtoDays(secs)/365.25
+def TtoMinutes(secs):   return secs/(60.0)
+def TtoHours(secs):     return secs/(3600.0)
+def TtoDays(secs):      return secs/(24*3600.0)
+def TtoWeeks(secs):     return TtoDays(secs)/7
+def TtoMonths(secs):    return TtoDays(secs)/30
+def TtoYears(secs):     return TtoDays(secs)/365.25
 
 #------------------------------------------------------------------------------
 # Mass
@@ -37,10 +37,10 @@ def kg2GM(kg): return float(kg)*const_G
 # Distance
 #------------------------------------------------------------------------------
 
-def AU2m(AU): return float(AU)*const_AU
-def m2AU(m): return float(m)/const_AU
-def ly2m(ly): return float(ly)*const_ly
-def m2ly(m): return float(m)/const_ly
+def AU2m(AU):   return float(AU)*const_AU
+def m2AU(m):    return float(m)/const_AU
+def ly2m(ly):   return float(ly)*const_ly
+def m2ly(m):    return float(m)/const_ly
 
 #------------------------------------------------------------------------------
 # Speed

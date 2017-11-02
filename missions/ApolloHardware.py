@@ -26,9 +26,9 @@ APS_engine = Engine(ISP2ve(311))
 DPS_engine = Engine(ISP2ve(311))
 
 LM = Rocket(
-	"LM Descent",
-	Stage("LM Ascent",  APS_engine, mass =  4700, fuel = 2353, mission = Mission.phase42),
-	Stage("LM Descent", DPS_engine, mass = 10334, fuel = 8200, mission = Mission.phase41)
+    "LM Descent",
+    Stage("LM Ascent",  APS_engine, mass =  4700, fuel = 2353, mission = Mission.phase42),
+    Stage("LM Descent", DPS_engine, mass = 10334, fuel = 8200, mission = Mission.phase41)
 )
 
 ###############################################################################
@@ -50,14 +50,14 @@ AJ10_engine = Engine(ISP2ve(319))	# CSM
 #------------------------------------------------------------------------------
 
 CSM_TEI = Stage(
-	"CSM TEI",
-	AJ10_engine,
-	payload = (					
-		5560 +			# - Command Module
-		(24520-18410)	# - SM (empty)
-	),
-	dv = 1076,
-	mission = Mission.phase5
+    "CSM TEI",
+    AJ10_engine,
+    payload = (					
+        5560 +		# - Command Module
+        (24520-18410)	# - SM (empty)
+    ),
+    dv = 1076,
+    mission = Mission.phase5
 )
 
 #------------------------------------------------------------------------------

@@ -4,7 +4,10 @@
 #
 ###############################################################################
 
-from orbtools.systems.solsystem import *
+import os, sys
+sys.path.append(os.path.abspath(".."))
+
+from sol import *
 
 #------------------------------------------------------------------------------
 # LEO 300 km -> LMO 1000 km

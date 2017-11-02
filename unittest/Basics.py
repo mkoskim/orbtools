@@ -4,24 +4,31 @@
 #
 ################################################################################
 
-from orbits import *
+import os, sys
+sys.path.append(os.path.abspath(".."))
+
+from sol import *
 
 #-------------------------------------------------------------------------------
 # Testing printing
 #-------------------------------------------------------------------------------
 
 def test_TimePrints():
-    print timefmt( time_hms(0,0,43.5) )
-    print timefmt( time_hms(0,32,43.5) )
-    print timefmt( time_hms(1,13,12) )
-    print timefmt( time_hms(28,13,12) )
-    print timefmt( time_hms(3*24+7,13,12) )
-    print timefmt( time_hms(38*24+7,13,12) )
-    print timefmt( time_hms(523*24+7,13,12) )
-    print timefmt( time_hms(700*24+7,13,12) )
-    print timefmt( time_hms(1523*24+7,13,12) )
-    print timefmt( time_hms(11523*24+7,13,12) )
-    print timefmt( time_hms(1211523*24+7,13,12) )
+    print fmttime( TasDHMS(        0,  0, 0,   2.543e-5) )
+    print fmttime( TasDHMS(        0,  0, 0,   2.543e-2) )
+    print fmttime( TasDHMS(        0,  0, 0,  43.5) )
+    print fmttime( TasDHMS(        0,  0, 32, 43.5) )
+    print fmttime( TasDHMS(        0,  1, 13, 12) )
+    print fmttime( TasDHMS(        0, 28, 13, 12) )
+    print fmttime( TasDHMS(        3,  7, 13, 12) )
+    print fmttime( TasDHMS(       38,  7, 13, 12) )
+    print fmttime( TasDHMS(      523,  7, 13, 12) )
+    print fmttime( TasDHMS(      700,  7, 13, 12) )
+    print fmttime( TasDHMS(    5*365,  7, 13, 12) )
+    print fmttime( TasDHMS(   35*365,  7, 13, 12) )
+    print fmttime( TasDHMS(  145*365,  7, 13, 12) )
+    print fmttime( TasDHMS( 4145*365,  7, 13, 12) )
+    print fmttime( TasDHMS(56732*365,  7, 13, 12) )
 
 test_TimePrints()
 
@@ -39,6 +46,8 @@ def test_Kepler():
     print "Kepler: %.2f" % solve_aPaP(1,1,5.2,None), "== 11.86?"
     print
 
+test_Kepler()
+
 #-------------------------------------------------------------------------------
 # Testing energy equation
 #-------------------------------------------------------------------------------
@@ -47,8 +56,10 @@ def test_EnergyEq():
     print "--------------------------------------------------"
     print "Testing energy equation solving:"
     print
-    print "esc=", v_escape(GM_Sun, AU2m(1))
-    print "v2=", solve_v2(GM_Sun,v_escape(GM_Sun,AU2m(1))+200,AU2m(1), None, ly2m(2))
+    print "Sun @ 1AU, esc=", v_escape(GM_Sun, AU2m(1))
+    print "Sun @ 1AU, esc=", solve_rvrv(GM_Sun, AU2m(1), None, Inf, 0)
+
+test_EnergyEq()
 
 #-------------------------------------------------------------------------------
 # Testing GM solving from orbital radius & period
@@ -62,8 +73,10 @@ def test_GMsolving():
 
     # Calculate Mars mass ~ 6.42e23 kg (from Phobos orbit parameters)
 
-    print "m(Mars): %.3g" % GM2kg( solve_GM_from_aP(9380e3, time_hms(7,39.5,0))), "== 6.42e23 kg?"
+    print "m(Mars): %.3g" % GM2kg( solve_GM_from_aP(9380e3, TasDHMS(0, 7, 39.5, 0))), "== 6.42e23 kg?"
     print
+
+test_GMsolving()
 
 #-------------------------------------------------------------------------------
 # Testing circular & escape velocity calculation
@@ -73,16 +86,16 @@ def test_Vcirc():
     print "--------------------------------------------------"
     print "Testing circular & escape velocity calculation:"
     print
-    print "Earth +300km: v(circ) = %5.0f  (7558) m/s" % v_circular(GM_Earth, 6678e3+300e3)
-    print "Earth +300km: v(esc)  = %5.0f (10689) m/s" % v_escape(GM_Earth, 6678e3+300e3)
+    print "Earth +300km: v(circ) = %5.0f  (7558) m/s" % v_circular(Earth.GM, Earth.radius + 300e3)
+    print "Earth +300km: v(esc)  = %5.0f (10689) m/s" % v_escape(Earth.GM, Earth.radius + 300e3)
     print
 
-    #o = Orbit_circular(GM_Sun, 150e9)
-    #print o.period()/(365*24*60*60)
-    #print o.v(100e9)
+    o = Orbit(Sun, AU2m(1.0))
+    print "Sun @ 1AU, period =", fmttime(o.P)
+    print "Sun @ 1AU, v_circ =", o.v(0).length
+    print
 
-    #o = Orbit_from_circular(GM_Earth, 6378e3 + 300e3, -200)
-    #print o.periapsis, "-", o.apoapsis
+test_Vcirc()
 
 #-------------------------------------------------------------------------------
 # Heitto Deimoksella: M=1.8e15, r0=7490m, v0=4.5m/s
@@ -103,41 +116,36 @@ def test_Vcirc():
 #print "v1=", o.v(o.apoapsis)
 #print "P=", o.period()/3600
 
-
 #-------------------------------------------------------------------------------
 # Testing solar system mass database
 #-------------------------------------------------------------------------------
-
-import solsystem
 
 def test_MassDB():
     print "--------------------------------------------------"
     print "Testing mass database:"
     print
-    Sun = masses["Sun"]
-    Earth = masses["Earth"]
     print "Density:"
-    print "   Earth.: %7.2f kg/m^3" % Earth.density()
-    print "   Sun...: %7.2f kg/m^3" % Sun.density()
+    print "   Earth.: %7.2f kg/m^3" % Earth.density
+    print "   Sun...: %7.2f kg/m^3" % Sun.density
     print "Surface g:"
-    print "   Earth.: %7.2f g" % (Earth.surface_g()/const_g)
-    print "   Sun...: %7.2f g" % (Sun.surface_g()/const_g)
+    print "   Earth.: %7.2f g" % (Earth.g_surface/const_g)
+    print "   Sun...: %7.2f g" % (Sun.g_surface/const_g)
     print "Surface escape velocity:"
-    print "   Earth.: %7.2f km/s" % (Earth.surface_v_esc()*1e-3)
-    print "   Sun...: %7.2f km/s" % (Sun.surface_v_esc()*1e-3)
-    print
+    print "   Earth.: %7.2f km/s" % (Earth.v_escape()*1e-3)
+    print "   Sun...: %7.2f km/s" % (Sun.v_escape()*1e-3)
     print "Earth:"
     print "   orbits= ", Earth.center.name
-    print "   Laplace=", engfmt(Earth.dist_Laplace(),"m")
-    print "   dist=   ", engfmt(Earth.orbit.a(), "m")
-    print "   P(a)=   ", timefmt(Earth.orbit.P())
-    print "   v   =   ", engfmt(Earth.orbit.v(Earth.orbit.a()),"m/s")
+    print "   dist=   ", fmteng(Earth.orbit.a, "m")
+    print "   P   =   ", fmttime(Earth.orbit.P)
+    print "   v   =   ", fmteng(Earth.orbit.v(0).length,"m/s")
     print "LEO (300km):"
     LEO = masses["LEO"]
-    print "   dist=", engfmt(LEO.orbit.a(), "m")
-    print "   P(a)=", timefmt(LEO.orbit.P())
-    print "   v   =", engfmt(LEO.orbit.v(LEO.orbit.a()),"m/s")
+    print "   dist=", fmteng(LEO.orbit.a, "m")
+    print "   P   =", fmttime(LEO.orbit.P)
+    print "   v   =", fmteng(LEO.orbit.v(0).length,"m/s")
     print
+
+test_MassDB()
 
 #-------------------------------------------------------------------------------
 # Testing mission setup
