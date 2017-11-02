@@ -13,7 +13,7 @@ from orbtools import *
 ################################################################################
 
 Sun     = Mass("Sun",       GM_Sun,         695000e3,   TasDays(24.6))		
-							
+
 Mercury = Mass("Mercury",   GM_Mercury,	    2440e3,     TasDays(58.6),          Orbit(	"Sun",	57910e6))
 Venus   = Mass("Venus",     GM_Venus,	    6052e3,     TasDays(-243),          Orbit(	"Sun",	108200e6))
 Earth   = Mass("Earth",     GM_Earth,	    r_Earth,    TasDHMS(0, 23, 56, 0),  Orbit(	"Sun",	AU2m(1)))
@@ -23,17 +23,30 @@ Saturn  = Mass("Saturn",    GM_Saturnus,    60268e3,    TasDays(0.45),          
 Uranus  = Mass("Uranus",    GM_Uranus,	    25559e3,    TasDays(-0.72),         Orbit(	"Sun",	2870990e6))
 Neptune = Mass("Neptune",   GM_Neptunus,    24766e3,    TasDays(0.67),          Orbit(	"Sun",	4504300e6))
 Pluto   = Mass("Pluto",	    kg2GM(1.3E+22), 1150e3,     TasDays(-6.39),         Orbit(	"Sun",	5913520e6))
-							
-Mass(	"LEO",        0, 0, 0, Altitude("Earth", +150e3))
-Mass(	"ISS",        0, 0, 0, Altitude("Earth", +368e3))
-Mass(	"Hubble",     0, 0, 0, Altitude("Earth", +573e3))
-Mass(	"Earth300km", 0, 0, 0, Altitude("Earth", +300e3))
-Mass(	"GEO",        0, 0, 0, Period  ("Earth", TasDHMS(0,23,56,0)))
-Mass(	"Moon",	kg2GM(7.4E+22),	1738e3,	"S",	Orbit(	"Earth",	384e6))
-							
+
+#-------------------------------------------------------------------------------
+# Earth satellites and orbits
+#-------------------------------------------------------------------------------
+
+Moon = Mass("Moon", kg2GM(7.4E+22), 1738e3, "S", Orbit("Earth", 384.399e6))
+
+Mass("LEO",        0, 0, 0, Altitude("Earth", +150e3))
+Mass("ISS",        0, 0, 0, Altitude("Earth", +368e3))
+Mass("Hubble",     0, 0, 0, Altitude("Earth", +573e3))
+Mass("Earth300km", 0, 0, 0, Altitude("Earth", +300e3))
+Mass("GEO",        0, 0, 0, Period  ("Earth", Earth.rotate))
+
+#-------------------------------------------------------------------------------
+# Mars satellites
+#-------------------------------------------------------------------------------
+
 Mass(	"Mars1000km", 0, 0, 0, Altitude("Mars", +1000e3))
 Mass(	"Phobos",	kg2GM(1.1E+16),	11e3,	"S",	Orbit(	"Mars",	9e6))
 Mass(	"Deimos",	kg2GM(1.8E+15),	6e3,	"S",	Orbit(	"Mars",	23e6))
+
+#-------------------------------------------------------------------------------
+# Asteroid belt objects
+#-------------------------------------------------------------------------------
 
 Mass("Aten",            kg2GM(0),    0.5e3,     0,  Orbit("Sun",    144514e6))
 Mass("Amun",            kg2GM(0),    0.0e3,     0,  Orbit("Sun",    145710e6))
@@ -52,7 +65,11 @@ Mass("Hygiea",    kg2GM(9.30e19),    215e3,     0,  Orbit("Sun",    470300e6))
 Mass("Davida",          kg2GM(0),    168e3,     0,  Orbit("Sun",    475400e6))
 Mass("Agamemnon",       kg2GM(0),     88e3,     0,  Orbit("Sun",    778100e6))
 Mass("Chiron",          kg2GM(0),     85e3,     0,  Orbit("Sun",   2051900e6))
-							
+
+#-------------------------------------------------------------------------------
+# Jupiter satellites
+#-------------------------------------------------------------------------------
+
 Mass(	"Metis",	kg2GM(9.6E+16),	20e3,	0,	Orbit(	"Jupiter",	128e6))
 Mass(	"Adrastea",	kg2GM(1.9E+16),	10e3,	0,	Orbit(	"Jupiter",	129e6))
 Mass(	"Amalthea",	kg2GM(3.5E+18),	94e3,	"S",	Orbit(	"Jupiter",	181e6))
@@ -80,7 +97,11 @@ Mass(	"Callirrhoe",	0,	0,	0,	Orbit(	"Jupiter",	24100e6))
 Mass(	"Megaclite",	0,	0,	0,	Orbit(	"Jupiter",	23911e6))
 Mass(	"Isonoe",	0,	0,	0,	Orbit(	"Jupiter",	23078e6))
 Mass(	"Erinome",	0,	0,	0,	Orbit(	"Jupiter",	23168e6))
-							
+
+#-------------------------------------------------------------------------------
+# Saturn satellites
+#-------------------------------------------------------------------------------
+
 Mass(	"Pan",	0,	10e3,	0,	Orbit(	"Saturn",	134e6))
 Mass(	"Atlas",	0,	15e3,	0,	Orbit(	"Saturn",	138e6))
 Mass(	"Prometheus",	kg2GM(2.7E+17),	46e3,	0,	Orbit(	"Saturn",	139e6))
@@ -99,7 +120,11 @@ Mass(	"Titan",	kg2GM(1.4E+23),	2575e3,	"S",	Orbit(	"Saturn",	1222e6))
 Mass(	"Hyperion",	kg2GM(1.8E+19),	143e3,	0,	Orbit(	"Saturn",	1481e6))
 Mass(	"Iapetus",	kg2GM(1.6E+21),	718e3,	"S",	Orbit(	"Saturn",	3561e6))
 Mass(	"Phoebe",	kg2GM(0.0E+0),	110e3,	TasDays(0.4),	Orbit(	"Saturn",	12952e6))
-							
+
+#-------------------------------------------------------------------------------
+# Uranus satellites
+#-------------------------------------------------------------------------------
+
 Mass(	"Cordelia",	0,	13e3,	0,	Orbit(	"Uranus",	50e6))
 Mass(	"Ophelia",	0,	16e3,	0,	Orbit(	"Uranus",	54e6))
 Mass(	"Bianca",	0,	22e3,	0,	Orbit(	"Uranus",	59e6))
@@ -120,8 +145,11 @@ Mass(	"Stephano",	0,	15e3,	0,	Orbit(	"Uranus",	7948e6))
 Mass(	"Sycorax",	0,	80e3,	0,	Orbit(	"Uranus",	12213e6))
 Mass(	"Prospero",	0,	20e3,	0,	Orbit(	"Uranus",	16568e6))
 Mass(	"Setebos",	0,	20e3,	0,	Orbit(	"Uranus",	17681e6))
-							
-							
+
+#-------------------------------------------------------------------------------
+# Neptune satellites
+#-------------------------------------------------------------------------------
+
 Mass(	"Naiad",	0,	29e3,	0,	Orbit(	"Neptune",	48e6))
 Mass(	"Thalassa",	0,	40e3,	0,	Orbit(	"Neptune",	50e6))
 Mass(	"Despina",	0,	74e3,	0,	Orbit(	"Neptune",	53e6))
@@ -130,7 +158,11 @@ Mass(	"Larissa",	0,	96e3,	0,	Orbit(	"Neptune",	74e6))
 Mass(	"Proteus",	0,	209e3,	0,	Orbit(	"Neptune",	118e6))
 Mass(	"Triton",	kg2GM(2.2E+22),	1353e3,	"S",	Orbit(	"Neptune",	355e6))
 Mass(	"Nereid",	0,	170e3,	0,	Orbit(	"Neptune",	5513e6))
-							
+
+#-------------------------------------------------------------------------------
+# Pluto satellites
+#-------------------------------------------------------------------------------
+
 Mass(	"Charon",	kg2GM(1.5E+21),	603e3,	"S",	Orbit(	"Pluto",	20e6))
 Mass(	"Nix",	kg2GM(2.0E+18),	23e3,	0,	Orbit(	"Pluto",	49e6))
 Mass(	"Hydra",	kg2GM(2.0E+18),	30e3,	0,	Orbit(	"Pluto",	65e6))
