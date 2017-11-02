@@ -105,7 +105,7 @@ masses = { }
 
 class Mass(object):
     
-    def __init__(self, name, GM, radius, rotate, orbit = None):
+    def __init__(self, name, GM = 0, radius = 0, rotate = 0, orbit = None):
         self.name = name
         self.GM = float(GM)
         self.radius = float(radius)
@@ -116,6 +116,15 @@ class Mass(object):
         self.orbit = orbit
         if orbit != None: self.center = orbit.center
         masses[name] = self
+
+    #--------------------------------------------------------------------------
+    #
+    #--------------------------------------------------------------------------
+    
+    @staticmethod
+    def resolve(mass):
+        if isinstance(mass, str): return masses[mass]
+        return mass
 
     #--------------------------------------------------------------------------
     # Basic properties
@@ -220,17 +229,24 @@ def solve_b(r1, r2):        return solve_a(r1,r2) * sqrt(1-eccentricity(r1,r2)**
 
 def v_escape(GM, r):        return sqrt(2.0*GM/r)
 def v_circular(GM, r):      return sqrt(GM/float(r))
+def v_elliptical(GM, a, r): return sqrt(GM*(2.0/r - 1.0/a))
 
-def P_orbit(GM, a):         return 2*pi*sqrt(pow(a,3.0)/GM)
-def a_from_P(GM, P):        return pow(P**2.0 * GM / (4*pi**2), 1/3.0)
+def P_orbit(GM, a):         return 2*pi*sqrt((a ** 3.0)/GM)
+def a_from_P(GM, P):        return (P**2.0 * GM / (4*pi**2)) ** (1/3.0)
+
+#------------------------------------------------------------------------------
+# Angular velocities to solve launch window periods
+#------------------------------------------------------------------------------
 
 def w_circular(GM, a):      return 1.0/P_orbit(GM, a)
 def w_diff(GM, a, b):       return 360*abs(w_circular(GM, a) - w_circular(GM, b))
 def P_window(GM, a, b):     return abs(360/w_diff(GM, a, b))
 
-#------------------------------------------------------------------------------
+################################################################################
+#
 # 2D vectors
-#------------------------------------------------------------------------------
+#
+################################################################################
 
 class Vec2d:
 
@@ -278,6 +294,8 @@ class Vec2d:
 #
 #   r1 = distance at T=0
 #   r2 = distance at T=0.5
+#
+# Algorithm always positions periapsis at angle = 0.
 #
 #------------------------------------------------------------------------------
 
@@ -327,7 +345,7 @@ class Orbit(object):
         self.set(center, r1, r2, T0, arg)
 
     def set(self, center, r1, r2, T0, arg):
-        if isinstance(center, str): center = masses[center]
+        center = Mass.resolve(center)
         if center.isMassless():
             raise Exception("Cannot orbit massless particle.")
         self.center = center
@@ -366,10 +384,10 @@ class Orbit(object):
     #--------------------------------------------------------------------------
     
     @property
-    def r_initial(self): return self.r1
+    def r_initial(self): return self.r(0.0)
 
     @property
-    def r_final(self): return self.r2
+    def r_final(self): return self.r(0.5)
 
     @property
     def v_initial(self): return self.v(0)
@@ -377,8 +395,10 @@ class Orbit(object):
     @property
     def v_final(self): return self.v(0.5)
 
+    def altitude(self, t = 0): return self.r(t) - self.center.radius
+
     @property
-    def alt_initial(self): return self.altitude(0)
+    def alt_initial(self): return self.altitude(0.0)
     
     @property
     def alt_final(self): return self.altitude(0.5)
@@ -388,21 +408,21 @@ class Orbit(object):
     #--------------------------------------------------------------------------
 
     def isCircular(self):
-            return abs(self.r1 - self.r2) < 1e-6 * self.r1
+        return abs(self.r1 - self.r2) < 1e-6 * self.r1
 
     #--------------------------------------------------------------------------
     # Check, if given distance r is reachable by this orbit
     #--------------------------------------------------------------------------
 
     def isReachable(self, r):
-            return r >= self.periapsis and r <= self.apoapsis
+        return r >= self.periapsis and r <= self.apoapsis
 
     #--------------------------------------------------------------------------
     # Check, if this orbit goes up (r1 < r2) or down (r1 > r2)
     #--------------------------------------------------------------------------
 
     def isUpwards(self):
-            return self.r1 - self.r2 < 0
+        return self.r1 - self.r2 < 0
 
     #--------------------------------------------------------------------------
     # Position (x,y) or (f,r) at given moment t = [0...1]
@@ -431,8 +451,6 @@ class Orbit(object):
             f, r = self.fr(t)
             return f
 
-    def altitude(self, t = 0): return self.r(t) - self.center.radius
-
     #--------------------------------------------------------------------------
     # Solve T at given distance
     #--------------------------------------------------------------------------
@@ -454,7 +472,7 @@ class Orbit(object):
             low, high = 0, 0.5
             while abs(low-high) > (1/self.P):
                 mid = (low + high)/2
-                f, r = self.pos_fr(mid)
+                f, r = self.fr(mid)
                 if r > dist:
                         high = mid
                 else:
@@ -463,7 +481,7 @@ class Orbit(object):
             low, high = 0, 0.5
             while abs(low-high) > (1/self.P):
                 mid = (low + high)/2
-                f, r = self.pos_fr(mid)
+                f, r = self.fr(mid)
                 if r > dist:
                         low = mid
                 else:
@@ -483,10 +501,10 @@ class Orbit(object):
     #--------------------------------------------------------------------------
 
     def dv_circular(self, r):
-            t = self.time(r)
-            p = self.pos_xy(t)
-            v_circ = Vec2d(-p.y, p.x).normalized() * v_circular(self.center.GM, r)
-            return self.v(t) - v_circ
+        t = self.time(r)
+        p = self.xy(t)
+        v_circ = Vec2d(-p.y, p.x).normalized() * v_circular(self.center.GM, r)
+        return self.v(t) - v_circ
 
     #--------------------------------------------------------------------------
     # Mean angular velocity
@@ -498,13 +516,14 @@ class Orbit(object):
     # This is used by Trajectory class below
     #--------------------------------------------------------------------------
     
+    @property
     def T_to_target(self):
-            if self.isCircular(): return 0.0
-            return 0.5
+        if self.isCircular(): return 0.0
+        return 0.5
 
 ################################################################################
 #
-# Creating orbits
+# Helper functions to create orbits
 #
 ################################################################################
 
@@ -538,7 +557,7 @@ class Surface(object):
 #------------------------------------------------------------------------------
 
 def Altitude(center, r1, r2 = None):
-    if isinstance(center,str): center = masses[center]
+    center = Mass.resolve(center)
     if r2 == None:
         return Orbit(center, center.radius + r1)
     else:
@@ -549,7 +568,7 @@ def Altitude(center, r1, r2 = None):
 #------------------------------------------------------------------------------
 
 def Period(center, P, r1 = None):
-    if isinstance(center,str): center = masses[center]
+    center = Mass.resolve(center)
     a = a_from_P(center.GM,P)
     if r1 == None:
         r1 = r2 = a
@@ -569,7 +588,7 @@ def Eccentric(center, a, e):
 #------------------------------------------------------------------------------
 
 def OrbitRV(center, r, v):
-    if isinstance(center,str): center = masses[center]
+    center = Mass.resolve(center)
 
     if(v >= v_escape(center.GM,r)):
         raise Exception("Apoapsis = infinite.")
@@ -580,7 +599,7 @@ def OrbitRV(center, r, v):
 
 ################################################################################
 #
-# Trajectories:
+# Trajectory is an arc of an ellipse (r1, r2), from altitude r3 to r4.
 #
 #   r3 = transfer initial altitude
 #   r4 = transfer final altitude
@@ -588,7 +607,9 @@ def OrbitRV(center, r, v):
 #   r1 = ellipse periapsis (or apoapsis downwards)
 #   r2 = ellipse apoapsis  (or periapsis downwards)
 #
-# Trajectory is an arc of an ellipse (r1, r2), from altitude r3 to r4.
+# Most often, you use Hohmann trajectories, where r3=r1 and r4=r2. But if you
+# want to try faster transfers, you have an option to either lower periapsis,
+# or raise apoapsis.
 #
 ################################################################################
 
@@ -618,47 +639,18 @@ class Trajectory(Orbit):
     def v_final(self): return self.v(self.time(self.r4))
 
     #--------------------------------------------------------------------------
-    # Computational dv for Hohmann transfer (r3 - r4)
+    # Solve time to reach final altitude from initial altitude: Time is
+    # relative [0 ... 1] to trajectory period.
     #--------------------------------------------------------------------------
 
     @property
-    def hohmann_P(self):
-            a = (self.r3 + self.r4)/2
-            return P_orbit(self.center.GM, a) / 2        
+    def T_initial(self): return self.time(self.r3)
+    
+    @property
+    def T_final(self): return self.time(self.r4)
 
     @property
-    def hohmann_dv_enter(self):
-            a = (self.r3 + self.r4)/2
-            return abs(v_elliptical(self.center.GM, a, self.r3) - v_circular(self.center.GM, self.r3))
-            
-    @property
-    def hohmann_dv_exit(self):
-            a = (self.r3 + self.r4)/2
-            return abs(v_elliptical(self.center.GM, a, self.r3) - v_circular(self.center.GM, self.r4))
-            
-    @property
-    def hohmann_dv_total(self):
-            return self.hohmann_dv_enter + self.hohmann_dv_exit
-
-    #--------------------------------------------------------------------------
-    # Delta-v required to enter and exit to trajectory
-    #--------------------------------------------------------------------------
-
-    @property
-    def dv_enter(self): return abs(self.dv_circular(self.r3))
-
-    @property
-    def dv_exit(self):  return abs(self.dv_circular(self.r4))
-
-    @property
-    def dv_total(self): return self.dv_enter + self.dv_exit
-
-    #--------------------------------------------------------------------------
-    # Solve time to reach final altitude from initial altitude
-    #--------------------------------------------------------------------------
-
-    def T_to_target(self):
-            return self.time(self.r4) - self.time(self.r3)
+    def T_to_target(self): return self.T_final - self.T_initial
 
     ###########################################################################
     #
@@ -721,4 +713,42 @@ class Trajectory(Orbit):
             return -(f_r4_at_departure - f_r3_at_departure)
 
     def launch_angle(self): return self.launch_angle_up()
+
+    ###########################################################################
+    #
+    # Delta-v required to enter and exit to trajectory
+    #
+    ###########################################################################
+
+    @property
+    def dv_enter(self): return abs(self.dv_circular(self.r3))
+
+    @property
+    def dv_exit(self):  return abs(self.dv_circular(self.r4))
+
+    @property
+    def dv_total(self): return self.dv_enter + self.dv_exit
+
+    #--------------------------------------------------------------------------
+    # Computational dv for Hohmann transfer (r3 - r4)
+    #--------------------------------------------------------------------------
+
+    @property
+    def hohmann_P(self):
+        a = solve_a(self.r3, self.r4)
+        return P_orbit(self.center.GM, a) / 2        
+
+    @property
+    def hohmann_dv_enter(self):
+        a = solve_a(self.r3, self.r4)
+        return abs(v_elliptical(self.center.GM, a, self.r3) - v_circular(self.center.GM, self.r3))
+            
+    @property
+    def hohmann_dv_exit(self):
+        a = solve_a(self.r3 + self.r4)
+        return abs(v_elliptical(self.center.GM, a, self.r3) - v_circular(self.center.GM, self.r4))
+            
+    @property
+    def hohmann_dv_total(self):
+        return self.hohmann_dv_enter + self.hohmann_dv_exit
 

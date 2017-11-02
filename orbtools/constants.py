@@ -6,7 +6,7 @@
 
 from math import pi
 
-const_G   = 6.6726e-11
+const_G   = 6.67408e-11
 const_c   = 299.792458e6
 const_g   = 9.81665
 const_day = 24*3600.0

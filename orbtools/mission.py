@@ -26,7 +26,7 @@ class Burn(object):
 			self.dv = abs(orbTo.v_initial - orbFrom.v_initial)
 		else:
 			self.dv = abs(orbTo.v_final - orbFrom.v_final)
-		self.dt = orbTo.T_to_target() * orbTo.P
+		self.dt = orbTo.T_to_target * orbTo.P
 		self.name = name
 		self.orbit = orbTo
 
@@ -83,7 +83,7 @@ class ExitSystem(object):
 		v_exit = sqrt(v_exit ** 2 + oldcenter.v_escape(orbit.r1) ** 2)
 
 		self.dv = abs(v_exit - abs(orbit.v()))
-		self.dt = exit_orbit.T_to_target() * exit_orbit.P
+		self.dt = exit_orbit.T_to_target * exit_orbit.P
 		self.name = name
 		self.orbit = exit_orbit
 
@@ -121,18 +121,14 @@ class Mission(object):
 	def enter(self, name, orbit):
 		self.burns.append(EnterSystem(name, self.orbit, orbit))
 
-	def exit(self, name, target_r):
-		self.burns.append(ExitSystem(name, self.orbit, target_r))
+	def exit(self, name, orbit):
+		self.burns.append(ExitSystem(name, self.orbit, orbit.r_final))
 
 	@property
 	def orbit(self): return self.burns[-1].orbit
 	
 	@property
-	def dt(self):
-		dt = 0
-		for burn in self.burns:
-			dt += burn.dt
-		return dt
+	def dt(self): return sum(map(lambda b: b.dt, self.burns))
 			
 	@property
 	def dv(self): return sum(map(lambda b: b.dv, self.burns[1:]))
@@ -141,6 +137,7 @@ class Mission(object):
 		print "Mission:", self.name
 		for burn in self.burns[1:]:
 			print "    Burn: %-15s dv=%8.2f dt=%10s" % (burn.name, burn.dv, fmttime(burn.dt))
+		print "    ---"
 		print "    Tot.: %15s dv=%8.2f dt=%10s" % ("", self.dv, fmttime(self.dt))
 
 

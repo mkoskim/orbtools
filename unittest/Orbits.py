@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 # Orbtools unit tests: Testing Orbit() class
@@ -17,29 +18,32 @@ from sol import *
 #------------------------------------------------------------------------------
 
 def test_moon():
-    print fmttime(P_orbit(Earth.GM + Moon.GM, Moon.orbit.a))
-    print fmttime(P_orbit(Earth.GM, Moon.orbit.a))
-    print fmttime(Moon.orbit.P)
+    print "Given............:", fmttime(TasDays(27.321661))
+    print "GM(Earth + Moon).:", fmttime(P_orbit(Earth.GM + Moon.GM, Moon.orbit.a))
+    print "GM(Earth)........:", fmttime(P_orbit(Earth.GM, Moon.orbit.a))
+    print "Database.........:", fmttime(Moon.orbit.P)
+    print
 
-#test_moon()
+test_moon()
 
 #------------------------------------------------------------------------------
-# Test brick: create 2 x 1kg bricks and determine parameters for circular
-# orbit at 1 meter
+# Tähtitieteen perusteet (1984), example 7.3: Two 5 kg bricks are orbiting
+# each other in empty space. Their distance is 1 m. What is the period of the
+# orbit? Answer: 243000 s (2.8 d)
 #------------------------------------------------------------------------------
 
 def test_brick():
-    brick = Mass("Bricks", kg2GM(2), 0, 0)
-    o = Orbit(brick, 1.0)
+    bricks = Mass("Bricks", kg2GM(2 * 5))
+    o = Orbit(bricks, 1.0)
 
     print "Bricks:"
-    print "- Mass.....:", o.center.name
-    print "- Orbit....:", fmteng(o.a, "m")
-    print "- Period...:", fmttime(o.P)
-    print "- Velocity.:", fmteng(abs(o.v()), "m/s")
+    print "- Period (given)....:", 243000
+    print "- Period (method 1).:", P_orbit(bricks.GM, 1.0)
+    print "- Period (method 2).:", o.P
+    print "- Velocity..........:", fmteng(abs(o.v()), "m/s")
     print
 
-#test_brick()
+test_brick()
 
 #------------------------------------------------------------------------------
 # Create circular orbit around Earth

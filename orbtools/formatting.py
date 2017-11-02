@@ -24,7 +24,8 @@ def fmteng(val, unit):
     if(a >= 10e-09): return "%.2f n%s" % (val/1e-09, unit)
     if(a >= 10e-12): return "%.2f p%s" % (val/1e-12, unit)
     if(a >= 10e-15): return "%.2f f%s" % (val/1e-15, unit)
-    return "%.3f a%s" % (val/1e-18, unit)
+    if(a >=  1e-18): return "%.2f a%s" % (val/1e-15, unit)
+    return "---"
 
 #------------------------------------------------------------------------------
 # Distance prints

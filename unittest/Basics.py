@@ -29,6 +29,7 @@ def test_TimePrints():
     print fmttime( TasDHMS(  145*365,  7, 13, 12) )
     print fmttime( TasDHMS( 4145*365,  7, 13, 12) )
     print fmttime( TasDHMS(56732*365,  7, 13, 12) )
+    print
 
 test_TimePrints()
 
@@ -47,19 +48,6 @@ def test_Kepler():
     print
 
 test_Kepler()
-
-#-------------------------------------------------------------------------------
-# Testing energy equation
-#-------------------------------------------------------------------------------
-
-def test_EnergyEq():
-    print "--------------------------------------------------"
-    print "Testing energy equation solving:"
-    print
-    print "Sun @ 1AU, esc=", v_escape(GM_Sun, AU2m(1))
-    print "Sun @ 1AU, esc=", solve_rvrv(GM_Sun, AU2m(1), None, Inf, 0)
-
-test_EnergyEq()
 
 #-------------------------------------------------------------------------------
 # Testing GM solving from orbital radius & period
@@ -96,6 +84,20 @@ def test_Vcirc():
     print
 
 test_Vcirc()
+
+#-------------------------------------------------------------------------------
+# Testing energy equation
+#-------------------------------------------------------------------------------
+
+def test_EnergyEq():
+    print "--------------------------------------------------"
+    print "Testing energy equation solving:"
+    print
+    print "Sun @ 1AU, esc=", v_escape(GM_Sun, AU2m(1))
+    print "Sun @ 1AU, esc=", solve_rvrv(GM_Sun, AU2m(1), None, Inf, 0)
+    print
+
+test_EnergyEq()
 
 #-------------------------------------------------------------------------------
 # Heitto Deimoksella: M=1.8e15, r0=7490m, v0=4.5m/s
