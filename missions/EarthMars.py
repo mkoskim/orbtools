@@ -112,7 +112,7 @@ Earth2Mars = Mission("Earth - Mars", LEO)
 # Burn from start to end
 #------------------------------------------------------------------------------
 
-Earth2Mars.exit ("LEO - TMI", LMO.center.orbit.a)
+Earth2Mars.exit ("LEO - TMI", LMO.center.orbit)
 Earth2Mars.enter("TMI - MOI", LMO)
 
 #------------------------------------------------------------------------------

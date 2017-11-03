@@ -34,7 +34,8 @@ def solve_aPaP(a1, P1, a2, P2):
 
 ################################################################################
 #
-# Solve GM from circular orbit parameters
+# Solve GM from (1) circular orbit parameters, (2) gravitational acceleration
+# at given distance.
 #
 ################################################################################
 
@@ -48,7 +49,7 @@ def solve_GM_from_rg(r, g): return g * (r ** 2.0)
 #   E  = Ekin + Epot 
 #   E1 = E2
 #
-#   ==> m*v1^2/2 - GM*m/r1 = m*v2^2/2 - GM*m/r2
+#   ==> m*v1^2/2 - GM*m/r1 = m*v2^2/2 - GM*m/r2  || /m
 #   ==> v1^2/2 - GM/r1 = v2^2/2 - GM/r2
 #
 ################################################################################
@@ -136,6 +137,7 @@ class Mass(object):
     @property
     def kg(self): return GM2kg(self.GM)
     
+    @property
     def isMassless(self): return self.GM < kg2GM(0.1)
     
     @property
@@ -188,14 +190,14 @@ class Mass(object):
     def info(self):
         print "-------------------"
         print "Name..............:", self.name
-        if not self.isMassless():
+        if not self.isMassless:
             print "Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth)
             print "Mass..............: %.4g kg (%.4g x M_earth)" % (self.kg, self.GM/GM_Earth)
             print "Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth)
             print "Density...........: %.3f kg/m3" % (self.density)
             print "Rotating period...: %s" % fmttime(self.rotate)
             print "Surface gravity...: %.2f g (%.2f m/s^2)" % (self.g_surface/const_g, self.g_surface)
-        if self.orbit != None:
+        if self.orbit:
             print "Orbits............:", self.orbit.center.name
             print "   Distance.......:", fmtdist(self.orbit.a)
             print "   Period.........:", fmttime(self.orbit.P)
@@ -221,9 +223,9 @@ class Mass(object):
 #
 ################################################################################
 
-def eccentricity(r1, r2):   return 1 - 2.0*min(r1,r2)/float(r1+r2)
-def solve_a(r1, r2):        return (r1+r2)/2.0
-def solve_b(r1, r2):        return solve_a(r1,r2) * sqrt(1-eccentricity(r1,r2)**2)
+def eccentricity(r1, r2):   return 1 - 2.0*min(r1, r2)/float(r1 + r2)
+def solve_a(r1, r2):        return (r1 + r2)/2.0
+def solve_b(r1, r2):        return solve_a(r1, r2) * sqrt(1-eccentricity(r1, r2)**2)
 
 #------------------------------------------------------------------------------
 
@@ -346,7 +348,7 @@ class Orbit(object):
 
     def set(self, center, r1, r2, T0, arg):
         center = Mass.resolve(center)
-        if center.isMassless():
+        if center.isMassless:
             raise Exception("Cannot orbit massless particle.")
         self.center = center
         self.r1 = float(r1)
@@ -404,27 +406,6 @@ class Orbit(object):
     def alt_final(self): return self.altitude(0.5)
     
     #--------------------------------------------------------------------------
-    # Check, if orbit is (nearly) circular
-    #--------------------------------------------------------------------------
-
-    def isCircular(self):
-        return abs(self.r1 - self.r2) < 1e-6 * self.r1
-
-    #--------------------------------------------------------------------------
-    # Check, if given distance r is reachable by this orbit
-    #--------------------------------------------------------------------------
-
-    def isReachable(self, r):
-        return r >= self.periapsis and r <= self.apoapsis
-
-    #--------------------------------------------------------------------------
-    # Check, if this orbit goes up (r1 < r2) or down (r1 > r2)
-    #--------------------------------------------------------------------------
-
-    def isUpwards(self):
-        return self.r1 - self.r2 < 0
-
-    #--------------------------------------------------------------------------
     # Position (x,y) or (f,r) at given moment t = [0...1]
     #--------------------------------------------------------------------------
 
@@ -452,6 +433,16 @@ class Orbit(object):
             return f
 
     #--------------------------------------------------------------------------
+
+    def isReachable(self, r): return r >= self.periapsis and r <= self.apoapsis
+
+    @property
+    def isCircular(self): return abs(self.r1 - self.r2) < 1e-6 * self.r1
+
+    @property
+    def isUpwards(self): return self.r1 < self.r2
+
+    #--------------------------------------------------------------------------
     # Solve T at given distance
     #--------------------------------------------------------------------------
 
@@ -461,19 +452,18 @@ class Orbit(object):
         if not self.isReachable(dist):
             raise Exception("Distance out of orbit parameters.")
 
-        if self.isCircular(): return 0
+        if self.isCircular: return 0
 
         #----------------------------------------------------------------------
         # If orbit is upwards, distance increases from 0 ... 0.5
         # If orbit is downwards, distance decreases from 0 ... 0.5
         #----------------------------------------------------------------------
         
-        if self.isUpwards():
+        if self.isUpwards:
             low, high = 0, 0.5
             while abs(low-high) > (1/self.P):
                 mid = (low + high)/2
-                f, r = self.fr(mid)
-                if r > dist:
+                if self.r(mid) > dist:
                         high = mid
                 else:
                         low = mid
@@ -481,8 +471,7 @@ class Orbit(object):
             low, high = 0, 0.5
             while abs(low-high) > (1/self.P):
                 mid = (low + high)/2
-                f, r = self.fr(mid)
-                if r > dist:
+                if self.r(mid) > dist:
                         low = mid
                 else:
                         high = mid

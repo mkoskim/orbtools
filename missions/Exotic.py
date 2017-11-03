@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os, sys
-sys.path.append(os.path.expanduser("~/GitHub/orbtools"))
+sys.path.append(os.path.abspath(".."))
 
 from sol import *
 
