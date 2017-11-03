@@ -1,0 +1,16 @@
+TODO
+
+- Add trajectories for escaping and entering bodies
+
+- DONE: Add periapsis argument and time to ease up matching velocity vectors.
+  This is made so, that when orbit has initial and final distances, you
+  can enter the time and angle of the initial distance.
+
+- Add "engine lab": This "lab" would have all sorts of useful equations
+  to build different engines: chemical engines, ion thrusters, nuclear
+  engines, antimatter infused fusion engines and so on. The designed
+  engine parameters are then returned as Engine class, which can be
+  attached to rockets.
+
+
+

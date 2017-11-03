@@ -1,6 +1,0 @@
-TODO
-
-- Add trajectories for escaping and entering bodies
-
-- Add periapsis argument and time to ease up matching velocity vectors
-
