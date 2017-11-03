@@ -14,4 +14,5 @@ from rocket import *
 from mission import *
 
 import plotter
+import gui
 
