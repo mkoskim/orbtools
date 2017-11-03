@@ -507,7 +507,7 @@ class Orbit(object):
     
     @property
     def T_to_target(self):
-        if self.isCircular(): return 0.0
+        if self.isCircular: return 0.0
         return 0.5
 
 ################################################################################
