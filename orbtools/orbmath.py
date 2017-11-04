@@ -522,11 +522,17 @@ class Orbit(object):
 
 class Surface(object):
     def __init__(self, center):
-        if isinstance(center,str): center = masses[center]
+        center = Mass.resolve(center)
         self.center = center
 
+    #--------------------------------------------------------------------------
+    
     @property
     def P(self): return self.center.rotate
+
+    #--------------------------------------------------------------------------
+    
+    def r(self, t = 0.0): return self.center.radius
 
     def xy(self, t = 0.0):
         return Vec2d(
@@ -541,6 +547,33 @@ class Surface(object):
             sin(2*pi*t)
         ).rotate(90) * w * self.center.radius
 
+    #--------------------------------------------------------------------------
+    
+    @property
+    def r_initial(self): return self.r(0.0)
+
+    @property
+    def r_final(self): return self.r(0.5)
+
+    @property
+    def v_initial(self): return self.v(0)
+
+    @property
+    def v_final(self): return self.v(0.5)
+
+    def altitude(self, t = 0): return self.r(t) - self.center.radius
+
+    @property
+    def alt_initial(self): return self.altitude(0.0)
+    
+    @property
+    def alt_final(self): return self.altitude(0.5)
+    
+    #--------------------------------------------------------------------------
+    
+    @property
+    def T_to_target(self): return 0.0
+    
 #------------------------------------------------------------------------------
 # Creating orbit from altitudes (adding central body radius)
 #------------------------------------------------------------------------------

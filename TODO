@@ -12,5 +12,6 @@ TODO
   engine parameters are then returned as Engine class, which can be
   attached to rockets.
 
-
+- Ease mission setup: Now there is a need to make temporary orbits,
+  these could be done internally.
 

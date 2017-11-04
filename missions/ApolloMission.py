@@ -66,7 +66,7 @@ phase42.show()
 #------------------------------------------------------------------------------
 
 phase5 = Mission("Trans-Earth Injection", phase42.orbit)
-phase5.exit("TEI @LLO", Earth.radius)
+phase5.exit("TEI @LLO", Trajectory(Earth, Moon.orbit.a, Earth.radius))
 phase5.show()
 
 #------------------------------------------------------------------------------

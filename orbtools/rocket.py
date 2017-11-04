@@ -18,30 +18,11 @@
 
 from orbtools import *
 
-#-------------------------------------------------------------------------------
-# Solving rocket equation: give the unknown value as None for solving.
-#-------------------------------------------------------------------------------
-
-def solve_rocket_eq(M0, M1, dv, ve):
-    def Rv(dv, ve): return exp(float(dv)/ve)
-    def Rm(M0, M1): return log(float(M0)/M1)
-
-    if M0 == None:      return M1 * Rv(dv, ve)
-    elif M1 == None:    return M0 / Rv(dv, ve)
-    elif dv == None:    return ve * Rm(M0, M1)
-    else:               return dv / Rm(M0, M1)
-
 ################################################################################
 #
 #
 #
 ################################################################################
-
-class Engine(object):
-    def __init__(self, u):  self.u = float(u)
-    def R(self, dv):        return exp(float(dv)/self.u)
-    def dvR(self, R):       return self.u*log(R)
-    def dv(self, m0, m1):   return self.dvR(m0/m1)
 
 class Payload(object):
 

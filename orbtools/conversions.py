@@ -63,6 +63,6 @@ def rad2deg(r): return degrees(r)
 # ISP <-> ve
 #------------------------------------------------------------------------------
 
-def ISP2ve(isp): return const_g * float(isp)
-def ve2ISP(ve):  return float(ve) / const_g
+def Isp2ve(isp): return const_g * float(isp)
+def ve2Isp(ve):  return float(ve) / const_g
 
