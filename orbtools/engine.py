@@ -111,10 +111,11 @@ engines = {
     "HiPEP":        Engine_IspF(9620.0, 0.670),     # Ion thruster: 39.3 kW
     "NSTAR":        Engine_IspF(3100.0, 0.092),     # Ion thruster:  2.3 kW
     "VASIMR":       Engine_IspF(5000.0, 5.700),     # VASIMR: 200 kW
+
+    "NERVA":        Engine_IspF( 850.0, 333600),    # NERVA nuclear thermal engine
 }
 
 engines["SSME"]  = engines["RS-25"]
-engines["RS-24"] = engines["RS-25"]
 
 ###############################################################################
 #
