@@ -12,19 +12,19 @@ from orbtools import *
 
 def fmteng(val, unit):
     a = abs(val)
-    if(a >= 10e+18): return "%.2f E%s" % (val/1e+18, unit)
-    if(a >= 10e+15): return "%.2f P%s" % (val/1e+15, unit)
-    if(a >= 10e+12): return "%.2f T%s" % (val/1e+12, unit)
-    if(a >= 10e+09): return "%.2f G%s" % (val/1e+09, unit)
-    if(a >= 10e+06): return "%.2f M%s" % (val/1e+06, unit)
-    if(a >= 10e+03): return "%.2f k%s" % (val/1e+03, unit)
-    if(a >= 1e+00):  return "%.2f %s"  % (val/1e+00, unit)
-    if(a >= 10e-03): return "%.2f m%s" % (val/1e-03, unit)
-    if(a >= 10e-06): return "%.2f u%s" % (val/1e-06, unit)
-    if(a >= 10e-09): return "%.2f n%s" % (val/1e-09, unit)
-    if(a >= 10e-12): return "%.2f p%s" % (val/1e-12, unit)
-    if(a >= 10e-15): return "%.2f f%s" % (val/1e-15, unit)
-    if(a >=  1e-18): return "%.2f a%s" % (val/1e-15, unit)
+    if(a >= 5e+18): return "%.2f E%s" % (val/1e+18, unit)
+    if(a >= 5e+15): return "%.2f P%s" % (val/1e+15, unit)
+    if(a >= 5e+12): return "%.2f T%s" % (val/1e+12, unit)
+    if(a >= 5e+09): return "%.2f G%s" % (val/1e+09, unit)
+    if(a >= 5e+06): return "%.2f M%s" % (val/1e+06, unit)
+    if(a >= 2e+03): return "%.2f k%s" % (val/1e+03, unit)
+    if(a >= 1e+00): return "%.2f  %s"  % (val/1e+00, unit)
+    if(a >= 2e-03): return "%.2f m%s" % (val/1e-03, unit)
+    if(a >= 5e-06): return "%.2f u%s" % (val/1e-06, unit)
+    if(a >= 5e-09): return "%.2f n%s" % (val/1e-09, unit)
+    if(a >= 5e-12): return "%.2f p%s" % (val/1e-12, unit)
+    if(a >= 5e-15): return "%.2f f%s" % (val/1e-15, unit)
+    if(a >= 1e-18): return "%.2f a%s" % (val/1e-15, unit)
     return "---"
 
 #------------------------------------------------------------------------------
