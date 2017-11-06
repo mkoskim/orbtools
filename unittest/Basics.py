@@ -8,6 +8,7 @@ import os, sys
 sys.path.append(os.path.abspath(".."))
 
 from sol import *
+from testlib import *
 
 #-------------------------------------------------------------------------------
 # Testing printing
@@ -31,92 +32,39 @@ def test_TimePrints():
     print fmttime( TasDHMS(56732*365,  7, 13, 12) )
     print
 
-test_TimePrints()
-
-#-------------------------------------------------------------------------------
-# Solving Earth & Jupiter axis (AU) and period (a), with Kepler's eq.
-#-------------------------------------------------------------------------------
-
-def test_Kepler():
-    print "--------------------------------------------------"
-    print "Testing Kepler's equation solving:"
-    print
-    print "Kepler: %.2f" % solve_aPaP(None,1,5.2,11.857824421), "== 1.00?"
-    print "Kepler: %.2f" % solve_aPaP(1,None,5.2,11.857824421), "== 1.00?"
-    print "Kepler: %.2f" % solve_aPaP(1,1,None,11.857824421), "== 5.20?"
-    print "Kepler: %.2f" % solve_aPaP(1,1,5.2,None), "== 11.86?"
-    print
-
-test_Kepler()
-
-#-------------------------------------------------------------------------------
-# Testing GM solving from orbital radius & period
-# Calculate Mars mass using Phobos orbit: r = 9380km, P=7h 39.5m
-#-------------------------------------------------------------------------------
-
-def test_GMsolving():
-    print "--------------------------------------------------"
-    print "Testing GM solving from orbital parameters:"
-    print
-
-    # Calculate Mars mass ~ 6.42e23 kg (from Phobos orbit parameters)
-
-    print "m(Mars): %.3g" % GM2kg( solve_GM_from_aP(9380e3, TasDHMS(0, 7, 39.5, 0))), "== 6.42e23 kg?"
-    print
-
-test_GMsolving()
+manual(__name__, test_TimePrints)
 
 #-------------------------------------------------------------------------------
 # Testing circular & escape velocity calculation
 #-------------------------------------------------------------------------------
 
 def test_Vcirc():
-    print "--------------------------------------------------"
-    print "Testing circular & escape velocity calculation:"
-    print
-    print "Earth +300km: v(circ) = %5.0f  (7558) m/s" % v_circular(Earth.GM, Earth.radius + 300e3)
-    print "Earth +300km: v(esc)  = %5.0f (10689) m/s" % v_escape(Earth.GM, Earth.radius + 300e3)
-    print
+    runcase()
 
+    # Velocities around Earth @ 300 km
+    expect(v_circular(Earth.GM, Earth.radius + 300e3), 7729, 1, "1")
+    expect(v_escape(Earth.GM, Earth.radius + 300e3), 10931, 1, "2")
+
+    # Create orbit around sun @ 1AU (Earth orbit)
     o = Orbit(Sun, AU2m(1.0))
-    print "Sun @ 1AU, period =", fmttime(o.P)
-    print "Sun @ 1AU, v_circ =", o.v(0).length
-    print
+    expect(TtoYears(o.P),     1.0, 1e-3, "3")
+    expect(o.v(0).length, 29784.0, 1,    "4")
 
 test_Vcirc()
 
 #-------------------------------------------------------------------------------
-# Testing energy equation
+# Testing energy equation (by solving escape velocities)
 #-------------------------------------------------------------------------------
 
 def test_EnergyEq():
-    print "--------------------------------------------------"
-    print "Testing energy equation solving:"
-    print
-    print "Sun @ 1AU, esc=", v_escape(GM_Sun, AU2m(1))
-    print "Sun @ 1AU, esc=", solve_rvrv(GM_Sun, AU2m(1), None, Inf, 0)
-    print
+    runcase()
+    expect(solve_rvrv(Earth.GM,   Inf, 0, Earth.radius,   None), 11.186e3, 1, "1")
+    expect(solve_rvrv(Jupiter.GM, Inf, 0, Jupiter.radius, None), 59.532e3,   1, "2")
+
+    expect(v_escape(GM_Sun, AU2m(1)),                   42121.9, 1, "3")
+    expect(solve_rvrv(GM_Sun, AU2m(1), None, Inf, 0),   42121.9, 1, "4")
 
 test_EnergyEq()
-
-#-------------------------------------------------------------------------------
-# Heitto Deimoksella: M=1.8e15, r0=7490m, v0=4.5m/s
-# Solution: apoapsis = 12830 m, nopeus = 2.62 m/s, periodi=5.157 h
-#-------------------------------------------------------------------------------
-
-#o = Orbit_from_v(kg2GM(1.8e15), 7490, 4.5)
-#print "Apoapsis=", o.apoapsis, "v(ap)=", o.v(o.apoapsis)
-#print "P=", o.period()/3600
-
-#-------------------------------------------------------------------------------
-# Heitto Deimoksella: M=1.8e15, r0=7490m, r1=r0+50
-# Solution: v0 =
-#-------------------------------------------------------------------------------
-
-#o = Orbit_elliptical(kg2GM(1.8e15),7490+50,7490)
-#print "v0=", o.v(o.periapsis)
-#print "v1=", o.v(o.apoapsis)
-#print "P=", o.period()/3600
 
 #-------------------------------------------------------------------------------
 # Testing solar system mass database
@@ -147,15 +95,5 @@ def test_MassDB():
     print "   v   =", fmteng(LEO.orbit.v(0).length,"m/s")
     print
 
-test_MassDB()
-
-#-------------------------------------------------------------------------------
-# Testing mission setup
-#-------------------------------------------------------------------------------
-
-#from mission_mars import *
-
-#print "Stage1:"
-#print "   orbits=",   s1.orbit.center.name
-#print "   altitude=", engfmt(s1.orbit.altitude(), "m")
-
+manual(__name__, Earth.info)
+manual(__name__, test_MassDB)

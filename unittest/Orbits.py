@@ -10,6 +10,25 @@ sys.path.append(os.path.abspath(".."))
 
 from sol import *
 
+#-------------------------------------------------------------------------------
+# Heitto Deimoksella: M=1.8e15, r0=7490m, v0=4.5m/s
+# Solution: apoapsis = 12830 m, nopeus = 2.62 m/s, periodi=5.157 h
+#-------------------------------------------------------------------------------
+
+#o = Orbit_from_v(kg2GM(1.8e15), 7490, 4.5)
+#print "Apoapsis=", o.apoapsis, "v(ap)=", o.v(o.apoapsis)
+#print "P=", o.period()/3600
+
+#-------------------------------------------------------------------------------
+# Heitto Deimoksella: M=1.8e15, r0=7490m, r1=r0+50
+# Solution: v0 =
+#-------------------------------------------------------------------------------
+
+#o = Orbit_elliptical(kg2GM(1.8e15),7490+50,7490)
+#print "v0=", o.v(o.periapsis)
+#print "v1=", o.v(o.apoapsis)
+#print "P=", o.period()/3600
+
 #------------------------------------------------------------------------------
 # This shows error in mass database, because orbit is only calculated
 # by central mass (not including satellite mass). It is highest with
