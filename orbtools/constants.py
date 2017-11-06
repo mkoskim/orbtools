@@ -6,15 +6,15 @@
 
 from math import pi
 
-const_G   = 6.67408e-11
-const_c   = 299.792458e6
-const_g   = 9.80665
-const_day = 24*3600.0
-const_year = 365.25*const_day
-const_AU = 149.597870691e9
-const_ly = const_c*const_year
+Inf         = float("infinity")
 
-Inf = float("infinity")
+const_G     = 6.67408e-11
+const_c     = 299.792458e6
+const_g     = 9.80665
+const_day   = 24*3600.0
+const_year  = 365.25*const_day
+const_AU    = 149.597870691e9
+const_ly    = const_c*const_year
 
 #------------------------------------------------------------------------------
 #
@@ -35,3 +35,4 @@ GM_Neptunus = 5.79394700000e15
 
 r_Earth     = 6372.167e3
 V_Earth     = 4/3.0*pi*(r_Earth ** 3)
+

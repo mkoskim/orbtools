@@ -95,14 +95,24 @@ def comparison(*engines):
 # Compare engines from engine database. These are (mainly) existing engines.
 #------------------------------------------------------------------------------
 
-def compare_engines(*names):
+def compare_engines():
+
+    names = [
+        "F-1", "J-2",
+        "SSME", "SSSRB",
+        "Merlin 1C", "Merlin 1D", "Raptor",
+        "RD-180", "RD-191", "RD-263",
+        "P230",
+        "HiPEP", "NSTAR", "VASIMR",
+        "NERVA",
+    ]
 
     print "%-10s %12s %12s %12s %12s %13s" % ("Name", "v(ex)", "Thrust", "P", "Mass flow", "E(flow)/kg")
 
     for name in names:
         engine = engines[name]
         print "%-10s %12s %12s %12s %12s %13s" % (
-            name,
+            engine.name,
             fmteng(engine.ve, "m/s"),
             fmteng(engine.F, "N"),
             fmteng(engine.P, "W"),
@@ -112,23 +122,60 @@ def compare_engines(*names):
 
     print
 
-compare_engines(
-    "F-1", "J-2",
-    "SSME", "SSSRB",
-    "Merlin 1C", "Merlin 1D", "Raptor",
-    "RD-180", "RD-263",
-    "P230",
-    "HiPEP", "NSTAR", "VASIMR",
-    "NERVA",
-)
+#compare_engines()
 
 #------------------------------------------------------------------------------
 # Fuels
 #------------------------------------------------------------------------------
 
-print "RP-1:", fmteng(Fuel("Kerosene"), "J/kg")
-print "CH4.:", fmteng(Fuel("Methane"), "J/kg")
-print "LH2.:", fmteng(Fuel("LH2"), "J/kg")
+#------------------------------------------------------------------------------
+#
+# Propellant mixture ratio: LH2/LOX, 100% mixture is 15.999 / (2*1.008).
+# Anything above means that not all O2 is burned, anything below means that
+# not all H2 is burned. But how much is left unburned?
+#
+# We leave this out for now. First, the effect is usually not that high: there
+# is approx. 3% of propellant mass left unburned. Second, with hydrocarbons it
+# results to incomplete burning, which affects to heat values. More information
+# would be needed to take those effects in account.
+#
+# Ratio is meant more for nuclear engines. Most of the speculated open cycle
+# nuclear engines have considerable amounts (like 100:1) of inert H2 as
+# propellant.
+#
+#------------------------------------------------------------------------------
+
+def compare_fuels():
+
+    def show(eng, fuel, efficiency, ratio = 1.0):
+        engine = engines[eng]
+        E = fuel.E * ratio * efficiency
+        print "%-10s %15s %12s %10s %15s %6.2f %%" % (
+            engine.name,
+            fmteng(engine.E(), "J/kg"),
+            fmteng(engine.ve, "m/s"),
+            fuel.name,
+            fmteng(fuel.E, "J/kg"),
+            100 * engine.E()/fuel.E
+        )
+        
+    show("SSME",   fuels["Hydrolox"], 0.620)
+    show("Raptor", fuels["Methalox"], 0.630)
+    show("RD-191", fuels["Kerolox"],  0.529)
+    show("F-1",    fuels["Kerolox"],  0.431)
+    show("SSSRB",  fuels["APCP"],     0.696)
+
+    #--------------------------------------------------------------------------
+    # This is strange: computed Isp for gunpowder is ~250 s, but actual
+    # gunpowder rockets have Isp around 80 s. It means that the efficiency
+    # is just 10%.
+    #--------------------------------------------------------------------------
+
+    print ve2Isp(fuels["Gunpowder"].ve(1.0, 1.00))
+    print ve2Isp(fuels["Gunpowder"].ve(1.0, 0.10))
+    print ve2Isp(fuels["APCP"].ve(1.0, 1.0))
+    
+compare_fuels()
 
 #------------------------------------------------------------------------------
 #

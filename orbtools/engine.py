@@ -34,6 +34,11 @@ def solve_Fma(F, m, a):
     if m == None: return float(F) / a
     return float(F) / m
 
+def solve_PFve(P, F, ve):
+    if P == None: return F * (0.5 * ve)
+    if F == None: return P / (0.5 * ve) # = flux * ve
+    return 2.0 * P/F
+    
 ###############################################################################
 #
 # Fixed-Isp reaction engines
@@ -49,19 +54,24 @@ class Exhaust(object):
     def dv(self, payload, fuel): return self.solve(payload + fuel, payload, None)
     def fuel(self, payload, dv): return self.solve(None, payload, dv) - payload
 
-    def P(self, F = 1): return F * (0.5 * self.ve)
-    def F(self, P):     return P / (0.5 * self.ve)      # = flux * ve
+    def P(self, F = 1): return solve_PFve(None, F, self.ve)
+    def F(self, P):     return solve_PFve(P, None, self.ve)
     def E(self, m = 1): return solve_Emv(None, m, self.ve)
     def flux(self, P):  return solve_Emv(P, None, self.ve)
     def E_eff(self, dv):return solve_Emv(None, 1, dv) / self.E(self.fuel(1, dv))
     
     def t(self, P, m):  return self.E(m) / P
 
+engines = { }
+
 class Engine(object):
 
-    def __init__(self, ve, P = None, F = None):
+    def __init__(self, ve, P = None, F = None, name = None, propellant = None):
         self.exhaust = Exhaust(ve)
         self.P = P and P or self.exhaust.P(F)
+        self.name = name
+        self.propellant = propellant
+        if name: engines[name] = self
 
     @property
     def ve(self): return self.exhaust.ve
@@ -81,39 +91,40 @@ class Engine(object):
     
     def t(self, m): return self.exhaust.t(self.P, m)    
 
-
-
 #------------------------------------------------------------------------------
 # Engine database: parameters are vacuum parameters
 #------------------------------------------------------------------------------
 
-def Engine_veP(ve, P):      return Engine(ve, P = P)
-def Engine_IspP(isp, P):    return Engine(Isp2ve(isp), P = P)
-def Engine_veF(ve, F):      return Engine(ve, F = F)
-def Engine_IspF(isp, F):    return Engine(Isp2ve(isp), F = F)
+def Engine_veP(name, ve, P):      return Engine(ve, P = P, name = name)
+def Engine_IspP(name, isp, P):    return Engine(Isp2ve(isp), P = P, name = name)
+def Engine_veF(name, ve, F):      return Engine(ve, F = F, name = name)
+def Engine_IspF(name, isp, F):    return Engine(Isp2ve(isp), F = F, name = name)
 
-engines = {
-    "F-1":          Engine_IspF(304.0,  7770000),   # Saturn first stage
-    "J-2":          Engine_IspF(421.0,  1033000),   # Saturn upper stage
+Engine_IspF("F-1",          304.0,  7770000)    # Saturn first stage
+Engine_IspF("J-2",          421.0,  1033000)    # Saturn upper stage
 
-    "RS-25":        Engine_IspF(452.3,  2279000),   # Shuttle main engine
-    "SSSRB":        Engine_IspF(268.0, 14000000),   # Shuttle solid rocket booster (PBAN/APCP)
-    
-    "Merlin 1C":    Engine_IspF(336.0,  413644),    # SpaceX Falcon 1, 9 (vac)
-    "Merlin 1D":    Engine_IspF(348.0,  934000),    # SpaceX Falcon 9 v1.1 (vac)
-    "Raptor":       Engine_IspF(382.0, 3500000),    # SpaceX Raptor (vac)
+Engine_IspF("RS-25",        452.3,  2279000)    # Shuttle main engine
+Engine_IspF("SSSRB",        268.0, 14000000)    # Shuttle solid rocket booster (PBAN/APCP)
 
-    "RD-180":       Engine_IspF(338.4, 4152136),    # RP-1 engine
-    "RD-263":       Engine_IspF(318.0, 1130000),    # N2O2/UDMH engine
+Engine_IspF("Merlin 1C",    336.0,  413644)     # SpaceX Falcon 1, 9 (vac)
+Engine_IspF("Merlin 1D",    348.0,  934000)     # SpaceX Falcon 9 v1.1 (vac)
+Engine_IspF("Raptor",       382.0, 3500000)     # SpaceX Raptor (vac)
+
+Engine_IspF("RD-180",       338.4, 4152136)     # RP-1 engine
+Engine_IspF("RD-191",       337.0, 2090000)     # RP-1 engine
+Engine_IspF("RD-263",       318.0, 1130000)     # N2O2/UDMH engine
         
-    "P230":         Engine_IspF(286.0, 6472300),    # Ariane 5 HTPB booster
+Engine_IspF("P230",         286.0, 6472300)     # Ariane 5 HTPB booster
 
-    "HiPEP":        Engine_IspF(9620.0, 0.670),     # Ion thruster: 39.3 kW
-    "NSTAR":        Engine_IspF(3100.0, 0.092),     # Ion thruster:  2.3 kW
-    "VASIMR":       Engine_IspF(5000.0, 5.700),     # VASIMR: 200 kW
+Engine_IspF("HiPEP",       9620.0, 0.670)       # Ion thruster: 39.3 kW
+Engine_IspF("NSTAR",       3100.0, 0.092)       # Ion thruster:  2.3 kW
+Engine_IspF("VASIMR",      5000.0, 5.700)       # VASIMR: 200 kW
 
-    "NERVA":        Engine_IspF( 850.0, 333600),    # NERVA nuclear thermal engine
-}
+Engine_IspF("NERVA",        850.0, 333600)      # NERVA nuclear thermal engine
+
+#------------------------------------------------------------------------------
+# A.K.A.
+#------------------------------------------------------------------------------
 
 engines["SSME"]  = engines["RS-25"]
 
@@ -124,6 +135,122 @@ engines["SSME"]  = engines["RS-25"]
 ###############################################################################
 
 #------------------------------------------------------------------------------
+# Different fuels as energy source.
+#------------------------------------------------------------------------------
+
+fuels = {}
+
+class Fuel:
+
+    def __init__(self, name, E = None, dm = None):
+        self.E = E and E or solve_Emc(None, dm)
+        self.name = name
+        if name: fuels[name] = self
+
+    @property
+    def dm(self): return solve_Emc(self.E, None)
+
+    @staticmethod
+    def alias(name, to): return Fuel(name, E = fuels[to].E)
+
+    @staticmethod
+    def Burn(name, energy, fuel, oxidizer):
+        atomic_mass = {
+            "H":  1.008,
+            "C": 12.011,
+            "N": 14.007,
+            "O": 15.999,
+        }
+        m_fuel     = sum([atomic_mass[x] for x in fuel])
+        m_oxidizer = sum([atomic_mass[x] for x in oxidizer])
+        m_tot = m_fuel + m_oxidizer
+
+        return Fuel(name, E = energy * m_fuel / m_tot)
+    
+    @staticmethod
+    def CH(name, energy, C, H, O = 0, N = 0):
+        return Fuel.Burn(
+            name,
+            energy,
+            C*["C"] + H*["H"] + O*["O"] + N*["N"],
+            (2*C + H/2 - O)*["O"]
+        )
+
+    def ve(self, ratio, efficiency):
+        return solve_Emv(self.E * ratio * efficiency, 1 - self.dm, None)
+        
+
+Fuel("!H",       dm = 1.0000000)
+Fuel("D-He3",    dm = 0.0040423)
+Fuel("D-T",      dm = 0.0037681)
+Fuel("D-D",      E  = 87900000.00e6)
+Fuel("U235",     E  = 80620000.00e6)
+Fuel("Th232",    E  = 79420000.00e6)
+Fuel("Pu239",    E  =    83610.00e6)
+
+Fuel.CH("LH2/LOX",       141.86e6,  0,  2)
+Fuel.CH("CH4/LOX",        55.60e6,  1,  4)
+Fuel.CH("C2H6/LOX",       51.80e6,  2,  6)
+Fuel.CH("C3H8/LOX",       50.30e6,  3,  8)
+Fuel.CH("C4H10/LOX",      49.50e6,  4, 10)
+Fuel.CH("C12H26/LOX",     46.20e6, 12, 26)
+
+Fuel.CH("CH3OH/LOX",      22.70e6,  1,  4,  1)
+Fuel.CH("C2H5OH/LOX",     29.70e6,  2,  6,  1)
+Fuel.CH("C3H7OH/LOX",     33.60e6,  3,  8,  1)
+
+#Fuel("N2O4/UDMH", E = None)
+
+Fuel("TNT",       E = 4.610e6)
+Fuel("Gunpowder", E = 3.000e6)
+Fuel("Hydrazine", E = 1.600e6)
+
+#------------------------------------------------------------------------------
+# APCP is a mixture of reagents, used in various forms in solid rocket
+# boosters. It's main fuel is aluminium which energy density is 31.0 MJ/kg.
+# Space Shuttle SRB APCP mixture:
+#
+# Ammonium Perchlorate (AP) NH4ClO4: 69.6% (oxidizer)
+# Aluminium (Al)                   : 16.0% (main fuel)
+# Rest                             : 14.4%
+# - PBAN (binder)                    12.0% (also fuel)
+# - Epoxy curing                      2.0%
+# - Iron oxide catalyst               0.4%
+# 
+#------------------------------------------------------------------------------
+
+Fuel("APCP", E = 31.0e6 * 0.16)  # Guessed
+
+#------------------------------------------------------------------------------
+# A.K.A.
+#------------------------------------------------------------------------------
+
+Fuel.alias("Antimatter",    "!H")
+Fuel.alias("Methane",       "CH4/LOX")
+Fuel.alias("Ethane",        "C2H6/LOX")
+Fuel.alias("Propane",       "C3H8/LOX")
+Fuel.alias("Butane",        "C4H10/LOX")
+Fuel.alias("Kerosene",      "C12H26/LOX")
+Fuel.alias("RP-1",          "C12H26/LOX")
+Fuel.alias("Methanol",      "CH3OH/LOX")
+Fuel.alias("Ethanol",       "C2H5OH/LOX")
+Fuel.alias("Propanol",      "C3H7OH/LOX")
+
+Fuel.alias("Hydrolox",      "LH2/LOX")
+Fuel.alias("Methalox",      "CH4/LOX")
+Fuel.alias("Kerolox",       "C12H26/LOX")
+
+#------------------------------------------------------------------------------
+# Temperature to velocity: v = sqrt(T / molec_weight)
+#------------------------------------------------------------------------------
+# Running fuel-rich: improves nozzle efficiency, which is proportional to
+# molecule mass. It lowers the energy released, thought.
+# Ideally, LH2/LOX engine would run 4:1 (half of the hydrogen unburned), but
+# in practise 6:1 is more common (8:1 is complete combusion). Ratio is
+# oxidizer:fuel.
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 #
 # Nuclear rockets: These rockets burn part of their fuel mass to energy,
 # which is then used to accelerate the rest of the mass. NOTE: These
@@ -131,7 +258,7 @@ engines["SSME"]  = engines["RS-25"]
 #
 #------------------------------------------------------------------------------
 
-def Fuel(fuel, ratio = 1.0, efficiency = 1.0):
+def xFuel(fuel, ratio = 1.0, efficiency = 1.0):
 
     def E2dm(energy):       return solve_Emc(energy, None)
     def dm2E(mass_loss):    return solve_Emc(None, mass_loss)
