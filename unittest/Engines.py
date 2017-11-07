@@ -125,7 +125,7 @@ def compare_engines():
 
     print
 
-#compare_engines()
+manual(__name__, compare_engines())
 
 #------------------------------------------------------------------------------
 # Fuels
