@@ -20,6 +20,8 @@ def solve_rocket_eq(M0, M1, dv, ve):
     if dv == None: return ve * Rm(M0, M1)
     return dv / Rm(M0, M1)
 
+#-------------------------------------------------------------------------------
+
 def solve_Emv(E, m, v = None):
     if m == None: return E/(0.5*(v**2))
     if v == None: return sqrt(E/(0.5*m))
@@ -29,6 +31,8 @@ def solve_Emc(E, m):
     if m == None: return E/(const_c**2)
     return m*(const_c**2)
 
+#-------------------------------------------------------------------------------
+
 def solve_Fma(F, m, a):
     if F == None: return m * a
     if m == None: return float(F) / a
@@ -36,7 +40,7 @@ def solve_Fma(F, m, a):
 
 def solve_PFve(P, F, ve):
     if P == None: return F * (0.5 * ve)
-    if F == None: return P / (0.5 * ve) # = flux * ve
+    if F == None: return P / (0.5 * ve) # = flow * ve
     return 2.0 * P/F
     
 ###############################################################################
@@ -57,7 +61,7 @@ class Exhaust(object):
     def P(self, F = 1): return solve_PFve(None, F, self.ve)
     def F(self, P):     return solve_PFve(P, None, self.ve)
     def E(self, m = 1): return solve_Emv(None, m, self.ve)
-    def flux(self, P):  return solve_Emv(P, None, self.ve)
+    def flow(self, P):  return solve_Emv(P, None, self.ve)
     def E_eff(self, dv):return solve_Emv(None, 1, dv) / self.E(self.fuel(1, dv))
     
     def t(self, P, m):  return self.E(m) / P
@@ -77,7 +81,7 @@ class Engine(object):
     def ve(self): return self.exhaust.ve
 
     @property
-    def flux(self): return self.exhaust.flux(self.P)
+    def flow(self): return self.exhaust.flow(self.P)
     
     @property
     def F(self):    return self.exhaust.F(self.P)

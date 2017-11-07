@@ -28,17 +28,23 @@ from testlib  import *
 #
 #------------------------------------------------------------------------------
 
-def test_energy_efficiency():
+def test_E_eff():
 
     def energy_efficiency(dv, ve): return Exhaust(ve).E_eff(dv)
 
-    expect(energy_efficiency(3000, 1000)*100, 47.1, 1, "E_eff 1")
-    expect(energy_efficiency(3000, 2000)*100, 64.6, 1, "E_eff 2")
-    expect(energy_efficiency(3000, 3000)*100, 58.2, 1, "E_eff 3")
-    expect(energy_efficiency(3000, 5000)*100, 43.8, 1, "E_eff 4")
-    expect(energy_efficiency(3000, 6000)*100, 38.5, 1, "E_eff 5")
+    expect(energy_efficiency(3000, 1000)*100, 47.1, 1, "1")
+    expect(energy_efficiency(3000, 2000)*100, 64.6, 1, "2")
+    expect(energy_efficiency(3000, 3000)*100, 58.2, 1, "3")
+    expect(energy_efficiency(3000, 5000)*100, 43.8, 1, "4")
+    expect(energy_efficiency(3000, 6000)*100, 38.5, 1, "5")
 
-test_energy_efficiency()
+test_E_eff()
+
+#------------------------------------------------------------------------------
+# Burn time depends on (1) input power (the larger, the shorter), (2)
+# exhaust velocity (the larger, the longer), and (3) amount of fuel (the
+# more the longer). These are examples from Wiki page.
+#------------------------------------------------------------------------------
 
 def test_burn_time():
 
@@ -47,16 +53,21 @@ def test_burn_time():
         m = e.fuel(payload, dv)
         return e.t(P, m)
 
-    expect(TtoMonths(burn(1e3, 100, 5e3, 16e3)), 1.8, 0.1, "Burn time 1")
-    expect(TtoMonths(burn(1e3, 100, 5e3, 50e3)), 5.0, 0.1, "Burn time 2")
+    expect(TtoMonths(burn(1e3, 100, 5e3, 16e3)), 1.8, 0.1, "1")
+    expect(TtoMonths(burn(1e3, 100, 5e3, 50e3)), 5.0, 0.1, "2")
 
 test_burn_time()
+
+#------------------------------------------------------------------------------
+# Let's create an engine with ve = 5000 m/s. Let's check, how much is the
+# mass flow and thrust force with 1 MW power source (100% efficiency).
+#------------------------------------------------------------------------------
 
 def test_thrust():
     e = Exhaust(5e3)
     
-    expect(e.flux(1e6), 0.08,  0.01, "Thrust 1")
-    expect(e.F(1e6),    400.0, 1.00, "Thrust 2")
+    expect(e.flow(1e6), 0.08,  0.01, "1")
+    expect(e.F(1e6),    400.0, 1.00, "2")
 
 test_thrust()
 
@@ -112,20 +123,19 @@ def compare_engines():
 
     print "%-10s %12s %12s %12s %12s %13s" % ("Name", "v(ex)", "Thrust", "P", "Mass flow", "E(flow)/kg")
 
-    for name in names:
-        engine = engines[name]
+    for engine in sorted([engines[x] for x in names], key = lambda e: e.ve):
         print "%-10s %12s %12s %12s %12s %13s" % (
             engine.name,
-            fmteng(engine.ve, "m/s"),
+            fmteng(ve2Isp(engine.ve), "s"),
             fmteng(engine.F, "N"),
             fmteng(engine.P, "W"),
-            fmteng(engine.flux*1e3, "g/s"),
+            fmteng(engine.flow*1e3, "g/s"),
             fmteng(engine.E(), "J/kg"),
         )
 
     print
 
-manual(__name__, compare_engines())
+manual(__name__, compare_engines)
 
 #------------------------------------------------------------------------------
 # Fuels
@@ -150,8 +160,9 @@ manual(__name__, compare_engines())
 
 def compare_fuels():
 
-    def show(eng, fuel, efficiency, ratio = 1.0):
-        engine = engines[eng]
+    def show(engine, fuel, efficiency, ratio = 1.0):
+        engine = engines[engine]
+        fuel   = fuels[fuel]
         E = fuel.E * ratio * efficiency
         print "%-10s %15s %12s %10s %15s %6.2f %%" % (
             engine.name,
@@ -162,11 +173,12 @@ def compare_fuels():
             100 * engine.E()/fuel.E
         )
         
-    show("SSME",   fuels["Hydrolox"], 0.620)
-    show("Raptor", fuels["Methalox"], 0.630)
-    show("RD-191", fuels["Kerolox"],  0.529)
-    show("F-1",    fuels["Kerolox"],  0.431)
-    show("SSSRB",  fuels["APCP"],     0.696)
+    show("SSME",        "Hydrolox", 0.620)
+    show("Raptor",      "Methalox", 0.630)
+    show("RD-191",      "Kerolox",  0.529)
+    show("Merlin 1D",   "Kerolox",  0.529)
+    show("F-1",         "Kerolox",  0.431)
+    show("SSSRB",       "APCP",     0.696)
 
     #--------------------------------------------------------------------------
     # This is strange: computed Isp for gunpowder is ~250 s, but actual
@@ -174,11 +186,11 @@ def compare_fuels():
     # is just 10%.
     #--------------------------------------------------------------------------
 
-    print ve2Isp(fuels["Gunpowder"].ve(1.0, 1.00))
-    print ve2Isp(fuels["Gunpowder"].ve(1.0, 0.10))
-    print ve2Isp(fuels["APCP"].ve(1.0, 1.0))
+    print "Gunpowder 100%, Isp =", ve2Isp(fuels["Gunpowder"].ve(1.0, 1.00))
+    print "Gunpowder  10%, Isp =", ve2Isp(fuels["Gunpowder"].ve(1.0, 0.10))
+    print "APCP      100%, Isp =", ve2Isp(fuels["APCP"].ve(1.0, 1.0))
     
-compare_fuels()
+manual(__name__, compare_fuels)
 
 #------------------------------------------------------------------------------
 #
