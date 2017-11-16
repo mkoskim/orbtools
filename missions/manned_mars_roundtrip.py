@@ -9,32 +9,46 @@ sys.path.append(os.path.abspath(".."))
 
 from sol import *
 
-#-------------------------------------------------------------------------------
-# Designing roundtrip: Earth - Mars - Earth
-#-------------------------------------------------------------------------------
+import ApolloMission
 
 #-------------------------------------------------------------------------------
-# Masses involved to mission
+# Designing roundtrip: Earth (LEO) - Mars - Earth
 #-------------------------------------------------------------------------------
-
-Earth = masses["Earth"]
-Mars = masses["Mars"]
-Jupiter = masses["Jupiter"]
-Venus = masses["Venus"]
 
 #-------------------------------------------------------------------------------
 # Orbits involved to mission
 #-------------------------------------------------------------------------------
 
-EarthSurface = Surface(Earth)
 EarthLEO = Altitude(Earth,300e3)
 
-MarsSurface = Surface(Mars)
 MarsLMO = Altitude(Mars,1000e3)
+MarsSurface = Surface(Mars)
 
 #-------------------------------------------------------------------------------
 # Transfers
 #-------------------------------------------------------------------------------
+
+Mars_Takeoff = Mission("Mars Takeoff", MarsSurface)
+Mars_Takeoff.burn("Ascent/1", Trajectory(Mars, MarsSurface.r(0), MarsLMO.r(0.5)))
+Mars_Takeoff.park("Ascent/2", MarsLMO)
+
+#-------------------------------------------------------------------------------
+# Apollo Lunar Ascent stage: dry mass = 2,150 kg
+# APS engine, Isp 311 s
+#-------------------------------------------------------------------------------
+
+APS = Exhaust(Isp2ve(311))
+Moon_Takeoff = ApolloMission.phase42
+
+Mars_Takeoff.show()
+Moon_Takeoff.show()
+
+print "Ascent vehicle, dry mass 2150 kg"
+print "Moon: fuel=", APS.fuel(2150, Moon_Takeoff.dv), "tot=", APS.solve(None, 2150, Moon_Takeoff.dv)
+print "Mars: fuel=", APS.fuel(2150, Mars_Takeoff.dv), "tot=", APS.solve(None, 2150, Mars_Takeoff.dv)
+print "Earth: fuel=", APS.fuel(2150, 9000), "tot=", APS.solve(None, 2150, 9000)
+
+exit()
 
 Earth_Surface2LEO = Transfer(EarthSurface, EarthLEO)
 
