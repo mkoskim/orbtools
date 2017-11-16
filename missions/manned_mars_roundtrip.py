@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-from orbtools import *
-from orbtools.systems.solsystem import *
-from orbtools.spaceships import *
+import sys, os
+sys.path.append(os.path.abspath(".."))
+
+from sol import *
 
 #-------------------------------------------------------------------------------
 # Designing roundtrip: Earth - Mars - Earth
