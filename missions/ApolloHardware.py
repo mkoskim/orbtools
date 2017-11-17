@@ -22,8 +22,8 @@ import ApolloMission as Mission
 #
 ###############################################################################
 
-APS_engine = Engine(ISP2ve(311))
-DPS_engine = Engine(ISP2ve(311))
+APS_engine = Exhaust(Isp2ve(311))
+DPS_engine = Exhaust(Isp2ve(311))
 
 LM = Rocket(
     "LM Descent",
@@ -43,7 +43,7 @@ LM = Rocket(
 #
 ###############################################################################
 
-AJ10_engine = Engine(ISP2ve(319))	# CSM
+AJ10_engine = Exhaust(Isp2ve(319))	# CSM
 
 #------------------------------------------------------------------------------
 # CSM TEI: CM + SM structural mass + propellant for TEI
@@ -82,32 +82,36 @@ CSM = CSM_LOI
 #
 ###############################################################################
 
-F1_engine = Engine(ISP2ve(264.72))
-J2_engine = Engine(ISP2ve(421.00))
+F1_engine = Exhaust(Isp2ve(264.72))
+J2_engine = Exhaust(Isp2ve(421.00))
+
+S_IVB = Stage("S-IVB", J2_engine, mass =  120.80e3, payload =  10e3)
+S_II  = Stage("S-II",  J2_engine, mass =  480.00e3, payload =  36e3)
+S_IC  = Stage("S-IC",  F1_engine, mass = 2300.00e3, payload = 131e3)
 
 SaturnV_upper = Rocket(
 	"Saturn V (upper)",
 	Payload("CSM+LM", CSM.mass),
-	Stage("S-IVB",   J2_engine, mass =  120.80e3, payload =  10e3),
+	S_IVB,
 	mission = Mission.phase2
 )
 
 SaturnV_lower = Rocket(
 	"Saturn V (lower)",
 	Payload("Saturn V (upper)", SaturnV_upper.mass),
-	Stage("S-II",    J2_engine, mass =  480.00e3, payload =  36e3),
-	Stage("S-IC",    F1_engine, mass = 2300.00e3, payload = 131e3),
+	S_II,
+	S_IC,
 	mission = Mission.phase1
 )
 
 if __name__ == "__main__":
-	SaturnV_lower.printOut()
-	print "***"
-	SaturnV_upper.printOut()
-	print "***"
-	CSM_LOI.printOut()
-	print "***"
-	CSM_TEI.printOut()
-	print "***"
-	LM.printOut()
+    SaturnV_lower.show()
+    print "***"
+    SaturnV_upper.show()
+    print "***"
+    CSM_LOI.show()
+    print "***"
+    CSM_TEI.show()
+    print "***"
+    LM.show()
 

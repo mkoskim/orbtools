@@ -93,31 +93,72 @@ timing(transfer)
 #
 # Mission delta v budget
 #
+# The planned mission is following:
+#
+# 1) Mars base (MarsHab) is launched and landed to Mars at previous launch
+#    window: This has also Mars ascent vechile to return crew to Mars orbit.
+#
+# 2) Manned SpaceHab, with Mars lander is launched to low Mars orbit: For
+#    safety reasons, Mars lander is also parked to orbit first.
+#
+# 3) Crew lands to Mars from LMO using lander
+#
+# 4) At next Mars-Earth launch window, crew uses Mars ascent vehicle to
+#    take them to SpaceHab parked at LMO
+#
+# 5) SpaceHab is launched to Earth
+#
+# 6) Separate CRW is used to land on Earth, SpaceHab itself is left to
+#    interplanetary trajectory.
+#
+# Only the TMI uses LH2/LOX engines. To be sure, that rocket fuel can be
+# stored for entire mission, other parts use hypergolic / solid fuels.
+#
 ###############################################################################
 
 #------------------------------------------------------------------------------
-# Create start and end orbits
+# Create orbit shorcuts
 #------------------------------------------------------------------------------
 
 LEO = Altitude(Earth, 300e3)
-LMO = Altitude(Mars, 1000e3)
+LMO = Altitude(Mars,  250e3)
 
 #------------------------------------------------------------------------------
 # Make a mission
 #------------------------------------------------------------------------------
 
-Earth2Mars = Mission("Earth - Mars", LEO)
+LEO2TMI = Mission("TMI @ LEO", LEO)
+LEO2TMI.exit("LEO - TMI", LMO.center.orbit)
 
-#------------------------------------------------------------------------------
-# Burn from start to end
-#------------------------------------------------------------------------------
+TMI2Surface = Mission("TMI Landing", LEO2TMI.orbit)
+TMI2Surface.enter("Landing", Surface(Mars))
 
-Earth2Mars.exit ("LEO - TMI", LMO.center.orbit)
-Earth2Mars.enter("TMI - MOI", LMO)
+TMI2LMO = Mission("MOI", LEO2TMI.orbit)
+TMI2LMO.enter("TMI - LMO", LMO)
+
+LMO2Surface = Mission("Mars Landing", LMO)
+LMO2Surface.transfer("Descent", Surface(Mars))
+
+Surface2LMO = Mission("Mars - LMO", Surface(Mars))
+Surface2LMO.transfer("Ascent", LMO)
 
 #------------------------------------------------------------------------------
 # Show results
 #------------------------------------------------------------------------------
 
-Earth2Mars.show()
+LEO2TMI.show()
+TMI2Surface.show()
+TMI2LMO.show()
+
+LMO2Surface.show()
+Surface2LMO.show()
+
+#------------------------------------------------------------------------------
+# Rockets to perform operations
+# MAV = Mars Ascent Vehicle
+#------------------------------------------------------------------------------
+
+MAV = Stage("MAV Ascent", engine = Exhaust(Isp2ve(311)), payload = 2000, mission = Surface2LMO)
+
+MAV.show()
 

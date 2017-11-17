@@ -55,8 +55,11 @@ class Exhaust(object):
 
     def solve(self, M0, M1, dv): return solve_rocket_eq(M0, M1, dv, self.ve)
 
+    def R(self, dv): return self.solve(None, 1, dv)
+
     def dv(self, payload, fuel): return self.solve(payload + fuel, payload, None)
-    def fuel(self, payload, dv): return self.solve(None, payload, dv) - payload
+    def M0(self, payload, dv):   return payload * self.R(dv)
+    def fuel(self, payload, dv): return payload * (self.R(dv) - 1)
 
     def P(self, F = 1): return solve_PFve(None, F, self.ve)
     def F(self, P):     return solve_PFve(P, None, self.ve)
@@ -243,87 +246,4 @@ Fuel.alias("Propanol",      "C3H7OH/LOX")
 Fuel.alias("Hydrolox",      "LH2/LOX")
 Fuel.alias("Methalox",      "CH4/LOX")
 Fuel.alias("Kerolox",       "C12H26/LOX")
-
-#------------------------------------------------------------------------------
-# Temperature to velocity: v = sqrt(T / molec_weight)
-#------------------------------------------------------------------------------
-# Running fuel-rich: improves nozzle efficiency, which is proportional to
-# molecule mass. It lowers the energy released, thought.
-# Ideally, LH2/LOX engine would run 4:1 (half of the hydrogen unburned), but
-# in practise 6:1 is more common (8:1 is complete combusion). Ratio is
-# oxidizer:fuel.
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
-#
-# Nuclear rockets: These rockets burn part of their fuel mass to energy,
-# which is then used to accelerate the rest of the mass. NOTE: These
-# calculations assume that the reaction mass is exhausted.
-#
-#------------------------------------------------------------------------------
-
-def xFuel(fuel, ratio = 1.0, efficiency = 1.0):
-
-    def E2dm(energy):       return solve_Emc(energy, None)
-    def dm2E(mass_loss):    return solve_Emc(None, mass_loss)
-    
-    #--------------------------------------------------------------------------
-    
-    def Burn(energy, fuel, oxidizer):
-        atomic_mass = {
-            "H":  1.008,
-            "C": 12.011,
-            "N": 14.007,
-            "O": 15.999,
-        }
-        m_fuel     = sum([atomic_mass[x] for x in fuel])
-        m_oxidizer = sum([atomic_mass[x] for x in oxidizer])
-        m_tot = m_fuel + m_oxidizer
-
-        return energy * m_fuel / m_tot
-    
-    def CH(energy, C, H, O = 0, N = 0):
-        return Burn(
-            energy,
-            C*["C"] + H*["H"] + O*["O"] + N*["N"],
-            (2*C + H/2 - O)*["O"]
-        )
-    
-    #--------------------------------------------------------------------------
-    
-    energy = {
-        "!H":       lambda: dm2E(1.0000000),
-        "D-He3":    lambda: dm2E(0.0040423),
-        "D-T":      lambda: dm2E(0.0037681),
-        
-        "D-D":      lambda: 87900000.00e6,
-        "U235":     lambda: 80620000.00e6,
-        "Th232":    lambda: 79420000.00e6,
-        "Pu239":    lambda:    83610.00e6,
-        
-        "LH2":      lambda: CH(  141.86e6,  0,  2),
-
-        "Methane":  lambda: CH(   55.6e6,  1,  4),
-        "Ethane":   lambda: CH(   51.8e6,  2,  6),
-        "Propane":  lambda: CH(   50.3e6,  3,  8),
-        "Butane":   lambda: CH(   49.5e6,  4, 10),
-        "Kerosene": lambda: CH(   46.2e6, 12, 26),
-
-        "Methanol": lambda: CH(   22.7e6,  1,  4,  1),
-        "Ethanol" : lambda: CH(   29.7e6,  2,  6,  1),
-        "Propanol": lambda: CH(   33.6e6,  3,  8,  1),
-
-        "TNT":      lambda:        4.6e6,
-        "Gunpowder":lambda:        3.0e6,
-        "Hydrazine":lambda:        1.6e6,
-    }
-
-    return energy[fuel]()
-
-    #--------------------------------------------------------------------------
-    
-    E  = energy[fuel]() * ratio
-    dv = solve_Emv(E * efficiency, 1 - E2dm(E), None)
-    
-    return Engine(fuel, dv)
 
