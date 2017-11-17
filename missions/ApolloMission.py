@@ -22,7 +22,7 @@ LLO  = Mass("LLO", 0, 0, 0, Altitude("Moon", 110e3))
 #------------------------------------------------------------------------------
 
 phase1 = Mission("Earth-LEO", Surface(Earth))
-phase1.burn("Surface 2 LEO", Orbit(Earth, Earth.radius, LEO.orbit.a))
+phase1.transfer("LEO Lift", LEO.orbit)
 phase1.loss("Losses", 750)
 
 #------------------------------------------------------------------------------
@@ -30,43 +30,46 @@ phase1.loss("Losses", 750)
 #------------------------------------------------------------------------------
 
 phase2 = Mission("Trans-Lunar Injection", phase1.orbit)
-phase2.park("LEO park", LEO.orbit)
-phase2.burn("TLI @LEO", Trajectory(Earth, phase2.orbit.a, Moon.orbit.a))
+phase2.lift("TLI", Moon.orbit)
 
 #------------------------------------------------------------------------------
 # Phase 3: Lunar Orbit Insertion
 #------------------------------------------------------------------------------
 
 phase3 = Mission("Lunar Orbit Insertion", phase2.orbit)
-phase3.enter("LOI 100 km", Orbit(Moon, LLO.orbit.a))
+phase3.enter("LOI 100 km", LLO.orbit)
 
 #------------------------------------------------------------------------------
 # Phase 4.1: Lunar landing
 #------------------------------------------------------------------------------
 
 phase41 = Mission("Lunar Landing", phase3.orbit)
-phase41.burn("Descent/1", Altitude(Moon, LLO.orbit.alt_initial, 0))
-phase41.park("Descent/2", Surface(Moon))
+phase41.transfer("Descent", Surface(Moon))
 
 #------------------------------------------------------------------------------
 # Phase 4.2: Lunar takeoff
 #------------------------------------------------------------------------------
 
 phase42 = Mission("Lunar Takeoff", phase41.orbit)
-phase42.burn("Ascent/1", Altitude(Moon, 0, LLO.orbit.alt_initial))
-phase42.park("Ascent/2", LLO.orbit)
+phase42.transfer("Ascent", LLO.orbit)
 
 #------------------------------------------------------------------------------
 # Phase 5: TEI (Trans Earth Injection)
 #------------------------------------------------------------------------------
 
 phase5 = Mission("Trans-Earth Injection", phase42.orbit)
-phase5.exit("TEI @LLO", Trajectory(Earth, Moon.orbit.a, Earth.radius))
+phase5.exit("TEI @LLO", Earth.radius)
 
 #------------------------------------------------------------------------------
 # Phase 6: Earth landing
 #------------------------------------------------------------------------------
 
 phase6 = Mission("Earth Landing", phase5.orbit)
-phase6.park("Landing 1", Altitude(Earth,0))
-phase6.park("Landing 2", Surface(Earth))
+phase6.park("Landing", Surface(Earth))
+
+if __name__ == "__main__":
+    phases = [phase1, phase2, phase3, phase41, phase42, phase5, phase6]
+    for phase in phases: phase.show()
+
+    print
+    print "Total dv:", sum([phase.dv for phase in phases])

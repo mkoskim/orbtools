@@ -530,9 +530,12 @@ class Surface(object):
     @property
     def P(self): return self.center.rotate
 
+    @property
+    def a(self): return self.center.radius
+
     #--------------------------------------------------------------------------
     
-    def r(self, t = 0.0): return self.center.radius
+    def r(self, t = 0.0): return self.a
 
     def xy(self, t = 0.0):
         return Vec2d(
