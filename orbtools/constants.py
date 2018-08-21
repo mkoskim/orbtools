@@ -15,6 +15,7 @@ const_day   = 24*3600.0
 const_year  = 365.25*const_day
 const_AU    = 149.597870691e9
 const_ly    = const_c*const_year
+const_solar = 1.361e3
 
 #------------------------------------------------------------------------------
 #
@@ -32,6 +33,8 @@ GM_Jupiter  = 1.26686534000e17
 GM_Saturnus = 3.79311870000e16
 GM_Uranus   = 6.83652900000e15
 GM_Neptunus = 5.79394700000e15
+
+r_Sun       = 695508e3
 
 r_Earth     = 6372.167e3
 V_Earth     = 4/3.0*pi*(r_Earth ** 3)
