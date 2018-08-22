@@ -47,6 +47,17 @@ class Star(Mass):
 
         self.L = (L is None) and _MLR(MxSun) or L
         
+    #--------------------------------------------------------------------------
+    # Flux (in solar constant units) at given distance
+    #--------------------------------------------------------------------------
+    
     def flux(self, distance = AU2m(1.0)):
         return self.L / (m2AU(distance) ** 2)
+
+    #--------------------------------------------------------------------------
+    # Habitable Zone distance: in fact, distance at given flux.
+    #--------------------------------------------------------------------------
+
+    def HZ(self, flux = 1.0):
+        return AU2m(sqrt(self.L) / flux)
 

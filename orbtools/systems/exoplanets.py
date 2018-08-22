@@ -8,6 +8,18 @@ from orbtools import *
 
 ################################################################################
 #
+# Example main sequence stars
+#
+################################################################################
+
+A_star = Star("A-class star", 2.0) # 1.40 - 2.10 solar masses (example: Sirius A)
+F_star = Star("F-class star", 1.2) # 1.04 - 1.40 solar masses
+G_star = Star("G-class star", 1.0) # 0.80 - 1.04 solar masses (example: Sun)
+K_star = Star("K-class star", 0.7) # 0.45 - 0.80 solar masses (example: 61 Cygni A)
+M_star = Star("M-class star", 0.2) # 0.08 - 0.45 solar masses (example: M4V class star)
+
+################################################################################
+#
 # Gliese 581 (M3V type red dwarf) & planets
 #
 ################################################################################

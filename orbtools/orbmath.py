@@ -189,7 +189,7 @@ class Mass(object):
     
     @property
     def flux(self):
-        if not hasattr(self.orbit.center, "flux"): return None
+        if not hasattr(self.orbit.center, "L"): return None
         return self.orbit.center.flux(self.orbit.altitude())
     
     #--------------------------------------------------------------------------
@@ -203,11 +203,16 @@ class Mass(object):
             print "Mass..............: %.4g kg (%.4g x M_earth)" % (self.kg, self.GM/GM_Earth)
             if hasattr(self, "L"):
                 print "Luminosity........: %.4f x Sun" % (self.L)
+                HZ = Orbit(self, self.HZ())
+                print "Habitable zone....: "
+                print "    - Distance....: %.4f AU" % m2AU(HZ.a)
+                print "    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P))
             if self.radius:
                 print "Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth)
                 print "Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth)
                 print "Density...........: %.3f kg/m3" % (self.density)
                 print "Surface gravity...: %.2f g (%.2f m/s^2)" % (self.g_surface/const_g, self.g_surface)
+                print "Escape velocity...: %s" % fmteng(self.v_escape(), "m/s")
             print "Rotating period...: %s" % fmttime(self.rotate)
         if self.orbit:
             print "Orbits............:", self.orbit.center.name
@@ -218,8 +223,8 @@ class Mass(object):
             print "   SOI............:", fmtdist(self.SOI())
             if hasattr(self.orbit.center, "L"):
                 print "   Flux...........: %.3f x Earth (%s)" % (
-                    self.L,
-                    fmteng(self.L * const_solar, "W/m2"),
+                    self.flux,
+                    fmteng(self.flux * const_solar, "W/m2"),
                 )
         s = self.satellites()
         if len(s):
@@ -231,7 +236,7 @@ class Mass(object):
                     satellite.name,
                     fmtdist(satellite.orbit.altitude()),
                     fmttime(satellite.orbit.P),
-                    hasattr(self, "flux") and ("%7.3f" % satellite.flux) or "",
+                    hasattr(self, "L") and ("%7.3f" % satellite.flux) or "",
                 )
                     
 	
@@ -562,11 +567,14 @@ class Surface(object):
         ) * self.center.radius
 
     def v(self, t = 0.0):
-        w = 2*pi/self.center.rotate
-        return Vec2d(
-            cos(2*pi*t),
-            sin(2*pi*t)
-        ).rotate(90) * w * self.center.radius
+        if self.center.rotate:
+            w = 2*pi/self.center.rotate
+            return Vec2d(
+                cos(2*pi*t),
+                sin(2*pi*t)
+            ).rotate(90) * w * self.center.radius
+        else:
+            return Vec2d(0, 0)
 
     #--------------------------------------------------------------------------
     
@@ -709,7 +717,7 @@ class Trajectory(Orbit):
     def w_diff(self):  return w_diff(self.center.GM, self.r3, self.r4)
 
     #--------------------------------------------------------------------------
-    # Period (width) of launch window, based on initial and final altitudes
+    # Period of launch window, based on initial and final altitudes
     #--------------------------------------------------------------------------
 
     @property
