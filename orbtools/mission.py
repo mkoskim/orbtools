@@ -56,13 +56,15 @@ class EnterSystem(object):
         if abs(orbFrom.r_final - orbTo.center.orbit.a) > orbTo.center.SOI():
             raise Exception("Orbit does not reach system")
 
-        v_inf   = orbFrom.dv_circular(orbFrom.r_final).length
+        v_inf   = abs(abs(orbFrom.v_final) - abs(orbTo.center.orbit.v()))
         v_enter = solve_rvrv(
             orbTo.center.GM,
             Inf, v_inf,
             orbTo.r_initial, None
         )
-            
+        #print "Enter: v_fin: %s, v_body.: %s" % (fmteng(v_final, "m/s"), fmteng(v_body, "m/s"))            
+        #print "Enter: v_inf: %s, v_enter: %s" % (fmteng(v_inf, "m/s"), fmteng(v_enter, "m/s"))
+
         self.dv = abs(v_enter - abs(orbTo.v(0)))
         self.dt = 0
         self.name = name
@@ -83,14 +85,16 @@ class ExitSystem(object):
                 target_r,
                 r1, r2
         )
-        v_inf  = abs(exit_orbit.v_initial - oldcenter.orbit.v_initial)
+        v_inf  = abs(exit_orbit.v_initial.length - oldcenter.orbit.v_initial.length)
         v_exit = solve_rvrv(
             oldcenter.GM,
-            oldcenter.orbit.r_initial, None,
+            orbit.r_initial, None,
             Inf, v_inf
         )
 
-        self.dv = abs(v_exit - abs(orbit.v_initial))
+        #print "Exit: v_inf: %s, v_exit: %s" % (fmteng(v_inf, "m/s"), fmteng(v_exit, "m/s"))
+
+        self.dv = abs(abs(v_exit) - abs(orbit.v_initial))
         self.dt = exit_orbit.T_to_target * exit_orbit.P
         self.name = name
         self.orbit = exit_orbit

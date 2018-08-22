@@ -24,7 +24,7 @@ def solve_rocket_eq(M0, M1, dv, ve):
 
 def solve_Emv(E, m, v = None):
     if m == None: return E/(0.5*(v**2))
-    if v == None: return sqrt(E/(0.5*m))
+    if v == None: return sqrt(2 * E/m)
     return 0.5*m*(v**2)
     
 def solve_Emc(E, m):
@@ -154,8 +154,8 @@ class Fuel:
         self.name = name
         if name: fuels[name] = self
 
-    @property
-    def dm(self): return solve_Emc(self.E, None)
+    def dm(self, ratio = 1.0, efficiency = 1.0):
+        return solve_Emc(self.E * ratio * efficiency, None)
 
     @staticmethod
     def alias(name, to): return Fuel(name, E = fuels[to].E)
@@ -184,7 +184,11 @@ class Fuel:
         )
 
     def ve(self, ratio, efficiency):
-        return solve_Emv(self.E * ratio * efficiency, 1 - self.dm, None)
+        return solve_Emv(
+            self.E * ratio * efficiency,
+            1.0 - self.dm(ratio, efficiency),
+            None
+        )
         
 
 Fuel("!H",       dm = 1.0000000)

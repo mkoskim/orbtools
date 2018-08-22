@@ -5,7 +5,7 @@
 ###############################################################################
 
 import os, sys
-sys.path.append(os.path.abspath(".."))
+sys.path.append(os.path.abspath("."))
 
 from orbtools.systems.solsystem import *
 from orbtools.systems.exoplanets import *
@@ -37,16 +37,27 @@ print "    P(orbit):", fmttime(to_LO_e.orbit.P)
 # Transfer from d to e
 #------------------------------------------------------------------------------
 
-d_to_e = Mission("TRAPPIST-1: d -> e", LO_d)
-d_to_e.exit("1", LO_e.center.orbit)
-d_to_e.enter("2", LO_e)
+d2e = Mission("TRAPPIST-1: d -> e", LO_d)
+d2e.exit("1", LO_e.center.orbit)
+d2e.enter("2", LO_e)
 
-d_to_e.show()
+d2e.show()
 
-print fmttime(Trajectory(TRAPPIST1, TRAPPIST1d.orbit.a, TRAPPIST1e.orbit.a).P_window)
+e2d = Mission("TRAPPIST-1: e -> d", LO_e)
+e2d.exit("1", LO_d.center.orbit)
+e2d.enter("2", LO_d)
+e2d.show()
 
-LEO  = Altitude(Earth, 300e3)
-LMO  = Altitude(Mars,  300e3)
+#------------------------------------------------------------------------------
+# Debugging
+#------------------------------------------------------------------------------
+
+trappist = Trajectory(TRAPPIST1, TRAPPIST1d.orbit.a, TRAPPIST1e.orbit.a)
+
+print TRAPPIST1d.orbit.v().length, TRAPPIST1e.orbit.v().length
+print trappist.v_initial.length, trappist.v_final.length
+
+print fmttime(trappist.P_window)
 
 ###############################################################################
 #
@@ -67,6 +78,12 @@ print "Pallas, P............: %.2f y" % TtoYears(Pallas.orbit.P)
 print "Ceres-Pallas, window.: %.2f y" % TtoYears(Trajectory(Sun, Ceres.orbit.a, Pallas.orbit.a).P_window)
 
 #------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+LEO  = Altitude(Earth, 300e3)
+LMO  = Altitude(Mars,  300e3)
+
+#------------------------------------------------------------------------------
 # Earth-LEO (300 km) transfer for reference
 #------------------------------------------------------------------------------
 
@@ -83,6 +100,11 @@ EarthMars = Mission("Reference: Earth-Mars", LEO)
 EarthMars.exit("1", LMO.center.orbit)
 EarthMars.enter("2", LMO)
 EarthMars.show()
+
+MarsEarth = Mission("Reference: Earth-Mars", LMO)
+MarsEarth.exit("1", LEO.center.orbit)
+MarsEarth.enter("2", LEO)
+MarsEarth.show()
 
 print fmttime(Trajectory(Sun, Earth.orbit.a, Mars.orbit.a).P_window)
 
