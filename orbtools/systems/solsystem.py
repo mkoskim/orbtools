@@ -5,16 +5,13 @@
 ################################################################################
 
 from orbtools import *
+from orbtools.systems.stars import *
 
 ################################################################################
 #
 # Sun & planets
 #
 ################################################################################
-
-#Sun     = Mass("Sun",       GM_Sun,         695000e3,   TasDays(24.6))
-
-Sun     = Star("Sun", 1.0, 1.0, TasDays(24.6))
 
 Mercury = Mass("Mercury",   GM_Mercury,	    2440e3,     TasDays(58.6),          Orbit(	"Sun",	57910e6))
 Venus   = Mass("Venus",     GM_Venus,	    6052e3,     TasDays(-243),          Orbit(	"Sun",	108200e6))

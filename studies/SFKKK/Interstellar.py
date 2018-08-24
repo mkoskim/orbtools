@@ -11,7 +11,7 @@ from sol import *
 
 #------------------------------------------------------------------------------
 
-ACentauriA = Star("a Centauri A", 1.1)
+ACentauriA = stars["Alpha Centauri A"]
 
 v_travel = 0.10 * const_c
 

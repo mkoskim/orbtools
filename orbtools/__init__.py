@@ -13,7 +13,7 @@ from orbmath import *
 from engine import *
 from rocket import *
 from mission import *
-from stars import *
+from star import *
 
 #import gui
 

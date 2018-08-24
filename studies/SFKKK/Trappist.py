@@ -10,6 +10,10 @@ sys.path.append(os.path.abspath("."))
 from orbtools.systems.solsystem import *
 from orbtools.systems.exoplanets import *
 
+TRAPPIST1  = stars["TRAPPIST-1"]
+TRAPPIST1d = masses["TRAPPIST-1d"]
+TRAPPIST1e = masses["TRAPPIST-1e"]
+
 #------------------------------------------------------------------------------
 
 LO_d = Altitude(TRAPPIST1d, 300e3)
@@ -52,7 +56,7 @@ e2d.show()
 # Debugging
 #------------------------------------------------------------------------------
 
-trappist = Trajectory(TRAPPIST1, TRAPPIST1d.orbit.a, TRAPPIST1e.orbit.a)
+trappist = Trajectory("TRAPPIST-1", TRAPPIST1d.orbit.a, TRAPPIST1e.orbit.a)
 
 print TRAPPIST1d.orbit.v().length, TRAPPIST1e.orbit.v().length
 print trappist.v_initial.length, trappist.v_final.length
