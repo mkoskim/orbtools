@@ -8,14 +8,14 @@ from math import pi
 
 Inf         = float("infinity")
 
-const_G     = 6.67408e-11
-const_c     = 299.792458e6
-const_g     = 9.80665
-const_day   = 24*3600.0
-const_year  = 365.25*const_day
-const_AU    = 149.597870691e9
-const_ly    = const_c*const_year
-const_solar = 1.361e3
+const_G     = 6.67408e-11               # Gravity constant
+const_c     = 299.792458e6              # Speed of light
+const_g     = 9.80665                   # Standard gravity
+const_day   = 24*3600.0                 # Day in seconds
+const_year  = 365.25*const_day          # Year in seconds
+const_AU    = 149.597870691e9           # Astronomical Unit
+const_ly    = const_c*const_year        # Light year
+const_solar = 1.361e3                   # Solar constant
 
 #------------------------------------------------------------------------------
 #

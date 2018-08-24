@@ -45,7 +45,7 @@ def solve_PFve(P, F, ve):
     
 ###############################################################################
 #
-# Fixed-Isp reaction engines
+# Fixed-Isp rocket engines
 #
 ###############################################################################
 
@@ -68,6 +68,8 @@ class Exhaust(object):
     def E_eff(self, dv):return solve_Emv(None, 1, dv) / self.E(self.fuel(1, dv))
     
     def t(self, P, m):  return self.E(m) / P
+
+#------------------------------------------------------------------------------
 
 engines = { }
 
@@ -154,12 +156,30 @@ class Fuel:
         self.name = name
         if name: fuels[name] = self
 
+    #--------------------------------------------------------------------------
+
     def dm(self, ratio = 1.0, efficiency = 1.0):
         return solve_Emc(self.E * ratio * efficiency, None)
+
+    #--------------------------------------------------------------------------
+
+    def ve(self, ratio, efficiency):
+        return solve_Emv(
+            self.E * ratio * efficiency,
+            1.0 - self.dm(ratio, efficiency),
+            None
+        )
+        
+    #--------------------------------------------------------------------------
 
     @staticmethod
     def alias(name, to): return Fuel(name, E = fuels[to].E)
 
+    #--------------------------------------------------------------------------
+    # Chemical burning: giving in energy by fuel unit, atoms in fuel and
+    # oxidizer, it computes specific energy.
+    #--------------------------------------------------------------------------
+    
     @staticmethod
     def Burn(name, energy, fuel, oxidizer):
         atomic_mass = {
@@ -174,6 +194,10 @@ class Fuel:
 
         return Fuel(name, E = energy * m_fuel / m_tot)
     
+    #--------------------------------------------------------------------------
+    # Burning hydrocarbons
+    #--------------------------------------------------------------------------
+
     @staticmethod
     def CH(name, energy, C, H, O = 0, N = 0):
         return Fuel.Burn(
@@ -183,13 +207,7 @@ class Fuel:
             (2*C + H/2 - O)*["O"]
         )
 
-    def ve(self, ratio, efficiency):
-        return solve_Emv(
-            self.E * ratio * efficiency,
-            1.0 - self.dm(ratio, efficiency),
-            None
-        )
-        
+#------------------------------------------------------------------------------
 
 Fuel("!H",       dm = 1.0000000)
 Fuel("D-He3",    dm = 0.0040423)
