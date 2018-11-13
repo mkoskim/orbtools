@@ -1,6 +1,6 @@
 ###############################################################################
 #
-#
+# Engine equations
 #
 ###############################################################################
 
@@ -21,6 +21,8 @@ def solve_rocket_eq(M0, M1, dv, ve):
     return dv / Rm(M0, M1)
 
 #-------------------------------------------------------------------------------
+# Energy equations
+#-------------------------------------------------------------------------------
 
 def solve_Emv(E, m, v = None):
     if m == None: return E/(0.5*(v**2))
@@ -31,6 +33,8 @@ def solve_Emc(E, m):
     if m == None: return E/(const_c**2)
     return m*(const_c**2)
 
+#-------------------------------------------------------------------------------
+# Power and Force equations
 #-------------------------------------------------------------------------------
 
 def solve_Fma(F, m, a):
@@ -43,6 +47,15 @@ def solve_PFve(P, F, ve):
     if F == None: return P / (0.5 * ve) # = flow * ve
     return 2.0 * P/F
     
+#-------------------------------------------------------------------------------
+# Temperature equations (T = temperature (celcius), M = Molar mass (g/mol), v = speed)
+#-------------------------------------------------------------------------------
+
+def solve_TMv(T, M, v):
+	if T == None: return (M*1e-3 * v**2 / (3*const_R)) - 273.15
+	if M == None: return (3*const_R*(T + 273.15) / (v**2)) * 1e3
+	return 1.6 * sqrt(const_R*(T + 273.15)/(M*1e-3))
+
 ###############################################################################
 #
 # Fixed-Isp rocket engines
@@ -173,6 +186,18 @@ class Fuel:
     #--------------------------------------------------------------------------
 
     @staticmethod
+    def atomic_mass(molecule):
+        am = {
+            "H":  1.008,
+            "C": 12.011,
+            "N": 14.007,
+            "O": 15.999,
+        }
+        return sum([am[x] for x in molecule])
+		
+    #--------------------------------------------------------------------------
+
+    @staticmethod
     def alias(name, to): return Fuel(name, E = fuels[to].E)
 
     #--------------------------------------------------------------------------
@@ -182,15 +207,9 @@ class Fuel:
     
     @staticmethod
     def Burn(name, energy, fuel, oxidizer):
-        atomic_mass = {
-            "H":  1.008,
-            "C": 12.011,
-            "N": 14.007,
-            "O": 15.999,
-        }
-        m_fuel     = sum([atomic_mass[x] for x in fuel])
-        m_oxidizer = sum([atomic_mass[x] for x in oxidizer])
-        m_tot = m_fuel + m_oxidizer
+        m_fuel     = Fuel.atomic_mass(fuel)
+        m_oxidizer = Fuel.atomic_mass(oxidizer)
+        m_tot      = m_fuel + m_oxidizer
 
         return Fuel(name, E = energy * m_fuel / m_tot)
     
@@ -204,7 +223,7 @@ class Fuel:
             name,
             energy,
             C*["C"] + H*["H"] + O*["O"] + N*["N"],
-            (2*C + H/2 - O)*["O"]
+            int(2*C + H/2 - O)*["O"]
         )
 
 #------------------------------------------------------------------------------

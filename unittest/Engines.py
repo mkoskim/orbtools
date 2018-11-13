@@ -5,8 +5,9 @@
 ###############################################################################
 
 import os, sys
-sys.path.append(os.path.abspath(".."))
+sys.path.append(os.path.abspath("."))
 
+from orbtools import *
 from sol import *
 from testlib  import *
 
@@ -84,18 +85,18 @@ def comparison(*engines):
     payload = 10e3
     dv = 3000
     
-    print "%5s %6s %10s %15s %15s" % ("ve", "fuel", "E", "E/kg", "P/F")
+    print("%5s %6s %10s %15s %15s" % ("ve", "fuel", "E", "E/kg", "P/F"))
 
     for engine in engines:
         fuel  = engine.fuel(payload, dv)
         E     = engine.E(fuel)
-        print "%5.0f %6.0f %10s %15s %15s" % (
+        print("%5.0f %6.0f %10s %15s %15s" % (
             engine.ve,
             fuel,
             fmteng(E, "J"),
             fmteng(E/fuel, "J/kg"),
             fmteng(engine.P(), "W/N"),
-        )
+        ))
 
     print
 
@@ -121,19 +122,19 @@ def compare_engines():
         "NERVA",
     ]
 
-    print "%-10s %12s %12s %12s %12s %13s" % ("Name", "v(ex)", "Thrust", "P", "Mass flow", "E(flow)/kg")
+    print("%-10s %12s %12s %12s %12s %13s" % ("Name", "v(ex)", "Thrust", "P", "Mass flow", "E(flow)/kg"))
 
     for engine in sorted([engines[x] for x in names], key = lambda e: e.ve):
-        print "%-10s %12s %12s %12s %12s %13s" % (
+        print("%-10s %12s %12s %12s %12s %13s" % (
             engine.name,
             fmteng(ve2Isp(engine.ve), "s"),
             fmteng(engine.F, "N"),
             fmteng(engine.P, "W"),
             fmteng(engine.flow*1e3, "g/s"),
             fmteng(engine.E(), "J/kg"),
-        )
+        ))
 
-    print
+    print()
 
 manual(__name__, compare_engines)
 
@@ -164,14 +165,14 @@ def compare_fuels():
         engine = engines[engine]
         fuel   = fuels[fuel]
         E = fuel.E * ratio * efficiency
-        print "%-10s %15s %12s %10s %15s %6.2f %%" % (
+        print("%-10s %15s %12s %10s %15s %6.2f %%" % (
             engine.name,
             fmteng(engine.E(), "J/kg"),
             fmteng(engine.ve, "m/s"),
             fuel.name,
             fmteng(fuel.E, "J/kg"),
             100 * engine.E()/fuel.E
-        )
+        ))
         
     show("SSME",        "Hydrolox", 0.620)
     show("Raptor",      "Methalox", 0.630)
@@ -186,11 +187,37 @@ def compare_fuels():
     # is just 10%.
     #--------------------------------------------------------------------------
 
-    print "Gunpowder 100%, Isp =", ve2Isp(fuels["Gunpowder"].ve(1.0, 1.00))
-    print "Gunpowder  10%, Isp =", ve2Isp(fuels["Gunpowder"].ve(1.0, 0.10))
-    print "APCP      100%, Isp =", ve2Isp(fuels["APCP"].ve(1.0, 1.0))
+    print("Gunpowder 100%%, Isp = %.2f" % ve2Isp(fuels["Gunpowder"].ve(1.0, 1.00)))
+    print("Gunpowder  10%%, Isp = %.2f" % ve2Isp(fuels["Gunpowder"].ve(1.0, 0.10)))
+    print("APCP      100%%, Isp = %.2f" % ve2Isp(fuels["APCP"].ve(1.0, 1.0)))
     
 manual(__name__, compare_fuels)
+
+#------------------------------------------------------------------------------
+# Combust chamber temperatures
+#------------------------------------------------------------------------------
+
+def compare_temperatures():
+	def show_T(ve, propellant):
+		print("%5s: T = %12.2f, v = %12.2f" % (propellant, solve_TMv(None, Fuel.atomic_mass(propellant), ve), ve))
+	
+	def show_ve(T, propellant):
+		print("%5s: T = %12.2f, v = %12.2f" % (propellant, T, solve_TMv(T, Fuel.atomic_mass(propellant), None)))
+	
+	print("Thermal velocities:")
+	show_ve(20, "HH")
+	show_ve(20, "HOH")
+	
+	show_T(2000, "HOH")
+	show_T(3000, "HOH")
+	show_T(4500, "HOH")
+	show_T(100e3, "HH")
+
+	show_ve(2000, "HOH")
+	show_ve(2000, "HH")
+	show_ve(4000, "HOH")
+
+manual(__name__, compare_temperatures)
 
 #------------------------------------------------------------------------------
 #
@@ -201,12 +228,12 @@ exit()
 #------------------------------------------------------------------------------
 
 def show(engine):
-    print "%-10s: E=%15s Isp=%10.1f s (%10.3f km/s)" % (
+    print("%-10s: E=%15s Isp=%10.1f s (%10.3f km/s)" % (
         engine.name,
         fmteng(engine.E(), "J/kg"),
         ve2Isp(engine.u),
         engine.u * 1e-3
-    )
+    ))
 
 #------------------------------------------------------------------------------
 # Antimatter engine
@@ -265,4 +292,3 @@ show(Fuel("Methanol", ratio = 1.0, efficiency = 0.65))
 show(Fuel("TNT",       ratio = 1.0, efficiency = 0.65))
 show(Fuel("Gunpowder", ratio = 1.0, efficiency = 0.65))
 show(Fuel("Hydrazine", ratio = 1.0, efficiency = 0.65))
-

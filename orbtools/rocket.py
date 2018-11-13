@@ -39,8 +39,8 @@ class Payload(object):
     def fuel(self):    return 0
 
     def show(self):
-        print "Payload"
-        print "   ", "Mass: %.2f kg" % self.mass
+        print("Payload")
+        print("   ", "Mass: %.2f kg" % self.mass)
 
 ################################################################################
 #
@@ -108,16 +108,16 @@ class Stage(object):
                 self.mass = fuel/(1 - 1.0/self.R)
 
     def show(self):
-        print self.name
-        print "   ", "Mass.......: %.2f kg" % self.mass        
-        print "   ", "- Payload..: %.2f kg" % self.payload
-        print "   ", "- Fuel.....: %.2f kg" % self.fuel
-        print "   ", "Engine.....: %.2f m/s" % self.engine.ve
-        print "   ", "DV.........: %.2f m/s" % self.dv
+        print(self.name)
+        print("   ", "Mass.......: %.2f kg" % self.mass)    
+        print("   ", "- Payload..: %.2f kg" % self.payload)
+        print("   ", "- Fuel.....: %.2f kg" % self.fuel)
+        print("   ", "Engine.....: %.2f m/s" % self.engine.ve)
+        print("   ", "DV.........: %.2f m/s" % self.dv)
         if self.mission != None:
             phase = self.mission
-            print "   ", "Mission DV.: %.2f m/s" % phase.dv
-            print "   ", "DV diff....: %.2f m/s" % (self.dv - phase.dv)
+            print("   ", "Mission DV.: %.2f m/s" % phase.dv)
+            print("   ", "DV diff....: %.2f m/s" % (self.dv - phase.dv))
 			
 ################################################################################
 
@@ -172,16 +172,15 @@ class Rocket(object):
         return sum(map(lambda s: s.fuel, self.stages))
 
     def show(self):
-        print "Rocket:", self.name
-        print "- Payload........: %.2f kg"  % self.payload
-        print "- Tot. mass......: %.2f kg"  % self.mass
-        print "- Tot. propellant: %.2f kg"  % self.fuel
-        print "- Tot. DV........: %.2f m/s" % self.dv
+        print("Rocket:", self.name)
+        print("- Payload........: %.2f kg"  % self.payload)
+        print("- Tot. mass......: %.2f kg"  % self.mass)
+        print("- Tot. propellant: %.2f kg"  % self.fuel)
+        print("- Tot. DV........: %.2f m/s" % self.dv)
         if self.mission != None:
             phase = self.mission
-            print "- Mission DV.....: %.2f m/s" % phase.dv
-            print "- DV diff........: %.2f m/s" % (self.dv - phase.dv)
-        print "Stages:"
+            print("- Mission DV.....: %.2f m/s" % phase.dv)
+            print("- DV diff........: %.2f m/s" % (self.dv - phase.dv))
+        print("Stages:")
         for stage in self.stages:
             stage.show()
-

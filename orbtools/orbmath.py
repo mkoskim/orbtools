@@ -197,47 +197,47 @@ class Mass(object):
     #--------------------------------------------------------------------------
     
     def info(self):
-        print "-------------------"
-        print "Name..............:", self.name
+        print("-------------------")
+        print("Name..............:", self.name)
         if not self.isMassless:
-            print "Mass..............: %.4g kg (%.4g x M_earth)" % (self.kg, self.GM/GM_Earth)
+            print("Mass..............: %.4g kg (%.4g x M_earth)" % (self.kg, self.GM/GM_Earth))
             if hasattr(self, "L"):
-                print "Luminosity........: %.4f x Sun" % (self.L)
+                print("Luminosity........: %.4f x Sun" % (self.L))
                 HZ = Orbit(self, self.HZ())
-                print "Habitable zone....: "
-                print "    - Distance....: %.4f AU" % m2AU(HZ.a)
-                print "    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P))
+                print("Habitable zone....: ")
+                print("    - Distance....: %.4f AU" % m2AU(HZ.a))
+                print("    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P)))
             if self.radius:
-                print "Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth)
-                print "Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth)
-                print "Density...........: %.3f kg/m3" % (self.density)
-                print "Surface gravity...: %.2f g (%.2f m/s^2)" % (self.g_surface/const_g, self.g_surface)
-                print "Escape velocity...: %s" % fmteng(self.v_escape(), "m/s")
-            print "Rotating period...: %s" % fmttime(self.rotate)
+                print("Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth))
+                print("Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth))
+                print("Density...........: %.3f kg/m3" % (self.density))
+                print("Surface gravity...: %.2f g (%.2f m/s^2)" % (self.g_surface/const_g, self.g_surface))
+                print("Escape velocity...: %s" % fmteng(self.v_escape(), "m/s"))
+            print("Rotating period...: %s" % fmttime(self.rotate))
         if self.orbit:
-            print "Orbits............:", self.orbit.center.name
-            print "   Distance.......:", fmtdist(self.orbit.a)
-            print "   Period.........:", fmttime(self.orbit.P)
-            print "   L1/L2 distance.:", fmtdist(self.Lagrangian())
-            print "   Hill Sphere....:", fmtdist(self.HillSphere())
-            print "   SOI............:", fmtdist(self.SOI())
+            print("Orbits............:", self.orbit.center.name)
+            print("   Distance.......:", fmtdist(self.orbit.a))
+            print("   Period.........:", fmttime(self.orbit.P))
+            print("   L1/L2 distance.:", fmtdist(self.Lagrangian()))
+            print("   Hill Sphere....:", fmtdist(self.HillSphere()))
+            print("   SOI............:", fmtdist(self.SOI()))
             if hasattr(self.orbit.center, "L"):
-                print "   Flux...........: %.3f x Earth (%s)" % (
+                print("   Flux...........: %.3f x Earth (%s)" % (
                     self.flux,
                     fmteng(self.flux * const_solar, "W/m2"),
-                )
+                ))
         s = self.satellites()
         if len(s):
-            print "Satellites........:"
+            print("Satellites........:")
             s.sort(cmp=lambda x,y: cmp(x.orbit.a, y.orbit.a))
             for num, satellite in enumerate(s):
-                print "   %2d - %-20s %15s %15s %s" % (
+                print("   %2d - %-20s %15s %15s %s" % (
                     num+1,
                     satellite.name,
                     fmtdist(satellite.orbit.altitude()),
                     fmttime(satellite.orbit.P),
                     hasattr(self, "L") and ("%7.3f" % satellite.flux) or "",
-                )
+                ))
                     
 	
 ################################################################################
