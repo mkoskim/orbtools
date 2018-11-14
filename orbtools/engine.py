@@ -48,13 +48,24 @@ def solve_PFve(P, F, ve):
     return 2.0 * P/F
     
 #-------------------------------------------------------------------------------
-# Temperature equations (T = temperature (celcius), M = Molar mass (g/mol), v = speed)
+# Temperature equations:
+# T = temperature (celcius)
+# M = Molar mass (g/mol)
+# v = speed
 #-------------------------------------------------------------------------------
 
-def solve_TMv(T, M, v):
-	if T == None: return (M*1e-3 * v**2 / (3*const_R)) - 273.15
-	if M == None: return (3*const_R*(T + 273.15) / (v**2)) * 1e3
-	return 1.6 * sqrt(const_R*(T + 273.15)/(M*1e-3))
+def solve_MTv(M, T, v = None):
+    if isinstance(M, str): M = Fuel.atomic_mass(M)
+    if T == None: return (M*1e-3 * v**2 / (3*const_R)) - 273.15
+    if M == None: return (3*const_R*(T + 273.15) / (v**2)) * 1e3
+    return 1.6 * sqrt(const_R*(T + 273.15)/(M*1e-3))
+
+def delaval(M, T, p, r_exp, gamma):
+    if isinstance(M, str): M = Fuel.atomic_mass(M)
+    p_ex = p / r_exp
+    print(p_ex / 1e6)
+    f = gamma / (gamma - 1)
+    return sqrt((const_R/M*1e3)*T*2*f * (1 - (p_ex / p) ** (1 / f)))
 
 ###############################################################################
 #
@@ -287,4 +298,3 @@ Fuel.alias("Propanol",      "C3H7OH/LOX")
 Fuel.alias("Hydrolox",      "LH2/LOX")
 Fuel.alias("Methalox",      "CH4/LOX")
 Fuel.alias("Kerolox",       "C12H26/LOX")
-

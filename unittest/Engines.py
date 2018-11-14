@@ -194,28 +194,42 @@ def compare_fuels():
 manual(__name__, compare_fuels)
 
 #------------------------------------------------------------------------------
-# Combust chamber temperatures
+# Combust chamber temperatures: These could help developing new speculative
+# motors. At the moment, the results from equations are not consistent enough,
+# they can be used only to give some rough magnitudes.
 #------------------------------------------------------------------------------
 
 def compare_temperatures():
-	def show_T(ve, propellant):
-		print("%5s: T = %12.2f, v = %12.2f" % (propellant, solve_TMv(None, Fuel.atomic_mass(propellant), ve), ve))
-	
-	def show_ve(T, propellant):
-		print("%5s: T = %12.2f, v = %12.2f" % (propellant, T, solve_TMv(T, Fuel.atomic_mass(propellant), None)))
-	
-	print("Thermal velocities:")
-	show_ve(20, "HH")
-	show_ve(20, "HOH")
-	
-	show_T(2000, "HOH")
-	show_T(3000, "HOH")
-	show_T(4500, "HOH")
-	show_T(100e3, "HH")
+    def show_T(propellant, ve):
+        print("%5s: T = %12.2f, v = %12.2f" % (
+            propellant,
+            solve_MTv(propellant, None, ve),
+            ve
+        ))
+    
+    def show_ve(propellant, T):
+        print("%5s: T = %12.2f, v = %12.2f" % (
+            propellant,
+            T,
+            solve_MTv(propellant, T, None)
+        ))
+    
+    print("Thermal velocities:")
+    expect(solve_MTv("HH",  20), 1760, 50, "H2 Thermal Speed")
+    expect(solve_MTv("HOH", 20),  600, 50, "H2O Thermal Speed")
+    
+    show_T("HOH", 2000)
+    show_T("HOH", 3000)
+    show_T("HOH", 4500)
+    show_T("HH",  100e3)
 
-	show_ve(2000, "HOH")
-	show_ve(2000, "HH")
-	show_ve(4000, "HOH")
+    show_ve("HOH", 2000)
+    show_ve("HH",  2000)
+    show_ve("HOH", 4000)
+
+    print("De Laval:")
+    expect(delaval(22, 3500, 7e6, 70.0, 1.22), 2800, 100, "De Laval (1)")
+    print(delaval(9, 3300, 20.64e6, 69.0, 1.22))
 
 manual(__name__, compare_temperatures)
 

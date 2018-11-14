@@ -229,7 +229,7 @@ class Mass(object):
         s = self.satellites()
         if len(s):
             print("Satellites........:")
-            s.sort(cmp=lambda x,y: cmp(x.orbit.a, y.orbit.a))
+            s.sort(key=lambda x: x.orbit.a)
             for num, satellite in enumerate(s):
                 print("   %2d - %-20s %15s %15s %s" % (
                     num+1,
