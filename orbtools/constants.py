@@ -16,6 +16,9 @@ const_year  = 365.25*const_day          # Year in seconds
 const_AU    = 149.597870691e9           # Astronomical Unit
 const_ly    = const_c*const_year        # Light year
 const_solar = 1.361e3                   # Solar constant
+const_kb    = 1.38064852e-23            # Boltzmann constant (J/K)
+const_NA    = 6.0221409e+23             # Avogadro constant
+const_R     = 8.3144598                 # Gas constant (NA * kb)
 
 #------------------------------------------------------------------------------
 #
@@ -38,4 +41,3 @@ r_Sun       = 695508e3
 
 r_Earth     = 6372.167e3
 V_Earth     = 4/3.0*pi*(r_Earth ** 3)
-

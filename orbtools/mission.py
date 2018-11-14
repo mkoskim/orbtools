@@ -160,10 +160,10 @@ class Mission(object):
     def dv(self): return sum(map(lambda b: b.dv, self.burns[1:]))
 
     def show(self):
-            print "Mission:", self.name
+            print("Mission:", self.name)
             for burn in self.burns[1:]:
-                    print "    Burn: %-15s dv=%8.2f dt=%10s" % (burn.name, burn.dv, fmttime(burn.dt))
-            print "    ---"
-            print "    Tot.: %15s dv=%8.2f dt=%10s" % ("", self.dv, fmttime(self.dt))
+                    print("    Burn: %-15s dv=%8.2f dt=%10s" % (burn.name, burn.dv, fmttime(burn.dt)))
+            print("    ---")
+            print("    Tot.: %15s dv=%8.2f dt=%10s" % ("", self.dv, fmttime(self.dt)))
 
 

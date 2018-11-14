@@ -19,11 +19,13 @@ from sol import *
 import math
 
 def Earth_escape(altitude, v_inf):
-	r     = Earth.radius + altitude
-	v_esc = Earth.v_escape(r)
-	dv    = solve_rvrv(Earth.GM, r, None, Inf, v_inf)
-	print "v_esc=%.2f v_inf=%7.2f dv=%.2f (d=%7.2f)" % (v_esc, v_inf, dv, dv - v_esc)
-	return dv
+    r     = Earth.radius + altitude
+    v_esc = Earth.v_escape(r)
+    dv    = solve_rvrv(Earth.GM, r, None, Inf, v_inf)
+    print("v_esc=%.2f v_inf=%7.2f dv=%.2f (d=%7.2f)" % (
+        v_esc, v_inf, dv, dv - v_esc
+    ))
+    return dv
 
 Earth_escape(300e3, 0e3)
 Earth_escape(300e3, 1e3)
@@ -47,5 +49,5 @@ exit()
 dv = solve_rocket_eq(250, 200, 9000, None)
 Ekin = 0.5 * 50 * (dv ** 2)
 
-print dv, Ekin*1e-9, Ekin/50*1e-6
+print(dv, Ekin*1e-9, Ekin/50*1e-6)
 

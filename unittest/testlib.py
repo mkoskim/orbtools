@@ -16,7 +16,7 @@ def _getcaller():
 #------------------------------------------------------------------------------
 
 def runcase():
-    print "Running: %s..." % (_getcaller()[2])
+    print("Running: %s..." % (_getcaller()[2]))
 
 def manual(name, f):
     if name == "__main__": f()
@@ -37,7 +37,7 @@ def expect(computed, correct, error, name = None):
             str(correct)
         ))
     else:
-        print "%s:%d: Case '%s %s' ok." % (filename, line, func, name)
+        print("%s:%d: Case '%s %s' ok." % (filename, line, func, name))
 
 #------------------------------------------------------------------------------
 

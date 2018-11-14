@@ -4,6 +4,9 @@
 #
 ###############################################################################
 
+import os, sys
+sys.path.append(os.path.abspath("orbtools"))
+
 from math import *
 from misc import *
 from constants import *
