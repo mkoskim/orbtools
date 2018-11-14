@@ -24,6 +24,13 @@ Neptune = Mass("Neptune",   GM_Neptunus,    24766e3,    TasDays(0.67),          
 Pluto   = Mass("Pluto",	    kg2GM(1.3E+22), 1150e3,     TasDays(-6.39),         Orbit(	"Sun",	5913520e6))
 
 #-------------------------------------------------------------------------------
+# Fictional masses
+#-------------------------------------------------------------------------------
+
+Mass("SuperEarth", GM_Earth*2, Mass.rFromV(GM2kg(GM_Earth*2) / Earth.density), 0)
+Mass("GiantEarth", GM_Earth*4, Mass.rFromV(GM2kg(GM_Earth*4) / Earth.density), 0)
+
+#-------------------------------------------------------------------------------
 # Earth satellites and orbits
 #-------------------------------------------------------------------------------
 

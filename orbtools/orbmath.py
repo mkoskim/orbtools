@@ -127,6 +127,10 @@ class Mass(object):
         if isinstance(mass, str): return masses[mass]
         return mass
 
+    @staticmethod
+    def rFromV(V):
+        return (V / (4/3.0*pi)) ** (1/3.0)
+
     #--------------------------------------------------------------------------
     # Basic properties
     #--------------------------------------------------------------------------
@@ -796,8 +800,8 @@ class Trajectory(Orbit):
             
     @property
     def hohmann_dv_exit(self):
-        a = solve_a(self.r3 + self.r4)
-        return abs(v_elliptical(self.center.GM, a, self.r3) - v_circular(self.center.GM, self.r4))
+        a = solve_a(self.r3, self.r4)
+        return abs(v_elliptical(self.center.GM, a, self.r4) - v_circular(self.center.GM, self.r4))
             
     @property
     def hohmann_dv_total(self):
