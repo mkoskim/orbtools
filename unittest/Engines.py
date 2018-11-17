@@ -215,8 +215,8 @@ def compare_temperatures():
         ))
     
     print("Thermal velocities:")
-    expect(solve_MTv("HH",  20), 1760, 50, "H2 Thermal Speed")
-    expect(solve_MTv("HOH", 20),  600, 50, "H2O Thermal Speed")
+    expect(solve_MTv("HH",  273.15 + 20), 1760, 50, "H2 Thermal Speed")
+    expect(solve_MTv("HOH", 273.15 + 20),  600, 50, "H2O Thermal Speed")
     
     show_T("HOH", 2000)
     show_T("HOH", 3000)
@@ -228,8 +228,8 @@ def compare_temperatures():
     show_ve("HOH", 4000)
 
     print("De Laval:")
-    expect(delaval(22, 3500, 7e6, 70.0, 1.22), 2800, 100, "De Laval (1)")
-    print(delaval(9, 3300, 20.64e6, 69.0, 1.22))
+    expect(de_laval(22, 3500, 7e6, 70.0, 1.22), 2800, 100, "De Laval (1)")
+    print(de_laval(9, 3300, 20.64e6, 69.0, 1.22))
 
 manual(__name__, compare_temperatures)
 

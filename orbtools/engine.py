@@ -49,23 +49,28 @@ def solve_PFve(P, F, ve):
     
 #-------------------------------------------------------------------------------
 # Temperature equations:
-# T = temperature (celcius)
+# T = temperature (Kelvin)
 # M = Molar mass (g/mol)
 # v = speed
 #-------------------------------------------------------------------------------
 
 def solve_MTv(M, T, v = None):
     if isinstance(M, str): M = Fuel.atomic_mass(M)
-    if T == None: return (M*1e-3 * v**2 / (3*const_R)) - 273.15
-    if M == None: return (3*const_R*(T + 273.15) / (v**2)) * 1e3
-    return 1.6 * sqrt(const_R*(T + 273.15)/(M*1e-3))
+    if T == None: return (M*1e-3 * v**2 / (3*const_R))
+    if M == None: return (2.5*const_R*T / (v**2)) * 1e3
+    return 1.6 * sqrt(T * const_R/M*1e3)
 
-def delaval(M, T, p, r_exp, gamma):
+def de_laval(M, T, p, r_exp, gamma):
     if isinstance(M, str): M = Fuel.atomic_mass(M)
+
     p_ex = p / r_exp
-    print(p_ex / 1e6)
     f = gamma / (gamma - 1)
-    return sqrt((const_R/M*1e3)*T*2*f * (1 - (p_ex / p) ** (1 / f)))
+    
+    return sqrt(
+        T * (const_R/M*1e3)*
+        2*f *
+        (1 - (p_ex / p) ** (1 / f))
+    )
 
 ###############################################################################
 #
