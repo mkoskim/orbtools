@@ -374,12 +374,15 @@ class Orbit(object):
         self.set(center, r1, r2, T0, arg)
 
     def set(self, center, r1, r2, T0, arg):
+        r2 = (r2 == None) and float(r1) or float(r2)
+        assert(r1 > 0)
+        assert(r2 > 0)
         center = Mass.resolve(center)
         if center.isMassless:
             raise Exception("Cannot orbit massless particle.")
         self.center = center
         self.r1 = float(r1)
-        self.r2 = (r2 == None) and float(r1) or float(r2)
+        self.r2 = r2
         self.T0 = T0
         self.arg = arg
 
