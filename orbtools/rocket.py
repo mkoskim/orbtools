@@ -85,6 +85,8 @@ class Stage(object):
         
         if dv != None and engine != None:
             R = engine.R(dv)
+            print dv, engine.ve
+            print R, log(R), dv / engine.ve
             if mass != None:
                 payload = mass / R
                 fuel = mass - payload

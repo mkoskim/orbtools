@@ -25,7 +25,8 @@ def engine_info(engine):
         fmteng(engine.dv(1.0, 10.0), "m/s"),
     )
 
-engine = engines["Merlin 1D"]
+#engine = engines["Merlin 1D"]
+engine = engines["SSME"]
 
 engine_info(engine)
 
@@ -33,6 +34,8 @@ engine_info(engine)
 
 rocket1 = Stage("SSTO", engine = engine, payload = 60e3, dv = 9000)
 
+print "Tot. k  =", rocket1.dv / engine.ve
+#print "Tot. R  =", exp(rocket.dv / engine.ve)
 print "Tot. dv =", rocket1.dv
 print "Tot. M  =", fmteng(rocket1.mass / 1e3, "t")
 print "Fuel    =", fmteng(rocket1.fuel / 1e3, "t")
@@ -45,6 +48,4 @@ print "Fuel    =", fmteng(rocket2.fuel / 1e3, "t")
 
 print "Mass save:", fmteng((rocket1.mass - rocket2.mass) / 1e3, "t")
 
-#print "Tot. k  =", rocket.dv / engine.ve
-#print "Tot. R  =", exp(rocket.dv / engine.ve)
 
