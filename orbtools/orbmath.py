@@ -194,7 +194,7 @@ class Mass(object):
     @property
     def flux(self):
         if not hasattr(self.orbit.center, "L"): return None
-        return self.orbit.center.flux(self.orbit.altitude())
+        return self.orbit.center.flux(self.orbit.r())
     
     #--------------------------------------------------------------------------
     # Info dump

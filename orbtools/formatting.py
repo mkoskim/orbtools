@@ -18,7 +18,7 @@ def fmteng(val, unit):
     if(a >= 5e+09): return "%.2f G%s" % (val/1e+09, unit)
     if(a >= 5e+06): return "%.2f M%s" % (val/1e+06, unit)
     if(a >= 2e+03): return "%.2f k%s" % (val/1e+03, unit)
-    if(a >= 1e+00): return "%.2f  %s"  % (val/1e+00, unit)
+    if(a >= 1e+00): return "%.2f %s"  % (val/1e+00, unit)
     if(a >= 2e-03): return "%.2f m%s" % (val/1e-03, unit)
     if(a >= 5e-06): return "%.2f u%s" % (val/1e-06, unit)
     if(a >= 5e-09): return "%.2f n%s" % (val/1e-09, unit)

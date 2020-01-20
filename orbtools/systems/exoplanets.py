@@ -42,3 +42,8 @@ Mass("61 Virginis b",      5.3 * GM_Earth, orbit = Orbit("61 Virginis", AU2m(0.0
 Mass("61 Virginis c",     18.8 * GM_Earth, orbit = Orbit("61 Virginis", AU2m(0.2175)))
 Mass("61 Virginis d (?)", 23.7 * GM_Earth, orbit = Orbit("61 Virginis", AU2m(0.476)))
 
+################################################################################
+
+Mass("Gliese 876d", 6.83 * GM_Earth, radius = 1.65 * r_Earth)
+Mass("Test", 2 * GM_Earth, radius = 1 * r_Earth)
+

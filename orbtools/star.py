@@ -7,7 +7,11 @@
 from orbtools import *
 
 #-------------------------------------------------------------------------------
+#
 # Stars: 
+# GM = mass
+# L  = Luminosity relative to Sun
+# 
 #-------------------------------------------------------------------------------
 
 stars = {}
@@ -33,7 +37,7 @@ class Star(Mass):
         stars[name] = self
         
     #--------------------------------------------------------------------------
-    # Flux (in solar constant units) at given distance
+    # Flux at given distance, relative to flux received by Earth:
     #--------------------------------------------------------------------------
     
     def flux(self, distance = AU2m(1.0)):
@@ -43,12 +47,12 @@ class Star(Mass):
     # Habitable Zone distance: in fact, distance at given flux.
     #--------------------------------------------------------------------------
 
-    def orbitByFlux(self, flux = 1.0):
-        return Orbit(self, AU2m(sqrt(self.L) / flux))
-
     def HZ(self, flux = 1.0):
-        return AU2m(sqrt(self.L) / flux)
+        return AU2m(sqrt(self.L / flux))
         
+    def orbitByFlux(self, flux = 1.0):
+        return Orbit(self, self.HZ(flux))
+
     #---------------------------------------------------------------------------
     # MLR, Mass-Luminosity Relation.
     # Luminosity approxmation from star mass (as Sun mass)
@@ -68,6 +72,14 @@ class Star(Mass):
         
         return k * (MxSun ** a)
 
+    #--------------------------------------------------------------------------
+    # Lifetime approx
+    #--------------------------------------------------------------------------
+    
+    @staticmethod
+    def TMS(MxSun):
+        return TasYears(1e10 * (MxSun ** -2.5))
+    
     #---------------------------------------------------------------------------
     # MRR, Mass-Radius Relation.
     # Radius approxmation from star mass (as Sun mass)
