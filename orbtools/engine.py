@@ -129,6 +129,8 @@ class Engine(object):
     
     def t(self, m): return self.exhaust.t(self.P, m)    
 
+    def R(self, dv): return self.exhaust.R(dv)
+
 #------------------------------------------------------------------------------
 # Engine database: parameters are vacuum parameters
 #------------------------------------------------------------------------------

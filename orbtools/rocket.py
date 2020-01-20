@@ -67,10 +67,7 @@ class Stage(object):
     #--------------------------------------------------------------------------
 
     @property
-    def payload(self):  return self.mass / self.R
-    
-    @property
-    def fuel(self):     return self.mass - self.payload
+    def mass(self): return self.payload + self.fuel
 
     #--------------------------------------------------------------------------
     # mass (tot), payload, mf (fuel mass), dv:
@@ -78,35 +75,52 @@ class Stage(object):
     # - Engine u is always known
     #--------------------------------------------------------------------------
 
-    def __init__(self, name, engine, mass = None, payload = None, fuel = None, dv = None, mission = None):
+    def __init__(self, name, mass = None, payload = None, fuel = None, engine = None, dv = None, mission = None):
+
+        if mission != None: dv = mission.dv
+
+        #----------------------------------------------------------------------
+        # dv and ve given, compute masses
+        #----------------------------------------------------------------------
+        
+        if dv != None and engine != None:
+            R = engine.R(dv)
+            if mass != None:
+                payload = mass / R
+                fuel = mass - payload
+            elif payload != None:
+                mass = R * payload
+                fuel = mass - payload
+            else:
+                fuel = mass - payload
+
+        #----------------------------------------------------------------------
+        # dv or ve missing, compute masses, solve missing
+        #----------------------------------------------------------------------
+
+        else:
+            if mass != None:
+                if payload != None: fuel = mass - payload
+                else: payload = mass - fuel
+            else:
+                mass = payload + fuel
+            
+            if dv == None:
+                dv = engine.dv(payload, fuel)
+            else:
+                engine = Engine(solve_rocket_eq(mass, payload, dv, None))
+
+        #----------------------------------------------------------------------
+        # Fill info
+        #----------------------------------------------------------------------
+
         self.name = name
         self.engine = engine
         self.mission = mission
-
-        if mass == None:
-            if payload != None and fuel != None: mass = fuel + payload
-
-        if mass != None:
-            if payload != None:
-                self.dv = self.engine.dv(payload, mass -payload)
-            elif fuel != None:
-                self.dv = self.engine.dv(mass - fuel, fuel)
-            else:
-                if dv == None: dv = mission.dv
-                self.dv = dv
-            self.mass = float(mass)
-            self.R = self.engine.R(self.dv)
-        else:
-            if dv == None: dv = mission.dv
+        self.dv = dv
+        self.payload = payload
+        self.fuel = fuel
             
-            self.dv = dv
-            self.R  = engine.R(dv)
-
-            if payload != None:
-                self.mass = self.R * float(payload)
-            else:
-                self.mass = fuel/(1 - 1.0/self.R)
-
     def show(self):
         print(self.name)
         print("   ", "Mass.......: %.2f kg" % self.mass)    
@@ -141,10 +155,9 @@ class Rocket(object):
             if stage.engine:
                 solvedstage = Stage(
                     stage.name,
-                    stage.engine,
-                    None,
-                    stage.payload + totmass,
-                    stage.fuel,
+                    engine = stage.engine,
+                    payload = stage.payload + totmass,
+                    fuel    = stage.fuel,
                     mission = stage.mission
                 )
             else:
