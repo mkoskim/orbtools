@@ -13,20 +13,19 @@ from orbtools.systems.exoplanets import *
 #------------------------------------------------------------------------------
 
 def engine_info(engine):
-    print "%s: %s %s %s %s : %s %s %s %s" % (
+    print "%s: %s %s %s %s" % (
         engine.name,
         fmteng(engine.ve, "m/s"),
         fmteng(engine.P, "W"),
         fmteng(engine.flow * 1000, "g/s"),
         fmteng(engine.F, "N"),
-        fmteng(engine.dv(1.0,  1.0), "m/s"),
-        fmteng(engine.dv(1.0,  2.0), "m/s"),
-        fmteng(engine.dv(1.0,  5.0), "m/s"),
-        fmteng(engine.dv(1.0, 10.0), "m/s"),
     )
+    
+    for R in [1, 2, 5, 10]:
+        print("   k=%.1f: %s" % (log(R+1), fmteng(engine.dv(1.0, R), "m/s")))
 
-#engine = engines["Merlin 1D"]
-engine = engines["SSME"]
+engine = engines["Merlin 1D"]
+#engine = engines["SSME"]
 
 engine_info(engine)
 

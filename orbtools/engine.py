@@ -131,14 +131,14 @@ class Engine(object):
 
     def R(self, dv): return self.exhaust.R(dv)
 
-#------------------------------------------------------------------------------
-# Engine database: parameters are vacuum parameters
-#------------------------------------------------------------------------------
-
 def Engine_veP(name, ve, P):      return Engine(ve, P = P, name = name)
 def Engine_IspP(name, isp, P):    return Engine(Isp2ve(isp), P = P, name = name)
 def Engine_veF(name, ve, F):      return Engine(ve, F = F, name = name)
 def Engine_IspF(name, isp, F):    return Engine(Isp2ve(isp), F = F, name = name)
+
+#------------------------------------------------------------------------------
+# Engine database: parameters are vacuum parameters... TODO: Add fuels.
+#------------------------------------------------------------------------------
 
 Engine_IspF("F-1",          304.0,  7770000)    # Saturn first stage
 Engine_IspF("J-2",          421.0,  1033000)    # Saturn upper stage
