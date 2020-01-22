@@ -17,8 +17,8 @@ def makebb(T):
     for wl in spectrum:
         bb.append(blackbody(T, wl * 1e-9))
 
-    s = sum(bb)
-    return list(map(lambda p: p/s, bb))
+    E = sum(bb)
+    return list(map(lambda x: x/E, bb))
 
 G2V = makebb(5780)
 K0  = makebb(5240)
