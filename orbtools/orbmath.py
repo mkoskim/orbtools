@@ -8,6 +8,15 @@ from orbtools import *
 
 ###############################################################################
 #
+# Simple calculations
+#
+###############################################################################
+
+def arcsec(dist, diam):
+    return atan(diam / dist)/(2*pi)*360*60*60
+
+###############################################################################
+#
 # Solving Kepler's equation:
 #
 #    a1^3 * P1^2  =  a2^3 * P2^2
@@ -160,6 +169,9 @@ class Mass(object):
             return v_escape(self.GM, self.radius)
         else:
             return v_escape(self.GM, r)
+
+    def v_circular(self, r):
+        return v_circular(self.GM, r)
 
     def altitude(self, a): return self.radius + float(a)
 
@@ -449,7 +461,7 @@ class Orbit(object):
     def v(self, t = 0):
         h = 1/self.P
         return (self.xy(t+h) - self.xy(t-h)) / 2.0
-
+        
     #--------------------------------------------------------------------------
     # Orbital distance / angle at given moment t = [0 ... 1]
     #--------------------------------------------------------------------------
