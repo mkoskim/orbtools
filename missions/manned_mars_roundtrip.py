@@ -6,10 +6,38 @@
 
 import sys, os
 sys.path.append(os.path.abspath(".."))
+sys.path.append(os.path.abspath("."))
 
 from sol import *
 
 import ApolloMission
+
+#-------------------------------------------------------------------------------
+# Let's try to estimate the initial mass needed for the mission
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Human metabolism
+#-------------------------------------------------------------------------------
+
+class Crew:
+
+    oxygen_per_day = 0.84
+    water_per_day = 0
+    food_per_day = 0
+
+    def __init__(self, number):
+        self.number = 1
+
+    def oxygen(self, days = 1):
+        return days * self.number * self.oxygen_per_day
+
+crew = Crew(3)
+# days = 224 + 458 + 237 # Direct round trip
+days = 224 + 30 + 291 # Return via Venus flyby
+
+print("Oxygen (%d): %.2f kg" % (days, crew.oxygen(days)))
+exit(0)
 
 #-------------------------------------------------------------------------------
 # Designing roundtrip: Earth (LEO) - Mars - Earth
