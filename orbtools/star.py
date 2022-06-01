@@ -18,17 +18,23 @@ stars = {}
 
 class Star(Mass):
 
-    def __init__(self, name, MxSun, RxSun = 0, sptype = None, L = None, rotate = 0, orbit = None, dist = None):
+    def __init__(self, name, MxSun, RxSun = 0, sptype = None, L = None, T = None, BV = None, rotate = 0, orbit = None, dist = None):
+
+        self.sptype = sptype
+        if not name: name = sptype
+
         super(Star, self).__init__(
             name,
-            GM     = MxSun * GM_Sun,
-            radius = RxSun * r_Sun,
+            GM     = MasSun(MxSun),
+            radius = RasSun(RxSun),
             rotate = rotate,
             orbit  = orbit
         )
 
-        self.sptype = sptype
         self.L      = (L is None) and Star.MLR(MxSun) or L
+        self.T      = T
+        self.BV     = BV
+
         if dist is None:
             self.dist = None
         else:
@@ -86,16 +92,16 @@ class Star(Mass):
     # ???
     #---------------------------------------------------------------------------
 
-
 #-------------------------------------------------------------------------------
 #
 # Black Body Radiation
 # 
 #-------------------------------------------------------------------------------
 
-def blackbody(T, wl):
-    a = 2 * const_h * (const_c ** 2) / (wl ** 5)
-    b = const_h * const_c / (wl * const_kb * T)
+def blackbody(T, wavelength):
+    #a = 2 * const_h * (const_c ** 2) / (wavelength ** 5)
+    a = 8 * pi * const_h * const_c / (wavelength ** 5)
+    b = const_h * const_c / (wavelength * const_kb * T)
     
     return a / (exp(b) - 1)
 

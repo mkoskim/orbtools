@@ -34,6 +34,23 @@ def TtoYears(secs):     return TtoDays(secs)/365.25
 def GM2kg(GM): return float(GM)/const_G
 def kg2GM(kg): return float(kg)*const_G
 
+def MtoSun(GM): return float(GM)/GM_Sun
+def MtoEarth(GM): return float(GM)/GM_Earth
+
+def MasSun(m): return float(m) * GM_Sun
+def MasJupiter(m): return float(m) * GM_Jupiter
+def MasEarth(m): return float(m) * GM_Earth
+
+#------------------------------------------------------------------------------
+# Radius
+#------------------------------------------------------------------------------
+
+def RtoSun(R): return float(R) / r_Sun
+def RtoEarth(R): return float(R) / r_Earth
+
+def RasSun(R): return float(R) * r_Sun
+def RasEarth(R): return float(R) * r_Earth
+
 #------------------------------------------------------------------------------
 # Distance
 #------------------------------------------------------------------------------

@@ -10,22 +10,34 @@ sys.path.append(os.path.abspath("."))
 from orbtools.systems.solsystem import *
 from orbtools.systems.exoplanets import *
 
-spectrum = range(50, 2000, 50)
+step = 10
+spectrum = range(step, 2000, step)
 
-def makebb(T, W):
+def makebb(txt, T, W):
     bb = []
-    for wl in spectrum:
-        bb.append(blackbody(T, wl * 1e-9))
+    for wavelength in spectrum:
+        bb.append(blackbody(T, wavelength * 1e-9))
 
-    E = sum(bb)
-    return list(map(lambda x: W * x/E, bb))
+    E = W / (step * sum(bb))
+    return [txt] + list(map(lambda x: x * E, bb))
 
-G2 = makebb(5780, 1300)
-K0 = makebb(5240, 1300)
-F5 = makebb(6540, 1300)
+#T5000 = makebb(5000, 1300)
+#K5 = makebb(stars["K2"].T, 1300)
+#G2 = makebb(stars["G2"].T, 1300)
+#F5 = makebb(stars["F5"].T, 1300)
+
+data = zip(
+    ["Aallonpituus (nm)"] + list(spectrum),
+    #makebb("Sun", 5777, 1367),
+    #makebb("4000K", 4000, 1367),
+    #makebb("3000K", 3000, 1367),
+    makebb("K2", stars["K2"].T, 1367),
+    makebb("G2", stars["G2"].T, 1367),
+    makebb("F5", stars["F5"].T, 1367),
+)
 
 #for p in G2: print(p)
 #for p in K0: print(p)
-for p in F5: print(p)
+#for p in F5: print(p)
 #for wl in spectrum: print wl
-
+for d in data: print("\t".join(map(str, d)))
