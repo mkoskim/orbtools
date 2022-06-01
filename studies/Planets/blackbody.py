@@ -11,6 +11,16 @@ sys.path.append(os.path.abspath("."))
 from orbtools.systems.solsystem import *
 from orbtools.systems.exoplanets import *
 
+#------------------------------------------------------------------------------
+
+for name in ["F5", "Sun", "K2"]:
+    o = stars[name].orbitByFlux()
+    print("%s: r=%.2f AU, P=%.2f d" % (name, m2AU(o.a), TtoDays(o.P)))
+
+sys.exit()
+
+#------------------------------------------------------------------------------
+
 step = 10
 spectrum = range(step, 2000, step)
 
