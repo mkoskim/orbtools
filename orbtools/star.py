@@ -8,10 +8,10 @@ from orbtools import *
 
 #-------------------------------------------------------------------------------
 #
-# Stars: 
+# Stars:
 # GM = mass
 # L  = Luminosity relative to Sun
-# 
+#
 #-------------------------------------------------------------------------------
 
 stars = {}
@@ -39,14 +39,14 @@ class Star(Mass):
             self.dist = None
         else:
             self.dist = ly2m(dist)
-        
+
         stars[name] = self
-        
+
     #--------------------------------------------------------------------------
-    # Flux at given distance, relative to flux received by Earth:
+    # Radiation at given distance, relative to flux received by Earth:
     #--------------------------------------------------------------------------
-    
-    def flux(self, distance = AU2m(1.0)):
+
+    def radiation(self, distance = AU2m(1.0)):
         return self.L / (m2AU(distance) ** 2)
 
     #--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ class Star(Mass):
 
     def HZ(self, flux = 1.0):
         return AU2m(sqrt(self.L / flux))
-        
+
     def orbitByFlux(self, flux = 1.0):
         return Orbit(self, self.HZ(flux))
 
@@ -75,17 +75,17 @@ class Star(Mass):
             k, a = 1.4, 3.5
         else:
             k, a = 32e3, 1.0
-        
+
         return k * (MxSun ** a)
 
     #--------------------------------------------------------------------------
     # Lifetime approx
     #--------------------------------------------------------------------------
-    
+
     @staticmethod
     def TMS(MxSun):
         return TasYears(1e10 * (MxSun ** -2.5))
-    
+
     #---------------------------------------------------------------------------
     # MRR, Mass-Radius Relation.
     # Radius approxmation from star mass (as Sun mass)
@@ -95,13 +95,13 @@ class Star(Mass):
 #-------------------------------------------------------------------------------
 #
 # Black Body Radiation
-# 
+#
 #-------------------------------------------------------------------------------
 
 def blackbody(T, wavelength):
     #a = 2 * const_h * (const_c ** 2) / (wavelength ** 5)
     a = 8 * pi * const_h * const_c / (wavelength ** 5)
     b = const_h * const_c / (wavelength * const_kb * T)
-    
+
     return a / (exp(b) - 1)
 
