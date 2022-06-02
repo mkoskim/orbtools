@@ -26,7 +26,7 @@ class Burn(object):
             self.dv = abs(orbTo.v_initial - orbFrom.v_initial)
         else:
             self.dv = abs(orbTo.v_final - orbFrom.v_final)
-        
+
         self.dt = orbTo.T_to_target * orbTo.P
         self.name = name
         self.orbit = orbTo
@@ -62,14 +62,14 @@ class EnterSystem(object):
             Inf, v_inf,
             orbTo.r_initial, None
         )
-        #print "Enter: v_fin: %s, v_body.: %s" % (fmteng(v_final, "m/s"), fmteng(v_body, "m/s"))            
+        #print "Enter: v_fin: %s, v_body.: %s" % (fmteng(v_final, "m/s"), fmteng(v_body, "m/s"))
         #print "Enter: v_inf: %s, v_enter: %s" % (fmteng(v_inf, "m/s"), fmteng(v_enter, "m/s"))
 
         self.dv = abs(v_enter - abs(orbTo.v(0)))
         self.dt = 0
         self.name = name
         self.orbit = orbTo
-	
+
 #------------------------------------------------------------------------------
 # Escape from system to orbit its central mass
 #------------------------------------------------------------------------------
@@ -80,10 +80,10 @@ class ExitSystem(object):
         newcenter = orbit.center.orbit.center
 
         exit_orbit = Trajectory(
-                newcenter,
-                oldcenter.orbit.a,
-                target_r,
-                r1, r2
+            newcenter,
+            oldcenter.orbit.a,
+            target_r,
+            r1, r2
         )
         v_inf  = abs(exit_orbit.v_initial.length - oldcenter.orbit.v_initial.length)
         v_exit = solve_rvrv(
@@ -117,7 +117,7 @@ class Initial(object):
 ###############################################################################
 
 class Mission(object):
-    
+
     def __init__(self, name, initial_orbit):
         self.name = name
         self.burns = [ Initial(initial_orbit) ]
@@ -132,7 +132,7 @@ class Mission(object):
 
     def lift(self, name, to_orbit):
         self.burn(name, to_orbit.a)
-    
+
     def transfer(self, name, to_orbit):
         self.lift(name + "/1", to_orbit)
         self.park(name + "/2", to_orbit)
@@ -152,10 +152,10 @@ class Mission(object):
 
     @property
     def orbit(self): return self.burns[-1].orbit
-    
+
     @property
     def dt(self): return sum(map(lambda b: b.dt, self.burns))
-                    
+
     @property
     def dv(self): return sum(map(lambda b: b.dv, self.burns[1:]))
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ###############################################################################
 #
 # Air breathing engines (e.g. Sabre/Skylon)
@@ -20,7 +21,7 @@ def engine_info(engine):
         fmteng(engine.flow * 1000, "g/s"),
         fmteng(engine.F, "N"),
     )
-    
+
     for R in [1, 2, 5, 10]:
         print("   k=%.1f: %s" % (log(R+1), fmteng(engine.dv(1.0, R), "m/s")))
 

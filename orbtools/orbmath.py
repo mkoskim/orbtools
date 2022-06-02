@@ -465,7 +465,7 @@ class Orbit(object):
 
     def v(self, t = 0):
         h = 1/self.P
-        return (self.xy(t+h) - self.xy(t-h)) / 2.0
+        return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0)
 
     #--------------------------------------------------------------------------
     # Orbital distance / angle at given moment t = [0 ... 1]
