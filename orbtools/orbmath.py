@@ -181,6 +181,27 @@ class Mass(object):
     def altitude(self, a): return self.radius + float(a)
 
     #--------------------------------------------------------------------------
+    # Orbital parameters
+    #--------------------------------------------------------------------------
+
+    @property
+    def center(self):
+        if not self.orbit: return None
+        return self.orbit.center
+
+    @property
+    def a(self):
+        return self.orbit and self.orbit.a or None
+
+    @property
+    def v(self):
+        return self.orbit and self.orbit.v or None
+
+    @property
+    def P(self):
+        return self.orbit and self.orbit.P or None
+
+    #--------------------------------------------------------------------------
     # Finding satellites
     #--------------------------------------------------------------------------
 
@@ -207,11 +228,6 @@ class Mass(object):
     #--------------------------------------------------------------------------
     # Radiation flux from star
     #--------------------------------------------------------------------------
-
-    @property
-    def center(self):
-        if not self.orbit: return None
-        return self.orbit.center
 
     @property
     def flux(self):
@@ -242,17 +258,16 @@ class Mass(object):
                 print("Escape velocity...: %s" % fmteng(self.v_escape(), "m/s"))
             print("Rotating period...: %s" % fmttime(self.rotate))
         if self.orbit:
-            print("Orbits............:", self.orbit.center.name)
-            print("   Distance.......:", fmtdist(self.orbit.a))
-            print("   Period.........:", fmttime(self.orbit.P))
-            print("   L1/L2 distance.:", fmtdist(self.Lagrangian()))
-            print("   Hill Sphere....:", fmtdist(self.HillSphere()))
-            print("   SOI............:", fmtdist(self.SOI()))
-            if hasattr(self.orbit.center, "L"):
-                print("   Flux...........: %.3f x Earth (%s)" % (
-                    self.flux,
-                    fmteng(self.flux * const_solar, "W/m2"),
-                ))
+            print("Orbits............:", self.center.name)
+            print("   Distance.......:", fmtdist(self.a))
+            print("   Period.........:", fmttime(self.P))
+            print("   Flux...........: %.3f x Earth (%s)" % (
+                self.flux,
+                fmteng(self.flux * const_solar, "W/m2"),
+            ))
+            #print("   L1/L2 distance.:", fmtdist(self.Lagrangian()))
+            #print("   Hill Sphere....:", fmtdist(self.HillSphere()))
+            #print("   SOI............:", fmtdist(self.SOI()))
         s = self.satellites()
         if len(s):
             print("Satellites........:")
@@ -265,7 +280,6 @@ class Mass(object):
                     fmttime(satellite.orbit.P),
                     hasattr(self, "L") and ("%7.3f" % satellite.flux) or "",
                 ))
-
 
 ################################################################################
 #
@@ -353,7 +367,7 @@ class Vec2d:
 
 def pos_xy(r1, r2, T):
 
-    if r1 > r2: T = T + 0.5
+    #if r1 > r2: T = T + 0.5
     T = T % 1.0
 
     e  = eccentricity(r1, r2)
@@ -372,7 +386,8 @@ def pos_xy(r1, r2, T):
         b*sin(E)
     )
 
-    return (r1 > r2) and -p or p
+    #return (r1 > r2) and -p or p
+    return p
 
 ################################################################################
 #
@@ -382,25 +397,26 @@ def pos_xy(r1, r2, T):
 
 class Orbit(object):
 
-    def __init__(self, center, r1, r2 = None):
+    def __init__(self, center, r1, r2 = None, arg=0.0):
         r2 = r2 == None and r1 or r2
         assert r1 > 0
         assert r2 > 0
         center = Mass.resolve(center)
         assert not center.isMassless, "Cannot orbit massless particle."
         self.center = center
-        self.r1 = float(r1)
-        self.r2 = float(r2)
+        self.r1  = float(min(r1, r2))   # Periapsis
+        self.r2  = float(max(r1, r2))   # Apoapsis
+        self.arg = arg                  # Argument of periapsis
 
     #--------------------------------------------------------------------------
     # Basic properties
     #--------------------------------------------------------------------------
 
     @property
-    def periapsis(self): return min(self.r1, self.r2)
+    def periapsis(self): return self.r1
 
     @property
-    def apoapsis(self): return max(self.r1,self.r2)
+    def apoapsis(self): return self.r1
 
     @property
     def diam(self): return self.r1 + self.r2
@@ -421,7 +437,8 @@ class Orbit(object):
     # Position (x,y) or (f,r) at given moment t = [0...1]
     #--------------------------------------------------------------------------
 
-    def xy(self, t = 0): return pos_xy(self.r1, self.r2, t)
+    def xy(self, t = 0):
+        return pos_xy(self.r1, self.r2, t).rotate(self.arg)
 
     #--------------------------------------------------------------------------
     # Orbital distance / angle at given moment t = [0 ... 1]
@@ -492,3 +509,21 @@ def byRV(center, r, v):
     vc = v_circular(center.GM,r)
     a = center.GM/(2*pow(vc,2) - pow(v,2))
     return Orbit(center, r, 2*a - r)
+
+################################################################################
+#
+# Trajectory
+#
+################################################################################
+
+#------------------------------------------------------------------------------
+# Let's think this better this time. Trajectory is path in any orbit. It
+# has its own parameters, like the point where we entered the orbit, and
+# when we leave
+#------------------------------------------------------------------------------
+
+class Trajectory:
+
+    def __init__(self):
+        pass
+

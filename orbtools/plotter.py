@@ -54,10 +54,20 @@ def annotate(txt, x, y, offset = (0, 5)):
 def center(center):
 	annotate(center.name, 0, 0)
 
-def arrowd(x, y, dx, dy, color = None):
-	plt.arrow(x, y, dx, dy,
+def linep(x1, y1, x2, y2, color = None):
+	return plt.plot([x1, x2], [y1, y2],
+		color = color
+	)
+
+def lined(x, y, dx, dy, color = None):
+	return linep(x, y, x + dx, x + dy,
 		color=color,
-		**arrow_args()
+	)
+
+def arrowd(x, y, dx, dy, color = None):
+	return plt.arrow(x, y, dx, dy,
+		color=color,
+		**arrow_args(),
 	)
 
 def arrowp(x1, y1, x2, y2, color = None):
@@ -77,7 +87,7 @@ def travel(orbit, t1, t2, color=None, style=None):
 	x, y = getPath(orbit, t1, t2)
 	ax.plot(x[:-1], y[:-1], color=color, linestyle=style)
 
-	arrowp(x[-2], y[-2], x[-1], y[-1], color)
+	arrowp(x[-2], y[-2], x[-1], y[-1], color=color)
 
 def mark(orbit, t, color=None):
 	p = getXY(orbit, t)
@@ -97,6 +107,14 @@ def speed(orbit, t, scale = 1.0, color=None):
 	arrowd(p.x, p.y, v.x, v.y,
 		color=color
 	)
+
+def pos(orbit, t, color=None):
+	p = getXY(orbit, t)
+	linep(0, 0, p.x, p.y, color=color)
+
+def speedmark(orbit, t, scale=1.0, color=None):
+	mark(orbit, t, color=color)
+	speed(orbit, t, scale=scale, color=color)
 
 #------------------------------------------------------------------------------
 
