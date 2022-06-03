@@ -34,7 +34,9 @@ def fmteng(val, unit):
 #------------------------------------------------------------------------------
 
 def fmtmass(val, unit = "g"):
-    return fmteng(val*1e3, unit)
+    if val < 0.5:
+        return fmteng(val*1e3, unit)
+    return "%.2f k%s" % (val, unit)
 
 #------------------------------------------------------------------------------
 # Distance prints

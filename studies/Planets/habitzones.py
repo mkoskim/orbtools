@@ -93,6 +93,7 @@ def printOut():
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter, AutoMinorLocator)
 
 fig, ax = plt.subplots()  # Create a figure containing a single axes.

@@ -139,7 +139,7 @@ class Engine(object):
         print("- v_e.....:", fmteng(self.ve, "m/s"))
         print("- Thrust..:", fmteng(self.F, "N"))
         print("- Power...:", fmteng(self.P, "W"))
-        print("- Flow....:", fmteng(self.flow, "kg/s"))
+        print("- Flow....:", fmtmass(self.flow))
         print("- Esp.....:", fmteng(self.Esp, "J/kg"))
 
 def Engine_veP(name, ve, P):      return Engine(ve, P = P, name = name)
@@ -157,13 +157,13 @@ def Engine_IspF(name, isp, F):    return Engine(Isp2ve(isp), F = F, name = name)
 
 Engine_IspF("F-1",          304.0,  7_770_000)    # Saturn first stage
 Engine_IspF("J-2",          421.0,  1_033_000)    # Saturn upper stage
-Engine_IspF("RS-25",        452.3,  2_279_000)    # Shuttle main engine
-
+Engine_IspF("RS-25",        452.3,  2_279_000)    # Shuttle main engine (vac)
+Engine_IspF("Vulcain",      431.0,  1_140_000)    # Ariane 5 main engine (vac)
 Engine_IspF("SSSRB",        268.0, 14_000_000)    # Shuttle solid rocket booster (PBAN/APCP)
 
 Engine_IspF("Merlin 1C",    336.0,    413_644)     # SpaceX Falcon 1, 9 (vac)
 Engine_IspF("Merlin 1D",    348.0,    934_000)     # SpaceX Falcon 9 v1.1 (vac)
-Engine_IspF("Raptor",       382.0,  3_500_000)     # SpaceX Raptor (vac)
+Engine_IspF("Raptor",       363.0,  2_300_000)     # SpaceX Raptor 1 (vac)
 
 Engine_IspF("RD-180",       338.4,  4_152_136)     # RP-1 engine
 Engine_IspF("RD-191",       337.0,  2_090_000)     # RP-1 engine
@@ -175,8 +175,12 @@ Engine_IspF("P230",         286.0,  6_472_300)     # Ariane 5 HTPB booster
 # Electric rocket engines
 #------------------------------------------------------------------------------
 
-Engine_IspF("HiPEP",       9620.0, 0.670)       # Ion thruster: 39.3 kW
-Engine_IspF("NSTAR",       3100.0, 0.092)       # Ion thruster:  2.3 kW
+Engine_IspF("HiPEP",       9620.0, 0.670)       # Ion thruster:  39.3 kW
+Engine_IspF("NSTAR",       3100.0, 0.092)       # Ion thruster:   2.3 kW
+Engine_IspF("NEXT",        4170.0, 0.237)       # Ion thruster:   6.9 kW
+Engine_IspF("X3",          2650.0, 5.400)       # Ion thruster: 102.0 kW
+Engine_IspF("MPD",         4665.0, 2.750)       # MPD thruster: 100.0 kW
+
 #Engine_IspF("VASIMR",      5000.0, 5.700)       # VASIMR: 200 kW
 
 #------------------------------------------------------------------------------
