@@ -20,6 +20,7 @@ const_h     = 6.62607015e-34		# Planc constant (Js)
 const_kb    = 1.38064852e-23            # Boltzmann constant (J/K)
 const_NA    = 6.0221409e+23             # Avogadro constant
 const_R     = 8.3144598                 # Gas constant (NA * kb)
+const_eV    = 1.60218e-19               # eV in Joules
 
 #------------------------------------------------------------------------------
 #

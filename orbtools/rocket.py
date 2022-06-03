@@ -34,7 +34,7 @@ class Payload(object):
 
     @property
     def payload(self): return self.mass
-    
+
     @property
     def fuel(self):    return 0
 
@@ -61,7 +61,7 @@ class Stage(object):
     #   fuel = mass - mass / R
     #   fuel = mass * (1 - 1/R)
     #   fuel/(1-1/R) = mass
-    #   
+    #
     # R = (payload + fuel) / payload = mass / payload
     #
     #--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ class Stage(object):
         #----------------------------------------------------------------------
         # dv and ve given, compute masses
         #----------------------------------------------------------------------
-        
+
         if dv != None and engine != None:
             R = engine.R(dv)
             if mass != None:
@@ -104,7 +104,7 @@ class Stage(object):
                 else: payload = mass - fuel
             else:
                 mass = payload + fuel
-            
+
             if dv == None:
                 dv = engine.dv(payload, fuel)
             else:
@@ -120,19 +120,38 @@ class Stage(object):
         self.dv = dv
         self.payload = payload
         self.fuel = fuel
-            
+
+    @property
+    def m_initial(self): return self.mass
+
+    @property
+    def m_final(self): return self.payload
+
+    @property
+    def a_initial(self): return self.engine.F / self.m_initial
+
+    @property
+    def a_final(self): return self.engine.F / self.m_final
+
+    @property
+    def t_burn(self): return self.engine.t(self.fuel)
+
     def show(self):
         print(self.name)
-        print("   ", "Mass.......: %.2f kg" % self.mass)    
-        print("   ", "- Payload..: %.2f kg" % self.payload)
-        print("   ", "- Fuel.....: %.2f kg" % self.fuel)
-        print("   ", "Engine.....: %.2f m/s" % self.engine.ve)
-        print("   ", "DV.........: %.2f m/s" % self.dv)
+        print("   ", "Mass.........: %.2f kg" % self.mass)
+        print("   ", "- Payload....: %.2f kg" % self.payload)
+        print("   ", "- Fuel.......: %.2f kg" % self.fuel)
+        print("   ", "Engine.......: %.2f m/s" % self.engine.ve)
+        print("   ", "DV...........: %.2f m/s" % self.dv)
+        print("   ", "Burn time....: %.2f s" % self.t_burn)
+        print("   ", "Acceleration.:")
+        print("   ", "- Initial....: %.2f g" % (self.a_initial / const_g))
+        print("   ", "- Final......: %.2f g" % (self.a_final / const_g))
         if self.mission != None:
             phase = self.mission
             print("   ", "Mission DV.: %.2f m/s" % phase.dv)
             print("   ", "DV diff....: %.2f m/s" % (self.dv - phase.dv))
-			
+
 ################################################################################
 
 class Rocket(object):
@@ -149,7 +168,7 @@ class Rocket(object):
             self.mission = kw["mission"]
         else:
             self.mission = None
-        
+
         totmass = 0
         for stage in stages:
             if stage.engine:
@@ -167,7 +186,7 @@ class Rocket(object):
                 )
             self.stages.append(solvedstage)
             totmass = totmass + stage.mass
-    
+
     @property
     def payload(self):
         return self.stages[0].payload

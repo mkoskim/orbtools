@@ -28,6 +28,15 @@ def fmteng(val, unit):
     return "---"
 
 #------------------------------------------------------------------------------
+# Mass prints: masses are given as kg's, but formatting is done as grams
+# TODO: Improve! Small masses with fmteng, very large masses as M(earth),
+# M(jupiter) and M(sun)
+#------------------------------------------------------------------------------
+
+def fmtmass(val, unit = "g"):
+    return fmteng(val*1e3, unit)
+
+#------------------------------------------------------------------------------
 # Distance prints
 #------------------------------------------------------------------------------
 

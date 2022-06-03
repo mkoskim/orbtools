@@ -4,6 +4,12 @@ TODO
 
 - Add trajectories for escaping and entering bodies
 
+- Improve mass formatting (fmtmass) - small masses as engineering (g, mg, ug),
+  larger masses as tons, very large masses as M(Earth), M(Jupiter) and
+  M(Sun)
+
+- Improve aliasing (especially fuel & engine aliasing)
+
 - Ease mission setup: Now there is a need to make temporary orbits,
   these could be done internally.
 
