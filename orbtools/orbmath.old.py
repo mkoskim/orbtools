@@ -115,7 +115,7 @@ masses = { }
 
 class Mass(object):
 
-    def __init__(self, name = None, GM = 0, radius = 0, rotate = 0, orbit = None):
+    def __init__(self, name, GM = 0, radius = 0, rotate = 0, orbit = None):
         self.name = name
         self.GM = float(GM)
         self.radius = float(radius)
@@ -124,13 +124,7 @@ class Mass(object):
         else:
             self.rotate = float(rotate)
         self.orbit = orbit
-        if name: masses[name] = self
-
-    @staticmethod
-    def fromGM(GM): return Mass(GM = GM)
-
-    @staticmethod
-    def fromKg(kg): return Mass(GM = kg2GM(kg))
+        masses[name] = self
 
     #--------------------------------------------------------------------------
     #
@@ -382,15 +376,32 @@ def pos_xy(r1, r2, T):
 
 class Orbit(object):
 
-    def __init__(self, center, r1, r2 = None):
-        r2 = r2 == None and r1 or r2
-        assert r1 > 0
-        assert r2 > 0
+    #--------------------------------------------------------------------------
+    #
+    # Orbit elements:
+    #
+    #   r1  = distance at T0
+    #   r2  = distance at T0 + 0.5
+    #   T0  = T at r1
+    #   arg = angle of r1
+    #
+    #--------------------------------------------------------------------------
+
+    def __init__(self, center, r1, r2 = None, T0 = 0, arg = 0):
+        self.set(center, r1, r2, T0, arg)
+
+    def set(self, center, r1, r2, T0, arg):
+        r2 = (r2 == None) and float(r1) or float(r2)
+        assert(r1 > 0)
+        assert(r2 > 0)
         center = Mass.resolve(center)
-        assert not center.isMassless, "Cannot orbit massless particle."
+        if center.isMassless:
+            raise Exception("Cannot orbit massless particle.")
         self.center = center
         self.r1 = float(r1)
-        self.r2 = float(r2)
+        self.r2 = r2
+        self.T0 = T0
+        self.arg = arg
 
     #--------------------------------------------------------------------------
     # Basic properties
@@ -418,26 +429,35 @@ class Orbit(object):
     def P(self): return P_orbit(self.center.GM, self.a)
 
     #--------------------------------------------------------------------------
+    # Initial and final altitudes and speeds, for mission building
+    #--------------------------------------------------------------------------
+
+    @property
+    def r_initial(self): return self.r(0.0)
+
+    @property
+    def r_final(self): return self.r(0.5)
+
+    @property
+    def v_initial(self): return self.v(0)
+
+    @property
+    def v_final(self): return self.v(0.5)
+
+    def altitude(self, t = 0): return self.r(t) - self.center.radius
+
+    @property
+    def alt_initial(self): return self.altitude(0.0)
+
+    @property
+    def alt_final(self): return self.altitude(0.5)
+
+    #--------------------------------------------------------------------------
     # Position (x,y) or (f,r) at given moment t = [0...1]
     #--------------------------------------------------------------------------
 
-    def xy(self, t = 0): return pos_xy(self.r1, self.r2, t)
-
-    #--------------------------------------------------------------------------
-    # Orbital distance / angle at given moment t = [0 ... 1]
-    #--------------------------------------------------------------------------
-
+    def xy(self, t = 0): return pos_xy(self.r1, self.r2, t - self.T0).rotate(self.arg)
     def fr(self, t = 0): return self.xy(t).fr
-
-    def r(self, t = 0):
-            f, r = self.fr(t)
-            return r
-
-    def f(self, t = 0):
-            f, r = self.fr(t)
-            return f
-
-    def altitude(self, t = 0): return self.r(t) - self.center.radius
 
     #--------------------------------------------------------------------------
     # Orbital velocity vector at given moment t = [0 ... 1]
@@ -447,13 +467,172 @@ class Orbit(object):
         h = 1/self.P
         return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0)
 
+    #--------------------------------------------------------------------------
+    # Orbital distance / angle at given moment t = [0 ... 1]
+    #--------------------------------------------------------------------------
+
+    def r(self, t = 0):
+            f, r = self.fr(t)
+            return r
+
+    def f(self, t = 0):
+            f, r = self.fr(t)
+            return f
+
+    #--------------------------------------------------------------------------
+
+    def isReachable(self, r): return r >= self.periapsis and r <= self.apoapsis
+
+    @property
+    def isCircular(self): return abs(self.r1 - self.r2) < 1e-6 * self.r1
+
+    @property
+    def isUpwards(self): return self.r1 < self.r2
+
+    #--------------------------------------------------------------------------
+    # Solve T at given distance
+    #--------------------------------------------------------------------------
+
+    def time(self, dist):
+        dist = float(dist)
+
+        if not self.isReachable(dist):
+            raise Exception("Distance out of orbit parameters.")
+
+        if self.isCircular: return 0
+
+        #----------------------------------------------------------------------
+        # If orbit is upwards, distance increases from 0 ... 0.5
+        # If orbit is downwards, distance decreases from 0 ... 0.5
+        #----------------------------------------------------------------------
+
+        if self.isUpwards:
+            low, high = 0, 0.5
+            while abs(low-high) > (1/self.P):
+                mid = (low + high)/2
+                if self.r(mid) > dist:
+                        high = mid
+                else:
+                        low = mid
+        else:
+            low, high = 0, 0.5
+            while abs(low-high) > (1/self.P):
+                mid = (low + high)/2
+                if self.r(mid) > dist:
+                        low = mid
+                else:
+                        high = mid
+
+        return (low + high)/2
+
+    #--------------------------------------------------------------------------
+    # Orbital velocity vector at given distance r
+    #--------------------------------------------------------------------------
+
+    def v_by_dist(self, r):
+        return self.v(self.time(r))
+
+    #--------------------------------------------------------------------------
+    # Velocity difference between ellipse and circular orbit at given altitude
+    #--------------------------------------------------------------------------
+
+    def dv_circular(self, r):
+        t = self.time(r)
+        p = self.xy(t)
+        v_circ = Vec2d(-p.y, p.x).normalized() * v_circular(self.center.GM, r)
+        return self.v(t) - v_circ
+
+    #--------------------------------------------------------------------------
+    # Mean angular velocity
+    #--------------------------------------------------------------------------
+
+    def w(self): return 360.0/self.P()
+
+    #--------------------------------------------------------------------------
+    # This is used by Trajectory class below
+    #--------------------------------------------------------------------------
+
+    @property
+    def T_to_target(self):
+        if self.isCircular: return 0.0
+        return 0.5
+
+################################################################################
+#
+# Helper functions to create orbits
+#
+################################################################################
+
+#------------------------------------------------------------------------------
+# Surface "orbit", to simplify landings & takeoffs
+#------------------------------------------------------------------------------
+
+class Surface(object):
+    def __init__(self, center):
+        center = Mass.resolve(center)
+        self.center = center
+
+    #--------------------------------------------------------------------------
+
+    @property
+    def P(self): return self.center.rotate
+
+    @property
+    def a(self): return self.center.radius
+
+    #--------------------------------------------------------------------------
+
+    def r(self, t = 0.0): return self.a
+
+    def xy(self, t = 0.0):
+        return Vec2d(
+            cos(2*pi*t),
+            sin(2*pi*t)
+        ) * self.center.radius
+
+    def v(self, t = 0.0):
+        if self.center.rotate:
+            w = 2*pi/self.center.rotate
+            return Vec2d(
+                cos(2*pi*t),
+                sin(2*pi*t)
+            ).rotate(90) * w * self.center.radius
+        else:
+            return Vec2d(0, 0)
+
+    #--------------------------------------------------------------------------
+
+    @property
+    def r_initial(self): return self.r(0.0)
+
+    @property
+    def r_final(self): return self.r(0.5)
+
+    @property
+    def v_initial(self): return self.v(0)
+
+    @property
+    def v_final(self): return self.v(0.5)
+
+    def altitude(self, t = 0): return self.r(t) - self.center.radius
+
+    @property
+    def alt_initial(self): return self.altitude(0.0)
+
+    @property
+    def alt_final(self): return self.altitude(0.5)
+
+    #--------------------------------------------------------------------------
+
+    @property
+    def T_to_target(self): return 0.0
+
 #------------------------------------------------------------------------------
 # Creating orbit from altitudes (adding central body radius)
 #------------------------------------------------------------------------------
 
-def byAltitude(center, r1, r2 = None):
+def Altitude(center, r1, r2 = None):
     center = Mass.resolve(center)
-
     if r2 == None:
         return Orbit(center, center.radius + r1)
     else:
@@ -463,9 +642,8 @@ def byAltitude(center, r1, r2 = None):
 # Creating orbit with given period
 #------------------------------------------------------------------------------
 
-def byPeriod(center, P, r1 = None):
+def Period(center, P, r1 = None):
     center = Mass.resolve(center)
-
     a = a_from_P(center.GM,P)
     if r1 == None:
         r1 = r2 = a
@@ -477,18 +655,175 @@ def byPeriod(center, P, r1 = None):
 # Creating orbit with given eccentricity
 #------------------------------------------------------------------------------
 
-def byEccentricity(center, a, e):
+def Eccentric(center, a, e):
     return Orbit(center, a*(1-e), a*(1+e))
 
 #------------------------------------------------------------------------------
 # Creating orbit with given distance and orbital speed at that distance
 #------------------------------------------------------------------------------
 
-def byRV(center, r, v):
+def OrbitRV(center, r, v):
     center = Mass.resolve(center)
 
-    assert v < center.v_escape(r), "Apoapsis = infinite"
+    if(v >= v_escape(center.GM,r)):
+        raise Exception("Apoapsis = infinite.")
 
     vc = v_circular(center.GM,r)
     a = center.GM/(2*pow(vc,2) - pow(v,2))
     return Orbit(center, r, 2*a - r)
+
+################################################################################
+#
+# Trajectory is an arc of an ellipse (r1, r2), from altitude r3 to r4.
+#
+#   r3 = transfer initial altitude
+#   r4 = transfer final altitude
+#
+#   r1 = ellipse periapsis (or apoapsis downwards)
+#   r2 = ellipse apoapsis  (or periapsis downwards)
+#
+# Most often, you use Hohmann trajectories, where r3=r1 and r4=r2. But if you
+# want to try faster transfers, you have an option to either lower periapsis,
+# or raise apoapsis.
+#
+################################################################################
+
+class Trajectory(Orbit):
+
+    def __init__(self, center, r3, r4, r1 = None, r2 = None, T0 = 0, arg = 0):
+        if r1 == None: r1 = r3
+        if r2 == None: r2 = r4
+        self.set(center, r1, r2, T0, arg)
+        self.r3 = r3
+        self.r4 = r4
+
+    #--------------------------------------------------------------------------
+    # Initial and final altitudes, for mission building
+    #--------------------------------------------------------------------------
+
+    @property
+    def r_initial(self): return self.r3
+
+    @property
+    def r_final(self): return self.r4
+
+    @property
+    def v_initial(self): return self.v(self.time(self.r3))
+
+    @property
+    def v_final(self): return self.v(self.time(self.r4))
+
+    #--------------------------------------------------------------------------
+    # Solve time to reach final altitude from initial altitude: Time is
+    # relative [0 ... 1] to trajectory period.
+    #--------------------------------------------------------------------------
+
+    @property
+    def T_initial(self): return self.time(self.r3)
+
+    @property
+    def T_final(self): return self.time(self.r4)
+
+    @property
+    def T_to_target(self): return self.T_final - self.T_initial
+
+    ###########################################################################
+    #
+    # Launch window calculations
+    #
+    ###########################################################################
+
+    #--------------------------------------------------------------------------
+    # Difference of angular speeds (degrees) at initial and final altitude
+    #--------------------------------------------------------------------------
+
+    @property
+    def w_diff(self):  return w_diff(self.center.GM, self.r3, self.r4)
+
+    #--------------------------------------------------------------------------
+    # Period of launch window, based on initial and final altitudes
+    #--------------------------------------------------------------------------
+
+    @property
+    def P_window(self): return P_window(self.center.GM, self.r3, self.r4)
+
+    #--------------------------------------------------------------------------
+    # Launch angles (r3 -> r4 and vice versa), so that planet at r3 is at
+    # 0 degrees. Seems to be correct according to:
+    #
+    #	http://www-istp.gsfc.nasa.gov/stargaze/Smars3.htm
+    #
+    #--------------------------------------------------------------------------
+
+    def launch_angle_up(self):
+            w_r3 = self.P / P_orbit(self.center.GM, self.r3)
+            w_r4 = self.P / P_orbit(self.center.GM, self.r4)
+
+            t_arrival = self.time(self.r4)			# Time to arrival
+            t_departure = self.time(self.r3)		# Time to departure
+            t_travel = t_arrival - t_departure		# Traveling time
+
+            f_arrival   = self.f(t_arrival)			# Angle at arrival
+            f_departure = self.f(t_departure)		# Angle at departure
+
+            f_r3_at_departure = f_departure
+            f_r4_at_departure = f_arrival - 360*w_r4*t_travel
+
+            return -(f_r4_at_departure - f_r3_at_departure)
+
+    def launch_angle_down(self):
+            w_r3 = self.P / P_orbit(self.center.GM, self.r3)
+            w_r4 = self.P / P_orbit(self.center.GM, self.r4)
+
+            t_arrival   = 1.0 - self.time(self.r3)	# Time to arrival
+            t_departure = 1.0 - self.time(self.r4)	# Time to departure
+            t_travel = t_arrival - t_departure		# Traveling time
+
+            f_departure = self.f(t_departure)		# Angle at departure
+            f_arrival   = self.f(t_arrival)			# Angle at arrival
+
+            f_r3_at_departure = f_arrival - 360*w_r3*t_travel
+            f_r4_at_departure = f_departure
+
+            return -(f_r4_at_departure - f_r3_at_departure)
+
+    def launch_angle(self): return self.launch_angle_up()
+
+    ###########################################################################
+    #
+    # Delta-v required to enter and exit to trajectory
+    #
+    ###########################################################################
+
+    @property
+    def dv_enter(self): return abs(self.dv_circular(self.r3))
+
+    @property
+    def dv_exit(self):  return abs(self.dv_circular(self.r4))
+
+    @property
+    def dv_total(self): return self.dv_enter + self.dv_exit
+
+    #--------------------------------------------------------------------------
+    # Computational dv for Hohmann transfer (r3 - r4)
+    #--------------------------------------------------------------------------
+
+    @property
+    def hohmann_P(self):
+        a = solve_a(self.r3, self.r4)
+        return P_orbit(self.center.GM, a) / 2
+
+    @property
+    def hohmann_dv_enter(self):
+        a = solve_a(self.r3, self.r4)
+        return abs(v_elliptical(self.center.GM, a, self.r3) - v_circular(self.center.GM, self.r3))
+
+    @property
+    def hohmann_dv_exit(self):
+        a = solve_a(self.r3, self.r4)
+        return abs(v_elliptical(self.center.GM, a, self.r4) - v_circular(self.center.GM, self.r4))
+
+    @property
+    def hohmann_dv_total(self):
+        return self.hohmann_dv_enter + self.hohmann_dv_exit
+

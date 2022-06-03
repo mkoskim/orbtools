@@ -13,22 +13,22 @@ from orbtools.systems.stars import *
 #
 ################################################################################
 
-Mercury = Mass("Mercury",   GM_Mercury,	    2440e3,     TasDays(58.6),          Orbit(	"Sun",	57910e6))
-Venus   = Mass("Venus",     GM_Venus,	    6052e3,     TasDays(-243),          Orbit(	"Sun",	108200e6))
-Earth   = Mass("Earth",     GM_Earth,	    r_Earth,    TasDHMS(0, 23, 56, 0),  Orbit(	"Sun",	AU2m(1)))
-Mars    = Mass("Mars",      GM_Mars,	    3397e3,     TasDays(1.03),          Orbit(	"Sun",	227940e6))
-Jupiter = Mass("Jupiter",   GM_Jupiter,	    71492e3,    TasDays(0.41),          Orbit(	"Sun",	778330e6))
-Saturn  = Mass("Saturn",    GM_Saturnus,    60268e3,    TasDays(0.45),          Orbit(	"Sun",	1429400e6))
-Uranus  = Mass("Uranus",    GM_Uranus,	    25559e3,    TasDays(-0.72),         Orbit(	"Sun",	2870990e6))
-Neptune = Mass("Neptune",   GM_Neptunus,    24766e3,    TasDays(0.67),          Orbit(	"Sun",	4504300e6))
-Pluto   = Mass("Pluto",	    kg2GM(1.3E+22), 1150e3,     TasDays(-6.39),         Orbit(	"Sun",	5913520e6))
+Mercury = Mass("Mercury",   GM_Mercury,	    2440e3,     TasDays(58.6),          Orbit("Sun",	57910e6))
+Venus   = Mass("Venus",     GM_Venus,	    6052e3,     TasDays(-243),          Orbit("Sun",	108200e6))
+Earth   = Mass("Earth",     GM_Earth,	    r_Earth,    TasDHMS(0, 23, 56, 0),  Orbit("Sun",	AU2m(1)))
+Mars    = Mass("Mars",      GM_Mars,	    3397e3,     TasDays(1.03),          Orbit("Sun",	227940e6))
+Jupiter = Mass("Jupiter",   GM_Jupiter,	    71492e3,    TasDays(0.41),          Orbit("Sun",	778330e6))
+Saturn  = Mass("Saturn",    GM_Saturnus,    60268e3,    TasDays(0.45),          Orbit("Sun",	1429400e6))
+Uranus  = Mass("Uranus",    GM_Uranus,	    25559e3,    TasDays(-0.72),         Orbit("Sun",	2870990e6))
+Neptune = Mass("Neptune",   GM_Neptunus,    24766e3,    TasDays(0.67),          Orbit("Sun",	4504300e6))
+Pluto   = Mass("Pluto",	    kg2GM(1.3E+22), 1150e3,     TasDays(-6.39),         Orbit("Sun",	5913520e6))
 
 #-------------------------------------------------------------------------------
 # Fictional masses
 #-------------------------------------------------------------------------------
 
-Mass("SuperEarth", GM_Earth*2, Mass.rFromV(GM2kg(GM_Earth*2) / Earth.density), 0)
-Mass("GiantEarth", GM_Earth*4, Mass.rFromV(GM2kg(GM_Earth*4) / Earth.density), 0)
+#Mass("SuperEarth", GM_Earth*2, Mass.rFromV(GM2kg(GM_Earth*2) / Earth.density), 0)
+#Mass("GiantEarth", GM_Earth*4, Mass.rFromV(GM2kg(GM_Earth*4) / Earth.density), 0)
 
 #-------------------------------------------------------------------------------
 # Earth satellites and orbits
@@ -36,19 +36,19 @@ Mass("GiantEarth", GM_Earth*4, Mass.rFromV(GM2kg(GM_Earth*4) / Earth.density), 0
 
 Moon = Mass("Moon", kg2GM(7.4E+22), 1738e3, "S", Orbit("Earth", 384.399e6))
 
-Mass("LEO",        0, 0, 0, Altitude("Earth", +150e3))
-Mass("ISS",        0, 0, 0, Altitude("Earth", +368e3))
-Mass("Hubble",     0, 0, 0, Altitude("Earth", +573e3))
-Mass("Earth300km", 0, 0, 0, Altitude("Earth", +300e3))
-Mass("GEO",        0, 0, 0, Period  ("Earth", Earth.rotate))
+Mass("LEO",        0, 0, 0, byAltitude("Earth", +150e3))
+Mass("ISS",        0, 0, 0, byAltitude("Earth", +368e3))
+Mass("Hubble",     0, 0, 0, byAltitude("Earth", +573e3))
+#Mass("Earth300km", 0, 0, 0, Altitude("Earth", +300e3))
+Mass("GEO",        0, 0, 0, byPeriod  ("Earth", Earth.rotate))
 
 #-------------------------------------------------------------------------------
 # Mars satellites
 #-------------------------------------------------------------------------------
 
-Mass("Mars1000km", 0, 0, 0, Altitude("Mars", +1000e3))
-Mass("Phobos",	kg2GM(1.1E+16),	11e3,	"S",	Orbit(	"Mars",	9e6))
-Mass("Deimos",	kg2GM(1.8E+15),	6e3,	"S",	Orbit(	"Mars",	23e6))
+#Mass("Mars1000km", 0, 0, 0, Altitude("Mars", +1000e3))
+Mass("Phobos",	kg2GM(1.1E+16),	11e3,	"S",	Orbit("Mars",	9e6))
+Mass("Deimos",	kg2GM(1.8E+15),	6e3,	"S",	Orbit("Mars",	23e6))
 
 #-------------------------------------------------------------------------------
 # Asteroid belt objects
@@ -172,4 +172,3 @@ Mass("Nereid",	    0,	170e3,	0,	Orbit(	"Neptune",	5513e6))
 Mass("Charon",	    kg2GM(1.5E+21),	603e3,	"S",	Orbit(	"Pluto",	20e6))
 Mass("Nix",	        kg2GM(2.0E+18),	23e3,	0,	Orbit(	"Pluto",	49e6))
 Mass("Hydra",	    kg2GM(2.0E+18),	30e3,	0,	Orbit(	"Pluto",	65e6))
-

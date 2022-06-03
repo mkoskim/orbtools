@@ -1,30 +1,104 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# Support for data plotting (GNUplot)
+# Orbit plotter
 #
 ###############################################################################
 
-import string
 from orbtools.misc import *
+from math import *
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots()
 
 #------------------------------------------------------------------------------
-# Dump data (two-dimensional list of values) to a file for plotting
-#------------------------------------------------------------------------------
 
-def dumpdata(filename, data, separator = " "):
-	f = open(filename, "w")
-	for record in data:
-		print>>f, string.join(map(lambda d: str(d), record), separator)
-	f.close()
+ax.set_aspect('equal')
+ax.scatter([0], [0])
 
 #------------------------------------------------------------------------------
-# Plot data files
+
+rot = -90
+
 #------------------------------------------------------------------------------
 
-def plot(directory, cmdfile):
-	system("cd %s; gnuplot %s" % (directory, cmdfile))
+scaling = 0
 
-#def plotPNG(directory, cmdfile):
-#	system("cd %s; gnuplot %s" % (directory, cmdfile))
+def arrow_args(): return {
+	"length_includes_head": True,
+	"head_length": scaling * 0.075,
+	"head_width":  scaling * 0.1 * 0.5,
+}
 
+#------------------------------------------------------------------------------
+
+def getXY(orbit, t):
+	return orbit.xy(t).rotate(rot)
+
+def getV(orbit, t):
+	return orbit.v(t).rotate(rot)
+
+def getPath(orbit, t1=0.0, t2=1.0):
+	xy = [getXY(orbit, t) for t in np.linspace(t1, t2, 50, endpoint=True)]
+	x  = [p.x for p in xy]
+	y  = [p.y for p in xy]
+	return x, y
+
+#------------------------------------------------------------------------------
+
+def annotate(txt, x, y, offset = (0, 5)):
+	ax.annotate(txt, xy=(x, y), xytext=offset, textcoords="offset points")
+
+def center(center):
+	annotate(center.name, 0, 0)
+
+def arrowd(x, y, dx, dy, color = None):
+	plt.arrow(x, y, dx, dy,
+		color=color,
+		**arrow_args()
+	)
+
+def arrowp(x1, y1, x2, y2, color = None):
+	return arrowd(x1, y1, x2 - x1, y2 - y1,
+		color = color
+	)
+
+#------------------------------------------------------------------------------
+
+def orbit(orbit, color="grey", style="dashed", width=1):
+	global scaling
+	scaling = max(scaling, orbit.a)
+	x, y = getPath(orbit)
+	ax.plot(x, y, color = color, linestyle = style, linewidth = width)
+
+def travel(orbit, t1, t2, color=None, style=None):
+	x, y = getPath(orbit, t1, t2)
+	ax.plot(x[:-1], y[:-1], color=color, linestyle=style)
+
+	arrowp(x[-2], y[-2], x[-1], y[-1], color)
+
+def mark(orbit, t, color=None):
+	p = getXY(orbit, t)
+	ax.scatter(p.x, p.y,
+		color=color
+	)
+
+def event(orbit, t, txt, offset=(0, 5)):
+	p = getXY(orbit, t)
+	#ax.scatter(p.x, p.y)
+	annotate(txt, p.x, p.y, offset)
+
+def speed(orbit, t, scale = 1.0, color=None):
+	p = getXY(orbit, t)
+	v = getV(orbit, t) * scale
+
+	arrowd(p.x, p.y, v.x, v.y,
+		color=color
+	)
+
+#------------------------------------------------------------------------------
+
+def show():
+	plt.show()

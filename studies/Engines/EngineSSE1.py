@@ -28,7 +28,7 @@ ve = solve_rocket_eq(m_tot, m_ship, dv, None)
 ship = Stage("Learspace",
     payload=m_ship,
     fuel=m_propellant,
-    engine = Engine(name="SSE-1", ve = ve, F = F)
+    engine = Engine.veF("SSE-1", ve, F)
 )
 
 #print(ship.a_initial)
