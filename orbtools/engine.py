@@ -21,33 +21,6 @@ def solve_rocket_eq(M0, M1, dv, ve):
     return dv / Rm(M0, M1)
 
 #-------------------------------------------------------------------------------
-# Energy equations
-#-------------------------------------------------------------------------------
-
-def solve_Emv(E, m, v = None):
-    if m == None: return E/(0.5*(v**2))
-    if v == None: return sqrt(2 * E/m)
-    return 0.5*m*(v**2)
-
-def solve_Emc(E, m):
-    if m == None: return E/(const_c**2)
-    return m*(const_c**2)
-
-#-------------------------------------------------------------------------------
-# Power and Force equations
-#-------------------------------------------------------------------------------
-
-def solve_Fma(F, m, a):
-    if F == None: return m * a
-    if m == None: return float(F) / a
-    return float(F) / m
-
-def solve_PFve(P, F, ve):
-    if P == None: return F * (0.5 * ve)
-    if F == None: return P / (0.5 * ve) # = flow * ve
-    return 2.0 * P/F
-
-#-------------------------------------------------------------------------------
 # Temperature equations:
 # T = temperature (Kelvin)
 # M = Molar mass (g/mol)

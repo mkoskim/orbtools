@@ -464,6 +464,17 @@ class Orbit(object):
         h = 1/self.P
         return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0)
 
+    #--------------------------------------------------------------------------
+    # Energy
+    #--------------------------------------------------------------------------
+
+    def Epot(self, t = 0): return -self.center.GM/self.r(t)
+
+    def Ekin(self, t = 0): return 0.5 * abs(self.v(t)) ** 2
+
+    def E(self, t = 0): return self.Ekin(t) + self.Epot(t)
+
+
 #------------------------------------------------------------------------------
 # Creating orbit from altitudes (adding central body radius)
 #------------------------------------------------------------------------------

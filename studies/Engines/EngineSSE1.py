@@ -55,6 +55,7 @@ def SSE1_fuel(fuel):
 
 for fuel in selected:
     print("%10s Esp=%6.2f TJ/kg" %(fuel.name, fuel.E * 1e-12))
+    #print("%10s Esp=%6.2f MJ/kg" %(fuel.name, fuel.E * 1e-6))
     #fuel.show()
     #SSE1_fuel(fuel)
 

@@ -22,7 +22,7 @@ C = Orbit(Earth, A.a, B.a)
 
 #------------------------------------------------------------------------------
 
-def plot1():
+def plot():
     plotter.orbit(A)
     plotter.orbit(B)
     plotter.orbit(C)
@@ -35,11 +35,42 @@ def plot1():
     plotter.event(C, 0.5, "A")
     plotter.travel(B, 0.50, 0.83, color="green")
 
-#plot1()
+#plot()
 
 #------------------------------------------------------------------------------
 
-def plot2():
+def plot():
+
+    #def speedmark(orbit, t, color):
+    #    plotter.mark(orbit, t, color=color)
+    #    plotter.speed(orbit, t, scale = 500, color=color)
+
+    plotter.orbit(C)
+
+    plotter.event(C, 0.0, "Periapsis", offset = (-50, -10))
+    plotter.event(C, 0.5, "Apoapsis", offset=(15, 0))
+
+    plotter.speedmark(C, 0.00, color="green", scale=500)
+    plotter.speedmark(C, 0.25, color="green", scale=500)
+    plotter.speedmark(C, 0.50, color="green", scale=500)
+    plotter.speedmark(C, 0.85, color="green", scale=500)
+
+    plotter.pos(C, 0.00, color="red")
+    plotter.pos(C, 0.50, color="green")
+    plotter.slice(C, -0.03 - 0.05, -0.03, color="lightgrey")
+    plotter.slice(C, 0.40, 0.40 + 0.05, color="lightgrey")
+    #plotter.slice(C, 0.525, 0.6, color="lightgrey")
+    #plotter.pos(C, 0.05)
+    #plotter.pos(C, 0.55)
+
+    #plotter.travel(C,  0.00, 0.25, color="green")
+    #plotter.travel(C,  0.50, 0.75, color="green")
+
+plot()
+
+#------------------------------------------------------------------------------
+
+def plot():
 
     D = Orbit(Earth, C.r1 - 2000e3, C.r2 - 2000e3)
     E = Orbit(Earth, C.r1 - 4000e3, C.r2 - 4000e3)
@@ -65,7 +96,7 @@ def plot2():
 
     #plotter.travel(C,  0.50, 0.75, color="green")
 
-plot2()
+#plot()
 
 #------------------------------------------------------------------------------
 

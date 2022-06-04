@@ -18,6 +18,13 @@ A = Earth.orbit
 B = Mars.orbit
 C = Orbit(Sun, Earth.a, Mars.a)
 
+#print("A", fmteng(A.E(), "J"))
+#print("B", fmteng(B.E(), "J"))
+#print("C(0.0):", fmteng(C.E(0), "J"), ":", fmteng(C.Epot(0), "J"), fmteng(C.Ekin(0), "J"))
+#print("C(0.5):", fmteng(C.E(0.5), "J"), ":", fmteng(C.Epot(0.5), "J"), fmteng(C.Ekin(0.5), "J"))
+
+sys.exit()
+
 #Sun.info()
 #Earth.info()
 #Mars.info()

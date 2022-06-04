@@ -108,13 +108,18 @@ def speed(orbit, t, scale = 1.0, color=None):
 		color=color
 	)
 
+def speedmark(orbit, t, scale=1.0, color=None):
+	mark(orbit, t, color=color)
+	speed(orbit, t, scale=scale, color=color)
+
 def pos(orbit, t, color=None):
 	p = getXY(orbit, t)
 	linep(0, 0, p.x, p.y, color=color)
 
-def speedmark(orbit, t, scale=1.0, color=None):
-	mark(orbit, t, color=color)
-	speed(orbit, t, scale=scale, color=color)
+def slice(orbit, t1, t2, color=None):
+	pos(orbit, t1, color)
+	pos(orbit, t2, color)
+	travel(orbit, t1, t2, color)
 
 #------------------------------------------------------------------------------
 
