@@ -15,9 +15,9 @@ from orbtools.systems.exoplanets import *
 # Create orbit shorcuts
 #------------------------------------------------------------------------------
 
-LEO = Altitude(Earth, 300e3)
-LMO = Altitude(Mars,  300e3)
-LJO = Altitude(Jupiter, 1_070_412e3)
+LEO = byAltitude(Earth, 300e3)
+LMO = byAltitude(Mars,  300e3)
+LJO = byAltitude(Jupiter, 1_070_412e3)
 
 #------------------------------------------------------------------------------
 

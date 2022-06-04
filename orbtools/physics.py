@@ -47,7 +47,7 @@ def solve_Fma(F, m, a):
     if m == None: return float(F) / a
     return float(F) / m
 
-def solve_PFve(P, F, ve):
+def solve_PFv(P, F, ve):
     if P == None: return F * (0.5 * ve)
     if F == None: return P / (0.5 * ve) # = flow * ve
     return 2.0 * P/F

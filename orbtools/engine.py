@@ -63,8 +63,8 @@ class Exhaust(object):
     def M0(self, payload, dv):   return payload * self.R(dv)
     def fuel(self, payload, dv): return payload * (self.R(dv) - 1)
 
-    def P(self, F = 1): return solve_PFve(None, F, self.ve)
-    def F(self, P):     return solve_PFve(P, None, self.ve)
+    def P(self, F = 1): return solve_PFv(None, F, self.ve)
+    def F(self, P):     return solve_PFv(P, None, self.ve)
     def E(self, m = 1): return solve_Emv(None, m, self.ve)
     def flow(self, P):  return solve_Emv(P, None, self.ve)
     def E_eff(self, dv):return solve_Emv(None, 1, dv) / self.E(self.fuel(1, dv))
@@ -84,14 +84,16 @@ class Engine(object):
         self.propellant = propellant
         if name: engines[name] = self
 
+    #--------------------------------------------------------------------------
+
     @property
     def ve(self): return self.exhaust.ve
 
     @property
-    def flow(self): return self.exhaust.flow(self.P)
+    def F(self):    return self.exhaust.F(self.P)
 
     @property
-    def F(self):    return self.exhaust.F(self.P)
+    def flow(self): return self.exhaust.flow(self.P)
 
     @property
     def Esp(self):  return 0.5 * self.ve ** 2
@@ -107,13 +109,7 @@ class Engine(object):
 
     def R(self, dv): return self.exhaust.R(dv)
 
-    def show(self):
-        print("Engine....:", self.name)
-        print("- v_e.....:", fmteng(self.ve, "m/s"))
-        print("- Thrust..:", fmteng(self.F, "N"))
-        print("- Power...:", fmteng(self.P, "W"))
-        print("- Flow....:", fmtmass(self.flow))
-        print("- Esp.....:", fmteng(self.Esp, "J/kg"))
+    #--------------------------------------------------------------------------
 
     @staticmethod
     def veP(name, ve, P):   return Engine(ve, P = P, name = name)
@@ -126,6 +122,16 @@ class Engine(object):
 
     @staticmethod
     def IspF(name, isp, F):    return Engine(Isp2ve(isp), F = F, name = name)
+
+    #--------------------------------------------------------------------------
+
+    def info(self):
+        print("Engine....:", self.name)
+        print("- v_e.....:", fmteng(self.ve, "m/s"))
+        print("- Thrust..:", fmteng(self.F, "N"))
+        print("- Power...:", fmteng(self.P, "W"))
+        print("- Flow....:", fmtmass(self.flow))
+        print("- Esp.....:", fmteng(self.Esp, "J/kg"))
 
 #------------------------------------------------------------------------------
 # Engine database: parameters are vacuum parameters... TODO: Add fuels.

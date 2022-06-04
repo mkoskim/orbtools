@@ -14,11 +14,51 @@ from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
 
+S = Surface(Earth)
+
 A = byAltitude(Earth, 1000e3)
 B = byAltitude(Earth, 10000e3)
 C = Orbit(Earth, A.a, B.a)
 
+#A.info()
+#B.info()
+#C.info()
+#exit()
+
 #plotter.center(Earth)
+
+#------------------------------------------------------------------------------
+
+def plot(orbit):
+
+    #plotter.orbit(S, style="solid")
+    plotter.orbit(orbit)
+    orbit.info()
+
+    if(orbit.r1 == orbit.r2):
+        plotter.pos(orbit, 0.00, color="green")
+    else:
+        plotter.event(orbit, 0.0, "Periapsis", offset = (-50, -10))
+        plotter.event(orbit, 0.5, "Apoapsis", offset=(15, 0))
+        plotter.pos(orbit, 0.00, color="red")
+        plotter.pos(orbit, 0.50, color="green")
+
+    plotter.speedmark(orbit, 0.00, color="green", scale=500)
+    plotter.speedmark(orbit, 0.25, color="green", scale=500)
+    plotter.speedmark(orbit, 0.50, color="green", scale=500)
+    plotter.speedmark(orbit, 0.85, color="green", scale=500)
+
+    plotter.slice(orbit, -0.03 - 0.05, -0.03, color="lightgrey")
+    plotter.slice(orbit, 0.40, 0.40 + 0.05, color="lightgrey")
+    #plotter.slice(C, 0.525, 0.6, color="lightgrey")
+    #plotter.pos(C, 0.05)
+    #plotter.pos(C, 0.55)
+
+    #plotter.travel(C,  0.00, 0.25, color="green")
+    #plotter.travel(C,  0.50, 0.75, color="green")
+
+plot(B)
+#plot(C)
 
 #------------------------------------------------------------------------------
 
@@ -36,37 +76,6 @@ def plot():
     plotter.travel(B, 0.50, 0.83, color="green")
 
 #plot()
-
-#------------------------------------------------------------------------------
-
-def plot():
-
-    #def speedmark(orbit, t, color):
-    #    plotter.mark(orbit, t, color=color)
-    #    plotter.speed(orbit, t, scale = 500, color=color)
-
-    plotter.orbit(C)
-
-    plotter.event(C, 0.0, "Periapsis", offset = (-50, -10))
-    plotter.event(C, 0.5, "Apoapsis", offset=(15, 0))
-
-    plotter.speedmark(C, 0.00, color="green", scale=500)
-    plotter.speedmark(C, 0.25, color="green", scale=500)
-    plotter.speedmark(C, 0.50, color="green", scale=500)
-    plotter.speedmark(C, 0.85, color="green", scale=500)
-
-    plotter.pos(C, 0.00, color="red")
-    plotter.pos(C, 0.50, color="green")
-    plotter.slice(C, -0.03 - 0.05, -0.03, color="lightgrey")
-    plotter.slice(C, 0.40, 0.40 + 0.05, color="lightgrey")
-    #plotter.slice(C, 0.525, 0.6, color="lightgrey")
-    #plotter.pos(C, 0.05)
-    #plotter.pos(C, 0.55)
-
-    #plotter.travel(C,  0.00, 0.25, color="green")
-    #plotter.travel(C,  0.50, 0.75, color="green")
-
-plot()
 
 #------------------------------------------------------------------------------
 

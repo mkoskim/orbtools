@@ -470,10 +470,38 @@ class Orbit(object):
 
     def Epot(self, t = 0): return -self.center.GM/self.r(t)
 
-    def Ekin(self, t = 0): return 0.5 * abs(self.v(t)) ** 2
+    def Ekin(self, t = 0): return solve_Emv(None, 1.0, abs(self.v(t)))
 
     def E(self, t = 0): return self.Ekin(t) + self.Epot(t)
 
+    #--------------------------------------------------------------------------
+    # Orbit info dump
+    #--------------------------------------------------------------------------
+
+    def info(self):
+
+        def info_by_t(t, prefix=""):
+            r, v = (self.r(t), abs(self.v(t)))
+            E, Ekin, Epot = (self.E(t), self.Ekin(t), self.Epot(t))
+
+            print(prefix + "- r.....:", fmtdist(r), "alt:", fmtdist(r - self.center.radius))
+            print(prefix + "- v.....:", fmteng(v, "m/s"))
+            print(prefix + "- E.....:", fmteng(E, "J"), "(%s %s)" % (fmteng(Ekin, "J"), fmteng(Epot, "J")))
+
+        print("Orbit")
+
+        print("- A.....:", fmtdist(self.a))
+        print("- P.....:", fmttime(self.P))
+
+        # Circular orbits
+        if(self.r1 == self.r2):
+            info_by_t(0.0)
+        # Elliptical orbits
+        else:
+            print("- Periapsis")
+            info_by_t(0.0, "  ")
+            print("- Apoapsis")
+            info_by_t(0.5, "  ")
 
 #------------------------------------------------------------------------------
 # Creating orbit from altitudes (adding central body radius)
@@ -520,6 +548,44 @@ def byRV(center, r, v):
     vc = v_circular(center.GM,r)
     a = center.GM/(2*pow(vc,2) - pow(v,2))
     return Orbit(center, r, 2*a - r)
+
+#------------------------------------------------------------------------------
+# Surface "orbit", to simplify landings & takeoffs
+#------------------------------------------------------------------------------
+
+class Surface(Orbit):
+    def __init__(self, center):
+        center = Mass.resolve(center)
+        self.center = center
+
+    #--------------------------------------------------------------------------
+
+    @property
+    def P(self): return self.center.rotate
+
+    @property
+    def a(self): return self.center.radius
+
+    #--------------------------------------------------------------------------
+
+    def r(self, t = 0.0): return self.a
+
+    def xy(self, t = 0.0):
+        return Vec2d(
+            cos(2*pi*t),
+            sin(2*pi*t)
+        ) * self.center.radius
+
+    def v(self, t = 0.0):
+        if self.center.rotate:
+            w = 2*pi/self.center.rotate
+            return Vec2d(
+                cos(2*pi*t),
+                sin(2*pi*t)
+            ).rotate(90) * w * self.center.radius
+        else:
+            return Vec2d(0, 0)
+
 
 ################################################################################
 #
