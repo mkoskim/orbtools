@@ -8,28 +8,110 @@
 
 from orbtools import *
 
-###############################################################################
-#
-# Burn: transfer from one orbit to another.
-#
-###############################################################################
+#------------------------------------------------------------------------------
+# Lets rethink this. We do burns that result to new orbits.
+#------------------------------------------------------------------------------
 
-class Burn:
-    def __init__(self, name, orbFrom, orbTo, initial = True):
+#def Hohmann(A, B):
+#    assert A.center == B.center, "Orbits need to have same center."
+#    return Orbit(A.center, A.r(0), B.r(0.5))
 
-        if orbFrom.center != orbTo.center:
-            raise Exception("Orbits have different central masses!")
-        if abs(orbFrom.r_final - orbTo.r_initial) > 0.05*orbTo.r_initial:
-            raise Exception("Orbit does not reach target")
+class Transfer:
 
-        if initial:
-            self.dv = abs(orbTo.v_initial - orbFrom.v_initial)
-        else:
-            self.dv = abs(orbTo.v_final - orbFrom.v_final)
-
-        self.dt = orbTo.T_to_target * orbTo.P
+    def __init__(self, name, orbit):
         self.name = name
-        self.orbit = orbTo
+        self.burns = [ Transfer.Burn(orbit)]
+
+    #--------------------------------------------------------------------------
+    # Properties
+    #--------------------------------------------------------------------------
+
+    @property
+    def latest(self): return self.burns[-1]
+
+    @property
+    def orbit(self): return self.latest.orbit
+
+    @property
+    def dv(self):
+        return sum([abs(burn.dv) for burn in self.burns])
+
+    @property
+    def t(self):
+        return sum([burn.t for burn in self.burns])
+
+    @property
+    def initial(self):
+        return self.burns[0].orbit
+
+    @property
+    def final(self):
+        return self.latest.orbit
+
+    #--------------------------------------------------------------------------
+    # Transfer operations
+    #--------------------------------------------------------------------------
+
+    def liftTo(self, dist, t = 0):
+        A = self.orbit
+        f, r = A.fr(t)
+        orbit = Orbit(A.center, r, dist, arg = f)
+        dv = orbit.v(0) - A.v(t)
+        self.latest.stay = t
+        self.burns.append(Transfer.Burn(orbit, dv))
+        return orbit, dv
+
+    def lift(self, height, t = 0):
+        A = self.orbit
+        return self.liftTo(A.r(t) + height, t)
+
+    def circulate(self, t = 0):
+        A = self.orbit
+        return self.liftTo(A.r(t), t)
+
+    #--------------------------------------------------------------------------
+
+    class Burn:
+        def __init__(self, orbit, dv = Vec2d()):
+            self.orbit = orbit
+            self.dv = dv
+            self.stay = 0.0
+
+        @property
+        def t(self): return self.stay * self.orbit.P
+
+    #--------------------------------------------------------------------------
+
+    @staticmethod
+    def TakeOff(name, mass, altitude):
+        T = Transfer(name, Surface(mass))
+        T.lift(altitude)
+        T.circulate(t=0.5)
+        return T
+
+    #--------------------------------------------------------------------------
+
+    def info(self):
+        print("Transfer..:", self.name)
+        print("- DV......:", fmteng(self.dv, "m/s"))
+        print("- Time....:", fmttime(self.t))
+
+        print("- Burns:")
+        for burn in self.burns:
+            print("  - DV:", abs(burn.dv))
+
+#def Burn(orbFrom, orbTo):
+
+#    assert orbFrom.center == orbTo.center, "Orbits have different central masses"
+
+    #if initial:
+    #    self.dv = abs(orbTo.v_initial - orbFrom.v_initial)
+    #else:
+    #    self.dv = abs(orbTo.v_final - orbFrom.v_final)
+
+    #self.dt = orbTo.T_to_target * orbTo.P
+    #self.name = name
+    #self.orbit = orbTo
 
 #------------------------------------------------------------------------------
 # Loss (friction, gravity) estimations
@@ -116,7 +198,7 @@ class Initial:
 #
 ###############################################################################
 
-class Mission(object):
+class MissionX:
 
     def __init__(self, name, initial_orbit):
         self.name = name

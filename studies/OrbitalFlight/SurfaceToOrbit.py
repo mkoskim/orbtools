@@ -13,6 +13,38 @@ from orbtools.systems.solsystem import *
 from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
+# How we want to make surface to orbit transfers?
+
+def plot():
+
+    T = Transfer.TakeOff("Earth-LEO", Earth, 300e3)
+    A = T.initial
+    B = T.final
+
+    T.info()
+    A.info()
+    B.info()
+
+    import plotter
+
+    plotter.orbit(A)
+    plotter.orbit(B)
+
+    for burn in T.burns:
+        if burn.stay: plotter.travel(burn.orbit, 0.0, burn.stay)
+
+    #plotter.travel(B, 0.0, 0.5)
+    #plotter.travel(C, 0.0, 0.66)
+    #plotter.orbit(C)
+
+    plotter.show()
+
+#T1 = Burn(A)
+
+plot()
+exit()
+
+#------------------------------------------------------------------------------
 
 def info():
     SuperEarth = Mass("Super", GM_Earth*4, Mass.rFromV(GM2kg(GM_Earth*4) / Earth.density), 0)

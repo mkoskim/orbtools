@@ -397,7 +397,7 @@ def pos_xy(r1, r2, T):
 
 class Orbit(object):
 
-    def __init__(self, center, r1, r2 = None, arg=0.0):
+    def __init__(self, center, r1, r2 = None, arg=None):
         r2 = r2 == None and r1 or r2
         assert r1 > 0
         assert r2 > 0
@@ -406,7 +406,7 @@ class Orbit(object):
         self.center = center
         self.r1  = float(min(r1, r2))   # Periapsis
         self.r2  = float(max(r1, r2))   # Apoapsis
-        self.arg = arg                  # Argument of periapsis
+        self.arg = arg and arg or 0.0   # Argument of periapsis
 
     #--------------------------------------------------------------------------
     # Basic properties
@@ -509,9 +509,13 @@ class Orbit(object):
 #------------------------------------------------------------------------------
 
 class Surface(Orbit):
-    def __init__(self, center):
+
+    def __init__(self, center, arg = None):
         center = Mass.resolve(center)
         self.center = center
+        self.r1 = center.radius
+        self.r2 = center.radius
+        self.arg = arg and arg or 0.0
 
     #--------------------------------------------------------------------------
 
@@ -520,8 +524,6 @@ class Surface(Orbit):
 
     @property
     def a(self): return self.center.radius
-
-    #--------------------------------------------------------------------------
 
     def r(self, t = 0.0): return self.a
 
@@ -545,20 +547,13 @@ class Surface(Orbit):
 # Creating orbit from altitudes (adding central body radius)
 #------------------------------------------------------------------------------
 
-def byAltitude(center, r1, r2 = None):
+def byAltitude(center, r1, r2 = None, arg=None):
     center = Mass.resolve(center)
 
     if r2 == None:
-        return Orbit(center, center.radius + r1)
+        return Orbit(center, center.radius + r1, arg)
     else:
-        return Orbit(center, center.radius + r1, center.radius + r2)
-
-#------------------------------------------------------------------------------
-# Hohmann between two orbits
-#------------------------------------------------------------------------------
-
-def Hohmann(center, A, B):
-    return Orbit(center, A.a, B.a)
+        return Orbit(center, center.radius + r1, center.radius + r2, arg)
 
 #------------------------------------------------------------------------------
 # Creating orbit with given period
