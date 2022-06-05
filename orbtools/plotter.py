@@ -54,14 +54,17 @@ def annotate(txt, x, y, offset = (0, 5)):
 def center(center):
 	annotate(center.name, 0, 0)
 
-def linep(x1, y1, x2, y2, color = None):
+def linep(x1, y1, x2, y2, color = None, style=None, width=None):
 	return plt.plot([x1, x2], [y1, y2],
-		color = color
+		color = color,
+		linestyle = style,
+		linewidth = width,
 	)
 
-def lined(x, y, dx, dy, color = None):
+def lined(x, y, dx, dy, color = None, style = None):
 	return linep(x, y, x + dx, x + dy,
 		color=color,
+		style=style,
 	)
 
 def arrowd(x, y, dx, dy, color = None):
@@ -112,9 +115,9 @@ def speedmark(orbit, t, scale=1.0, color=None):
 	mark(orbit, t, color=color)
 	speed(orbit, t, scale=scale, color=color)
 
-def pos(orbit, t, color=None):
+def pos(orbit, t, color=None, style=None):
 	p = getXY(orbit, t)
-	linep(0, 0, p.x, p.y, color=color)
+	linep(0, 0, p.x, p.y, color=color,style=style)
 
 def slice(orbit, t1, t2, color=None):
 	pos(orbit, t1, color)

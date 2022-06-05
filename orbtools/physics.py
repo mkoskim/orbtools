@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 # Basic physics & math equations and solving for orbital calculations

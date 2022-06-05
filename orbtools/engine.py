@@ -125,6 +125,16 @@ class Engine(object):
 
     #--------------------------------------------------------------------------
 
+    @staticmethod
+    def Stack(n, engine):
+        return Engine.veF(
+            "%d x %s" % (n, engine.name),
+            engine.ve,
+            n * engine.F
+        )
+
+    #--------------------------------------------------------------------------
+
     def info(self):
         print("Engine....:", self.name)
         print("- v_e.....:", fmteng(self.ve, "m/s"))
@@ -141,6 +151,9 @@ class Engine(object):
 # Chemical rocket engines
 #------------------------------------------------------------------------------
 
+Engine.IspF("Merlin 1D",        348.0,    934_000)     # SpaceX Falcon 9 v1.1 (vac)
+Engine.IspF("Merlin 1D/sea",    282.0,    854_000)     # SpaceX Falcon 9 v1.1 (sea-level)
+
 Engine.IspF("F-1",          304.0,  7_770_000)    # Saturn first stage
 Engine.IspF("J-2",          421.0,  1_033_000)    # Saturn upper stage
 Engine.IspF("RS-25",        452.3,  2_279_000)    # Shuttle main engine (vac)
@@ -148,7 +161,6 @@ Engine.IspF("Vulcain",      431.0,  1_140_000)    # Ariane 5 main engine (vac)
 Engine.IspF("SSSRB",        268.0, 14_000_000)    # Shuttle solid rocket booster (PBAN/APCP)
 
 Engine.IspF("Merlin 1C",    336.0,    413_644)     # SpaceX Falcon 1, 9 (vac)
-Engine.IspF("Merlin 1D",    348.0,    934_000)     # SpaceX Falcon 9 v1.1 (vac)
 Engine.IspF("Raptor",       363.0,  2_300_000)     # SpaceX Raptor 1 (vac)
 
 Engine.IspF("RD-180",       338.4,  4_152_136)     # RP-1 engine

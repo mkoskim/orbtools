@@ -490,6 +490,7 @@ class Orbit(object):
 
         print("Orbit")
 
+        print("- Center:", self.center.name)
         print("- A.....:", fmtdist(self.a))
         print("- P.....:", fmttime(self.P))
 
@@ -502,52 +503,6 @@ class Orbit(object):
             info_by_t(0.0, "  ")
             print("- Apoapsis")
             info_by_t(0.5, "  ")
-
-#------------------------------------------------------------------------------
-# Creating orbit from altitudes (adding central body radius)
-#------------------------------------------------------------------------------
-
-def byAltitude(center, r1, r2 = None):
-    center = Mass.resolve(center)
-
-    if r2 == None:
-        return Orbit(center, center.radius + r1)
-    else:
-        return Orbit(center, center.radius + r1, center.radius + r2)
-
-#------------------------------------------------------------------------------
-# Creating orbit with given period
-#------------------------------------------------------------------------------
-
-def byPeriod(center, P, r1 = None):
-    center = Mass.resolve(center)
-
-    a = a_from_P(center.GM,P)
-    if r1 == None:
-        r1 = r2 = a
-    else:
-        r2 = 2*a - r1
-    return Orbit(center, r1, r2)
-
-#------------------------------------------------------------------------------
-# Creating orbit with given eccentricity
-#------------------------------------------------------------------------------
-
-def byEccentricity(center, a, e):
-    return Orbit(center, a*(1-e), a*(1+e))
-
-#------------------------------------------------------------------------------
-# Creating orbit with given distance and orbital speed at that distance
-#------------------------------------------------------------------------------
-
-def byRV(center, r, v):
-    center = Mass.resolve(center)
-
-    assert v < center.v_escape(r), "Apoapsis = infinite"
-
-    vc = v_circular(center.GM,r)
-    a = center.GM/(2*pow(vc,2) - pow(v,2))
-    return Orbit(center, r, 2*a - r)
 
 #------------------------------------------------------------------------------
 # Surface "orbit", to simplify landings & takeoffs
@@ -585,6 +540,59 @@ class Surface(Orbit):
             ).rotate(90) * w * self.center.radius
         else:
             return Vec2d(0, 0)
+
+#------------------------------------------------------------------------------
+# Creating orbit from altitudes (adding central body radius)
+#------------------------------------------------------------------------------
+
+def byAltitude(center, r1, r2 = None):
+    center = Mass.resolve(center)
+
+    if r2 == None:
+        return Orbit(center, center.radius + r1)
+    else:
+        return Orbit(center, center.radius + r1, center.radius + r2)
+
+#------------------------------------------------------------------------------
+# Hohmann between two orbits
+#------------------------------------------------------------------------------
+
+def Hohmann(center, A, B):
+    return Orbit(center, A.a, B.a)
+
+#------------------------------------------------------------------------------
+# Creating orbit with given period
+#------------------------------------------------------------------------------
+
+def byPeriod(center, P, r1 = None):
+    center = Mass.resolve(center)
+
+    a = a_from_P(center.GM,P)
+    if r1 == None:
+        r1 = r2 = a
+    else:
+        r2 = 2*a - r1
+    return Orbit(center, r1, r2)
+
+#------------------------------------------------------------------------------
+# Creating orbit with given eccentricity
+#------------------------------------------------------------------------------
+
+def byEccentricity(center, a, e):
+    return Orbit(center, a*(1-e), a*(1+e))
+
+#------------------------------------------------------------------------------
+# Creating orbit with given distance and orbital speed at that distance
+#------------------------------------------------------------------------------
+
+def byRV(center, r, v):
+    center = Mass.resolve(center)
+
+    assert v < center.v_escape(r), "Apoapsis = infinite"
+
+    vc = v_circular(center.GM,r)
+    a = center.GM/(2*pow(vc,2) - pow(v,2))
+    return Orbit(center, r, 2*a - r)
 
 
 ################################################################################

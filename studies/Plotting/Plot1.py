@@ -11,6 +11,7 @@ sys.path.append(os.path.abspath("."))
 
 from orbtools.systems.solsystem import *
 from orbtools.systems.exoplanets import *
+import plotter
 
 #------------------------------------------------------------------------------
 
@@ -57,25 +58,39 @@ def plot(orbit):
     #plotter.travel(C,  0.00, 0.25, color="green")
     #plotter.travel(C,  0.50, 0.75, color="green")
 
-plot(B)
+#plot(B)
 #plot(C)
 
 #------------------------------------------------------------------------------
 
-def plot():
+def plot(A, B, C):
     plotter.orbit(A)
     plotter.orbit(B)
     plotter.orbit(C)
 
-    plotter.travel(A, -0.33, 0.00, color="green")
-    plotter.travel(A,  0.00, 0.25, color="grey")
-    plotter.event(C, 0.0, "A")
-    plotter.travel(C, 0.00, 0.50, color="blue")
-    plotter.travel(C, 0.50, 0.75, color="grey")
-    plotter.event(C, 0.5, "A")
-    plotter.travel(B, 0.50, 0.83, color="green")
+    plotter.pos(C, 0.00, color="red")
+    plotter.pos(C, 0.50, color="green")
 
-#plot()
+    plotter.travel(A, 0.00, 0.33, color="red")
+    plotter.event (A, 0.20, "A", offset=(-15, 0))
+    plotter.travel(B, 0.50, 0.83, color="green")
+    plotter.event (B, 0.75, "B", offset=(5, 0))
+
+    #plotter.pos(B, 0.85, color="grey", style="dashed")
+
+    plotter.travel(C, 0.00, 0.50, color="orange")
+    plotter.travel(C, 0.50, 1.00, color="blue")
+
+    plotter.event(C, 0.05, "Nousu", offset=(5, -5))
+    plotter.event(C, 0.65, "Lasku", offset=(5, -5))
+
+    #plotter.travel(A,  0.00, 0.25, color="grey")
+    #plotter.event(C, 0.0, "A")
+    #plotter.event(C, 0.5, "B")
+
+    #plotter.travel(C, 0.50, 0.75, color="grey")
+
+plot(A, B, C)
 
 #------------------------------------------------------------------------------
 

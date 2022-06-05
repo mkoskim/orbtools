@@ -14,7 +14,7 @@ from orbtools import *
 #
 ###############################################################################
 
-class Burn(object):
+class Burn:
     def __init__(self, name, orbFrom, orbTo, initial = True):
 
         if orbFrom.center != orbTo.center:
@@ -35,7 +35,7 @@ class Burn(object):
 # Loss (friction, gravity) estimations
 #------------------------------------------------------------------------------
 
-class Loss(object):
+class Loss:
     def __init__(self, name, orbit, loss):
         self.name = name
         self.orbit = orbit
@@ -46,7 +46,7 @@ class Loss(object):
 # Entering system to given orbit
 #------------------------------------------------------------------------------
 
-class EnterSystem(object):
+class EnterSystem:
 
     def __init__(self, name, orbFrom, orbTo):
 
@@ -74,7 +74,7 @@ class EnterSystem(object):
 # Escape from system to orbit its central mass
 #------------------------------------------------------------------------------
 
-class ExitSystem(object):
+class ExitSystem:
     def __init__(self, name, orbit, target_r, r1 = None, r2 = None):
         oldcenter = orbit.center
         newcenter = orbit.center.orbit.center
@@ -103,7 +103,7 @@ class ExitSystem(object):
 # "Virtual" burn for mission initial orbit
 #------------------------------------------------------------------------------
 
-class Initial(object):
+class Initial:
     def __init__(self, orbit):
         self.name = "Start"
         self.dv = 0

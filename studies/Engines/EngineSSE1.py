@@ -26,15 +26,19 @@ F = m_tot * a
 ve = solve_rocket_eq(m_tot, m_ship, dv, None)
 
 ship = Stage("Learspace",
-    payload=m_ship,
+    drymass=m_ship,
     fuel=m_propellant,
     engine = Engine.veF("SSE-1", ve, F)
 )
 
+print(solve_vat(8000.0, 2*9.81, None) / 60.0)
+alt20km = solve_svat(20_000, 0, 1.5*9.81, None)
+print(alt20km)
+
 #print(ship.a_initial)
 #print(fmttime(ship.t_burn))
-ship.show()
-ship.engine.show()
+ship.info()
+ship.engine.info()
 
 #------------------------------------------------------------------------------
 # Fuels for engines

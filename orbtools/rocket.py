@@ -1,18 +1,6 @@
 ################################################################################
 #
-# Orbital toolbox: Payloads, delta-v and propellant calculations
-#
-# Equations:
-#
-# - dv           = ve * ln(mtot/payload)
-# - dv / ve      =      ln(mtot/payload)
-# - exp(dv / ve) =         mtot/payload
-#
-# - ve = dv / ln(mtot/payload)
-#
-# 2) mtot = payload + mfuel
-#
-# R = ratio of masses = Mtot / Mpayload
+# Multistage rockets
 #
 ################################################################################
 
@@ -24,50 +12,7 @@ from orbtools import *
 #
 ################################################################################
 
-class Payload(object):
-
-    def __init__(self, name, mass):
-        self.name = name
-        self.mass = float(mass)
-        self.dv   = 0
-        self.engine = None
-
-    @property
-    def payload(self): return self.mass
-
-    @property
-    def fuel(self):    return 0
-
-    def show(self):
-        print("Payload")
-        print("   ", "Mass: %.2f kg" % self.mass)
-
-################################################################################
-#
-#
-#
-################################################################################
-
-class Stage(object):
-
-    #--------------------------------------------------------------------------
-    # mass = payload + fuel
-    #
-    # - payload = mass / R <=> mass = R * payload
-    #
-    # - payload = mass / R
-    #   mass - fuel = mass / R
-    #   - fuel = mass / R - mass
-    #   fuel = mass - mass / R
-    #   fuel = mass * (1 - 1/R)
-    #   fuel/(1-1/R) = mass
-    #
-    # R = (payload + fuel) / payload = mass / payload
-    #
-    #--------------------------------------------------------------------------
-
-    @property
-    def mass(self): return self.payload + self.fuel
+class Stage:
 
     #--------------------------------------------------------------------------
     # mass (tot), payload, mf (fuel mass), dv:
@@ -75,144 +20,140 @@ class Stage(object):
     # - Engine u is always known
     #--------------------------------------------------------------------------
 
-    def __init__(self, name, mass = None, payload = None, fuel = None, engine = None, dv = None, mission = None):
-
-        if mission != None: dv = mission.dv
-
-        #----------------------------------------------------------------------
-        # dv and ve given, compute masses
-        #----------------------------------------------------------------------
-
-        if dv != None and engine != None:
-            R = engine.R(dv)
-            if mass != None:
-                payload = mass / R
-                fuel = mass - payload
-            elif payload != None:
-                mass = R * payload
-                fuel = mass - payload
-            else:
-                fuel = mass - payload
-
-        #----------------------------------------------------------------------
-        # dv or ve missing, compute masses, solve missing
-        #----------------------------------------------------------------------
-
-        else:
-            if mass != None:
-                if payload != None: fuel = mass - payload
-                else: payload = mass - fuel
-            else:
-                mass = payload + fuel
-
-            if dv == None:
-                dv = engine.dv(payload, fuel)
-            else:
-                engine = Engine(solve_rocket_eq(mass, payload, dv, None))
-
-        #----------------------------------------------------------------------
-        # Fill info
-        #----------------------------------------------------------------------
-
+    def __init__(self, name, drymass, fuel = None, engine = None):
         self.name = name
         self.engine = engine
-        self.mission = mission
-        self.dv = dv
-        self.payload = payload
-        self.fuel = fuel
+        self.drymass = float(drymass)
+        self.fuel = float(fuel)
 
     @property
-    def m_initial(self): return self.mass
+    def R(self): return 1 + self.fuel / self.drymass
 
-    @property
-    def m_final(self): return self.payload
+    def m_final(self, payload = 0): return self.drymass + payload
+    def m_initial(self, payload = 0): return self.m_final(payload) + self.fuel
 
-    @property
-    def a_initial(self): return self.engine.F / self.m_initial
+    #--------------------------------------------------------------------------
 
-    @property
-    def a_final(self): return self.engine.F / self.m_final
+    def dv(self, payload):
+        if self.engine == None: return 0.0
+
+        return solve_rocket_eq(
+            self.m_initial(payload),
+            self.m_final(payload),
+            None,
+            self.engine.ve
+        )
+
+    #--------------------------------------------------------------------------
 
     @property
     def t_burn(self): return self.engine.t(self.fuel)
 
-    def show(self):
-        print(self.name)
-        print("   ", "Mass.........: %.2f kg" % self.mass)
-        print("   ", "- Payload....: %.2f kg" % self.payload)
-        print("   ", "- Fuel.......: %.2f kg" % self.fuel)
-        print("   ", "Engine.......: %.2f m/s" % self.engine.ve)
-        print("   ", "DV...........: %.2f m/s" % self.dv)
-        print("   ", "Burn time....: %.2f s" % self.t_burn)
-        print("   ", "Acceleration.:")
-        print("   ", "- Initial....: %.2f g" % (self.a_initial / const_g))
-        print("   ", "- Final......: %.2f g" % (self.a_final / const_g))
-        if self.mission != None:
-            phase = self.mission
-            print("   ", "Mission DV.: %.2f m/s" % phase.dv)
-            print("   ", "DV diff....: %.2f m/s" % (self.dv - phase.dv))
+    def a(self, payload, t):
+        mf = self.fuel - self.engine.flow * t
+        if mf < 0: return 0.0
+        return solve_Fma(
+            self.engine.F,
+            self.m_final(payload) + mf,
+            None
+        )
+
+    def a_initial(self, payload): return solve_Fma(self.engine.F, self.m_initial(payload), None)
+    def a_final(self, payload): return solve_Fma(self.engine.F, self.m_final(payload), None)
+
+    #--------------------------------------------------------------------------
+
+    def info(self, payload = None):
+        print("Stage:", self.name)
+        print("   Mass.........: %.2f kg" % self.m_initial())
+        print("   - Payload....: %.2f kg" % self.drymass)
+        print("   - Fuel.......: %.2f kg" % self.fuel)
+        print("   - R..........: %.2f" % self.R)
+
+        if self.engine == None: return
+
+        print("   Engine.......:", self.engine.name)
+        print("   - Ve.........:", fmteng(self.engine.ve, "m/s"))
+        print("   - Thrust.....:", fmteng(self.engine.F, "N"))
+        print("   - Burn time..: %.2f s" % self.t_burn)
+
+        if payload == None: return
+
+        print("   DV...........:", fmteng(self.dv(payload), "m/s"))
+        print("   Acceleration.:")
+        print("   - Initial....: %.2f g" % (self.a_initial(payload) / const_g))
+        print("   - Final......: %.2f g" % (self.a_final(payload) / const_g))
+
+#------------------------------------------------------------------------------
+
+def Payload(name, mass):
+    return Stage(name, drymass = mass, fuel=0.0)
 
 ################################################################################
 
-class Rocket(object):
+class Rocket:
 
-    #---------------------------------------------------------------------------
-    # Staged rocket: we create it from top to bottom, creating new objects
-    # to include masses of upper stages.
-    #---------------------------------------------------------------------------
-
-    def __init__(self, name, *stages, **kw):
+    def __init__(self, name, *stages):
         self.name = name
-        self.stages = []
-        if "mission" in kw:
-            self.mission = kw["mission"]
-        else:
-            self.mission = None
+        self.stages = stages
 
-        totmass = 0
-        for stage in stages:
-            if stage.engine:
-                solvedstage = Stage(
-                    stage.name,
-                    engine = stage.engine,
-                    payload = stage.payload + totmass,
-                    fuel    = stage.fuel,
-                    mission = stage.mission
-                )
-            else:
-                solvedstage = Payload(
-                    stage.name,
-                    stage.mass
-                )
-            self.stages.append(solvedstage)
-            totmass = totmass + stage.mass
+    def payload(self, stage):
+        return sum(stage.m_initial() for stage in self.stages[stage+1:])
 
-    @property
-    def payload(self):
-        return self.stages[0].payload
+    def t_burn(self, stage): return self.stages[stage].t_burn
+
+    def a(self, stage, t): return self.stages[stage].a(self.payload(stage), t)
+
+    #def a_initial(self, stage):
+    #    return solve_Fma(self.stage[stage].engine.F, payload(stage))
+
+    #@property
+    #def payload(self):
+    #    return self.stages[0].payload
+
+    #@property
+    #def dv(self):
+    #    return sum(map(lambda s: s.dv, self.stages))
+
+    #@property
+    #def mass(self):
+    #   return self.stages[-1].mass
 
     @property
-    def dv(self):
-        return sum(map(lambda s: s.dv, self.stages))
-
-    @property
-    def mass(self):
-        return self.stages[-1].mass
+    def m_initial(self):
+        return sum([stage.m_initial() for stage in self.stages])
 
     @property
     def fuel(self):
-        return sum(map(lambda s: s.fuel, self.stages))
+        return sum([stage.fuel for stage in self.stages])
 
-    def show(self):
+    @property
+    def drymass(self):
+        return sum([stage.drymass for stage in self.stages])
+
+    #@property
+    #def R(self):
+    #    return 1 + self.fuel/self.drymass
+
+    @property
+    def dv_tot(self):
+        return sum([stage.dv(self.payload(i)) for i, stage in enumerate(self.stages)])
+
+    #--------------------------------------------------------------------------
+
+    def info(self):
         print("Rocket:", self.name)
-        print("- Payload........: %.2f kg"  % self.payload)
-        print("- Tot. mass......: %.2f kg"  % self.mass)
-        print("- Tot. propellant: %.2f kg"  % self.fuel)
-        print("- Tot. DV........: %.2f m/s" % self.dv)
-        if self.mission != None:
-            phase = self.mission
-            print("- Mission DV.....: %.2f m/s" % phase.dv)
-            print("- DV diff........: %.2f m/s" % (self.dv - phase.dv))
+        print("- Total mass....: %.2f kg" % self.m_initial)
+        print("  - Dry mass....: %.2f kg" % self.drymass)
+        print("  - Fuel........: %.2f kg" % self.fuel)
+        print("  - R...........: %.2f" % (self.m_initial / self.drymass))
+        print("- Tot. DV.......: %.2f m/s" % self.dv_tot)
+
+        #print("- Payload........: %.2f kg"  % self.payload)
         print("Stages:")
-        for stage in self.stages:
-            stage.show()
+        for i, stage in enumerate(self.stages):
+            stage.info(self.payload(i))
+
+#------------------------------------------------------------------------------
+# Ready made rockets
+#------------------------------------------------------------------------------

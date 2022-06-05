@@ -18,7 +18,7 @@ from engine import *
 from rocket import *
 from mission import *
 from star import *
-import plotter
+#import plotter
 
 #import gui
 
