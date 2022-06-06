@@ -14,6 +14,15 @@ from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
 
+print("---")
+T3 = Transfer.Hohmann("Earth-Venus", Sun, Earth.a, Venus.a)
+T3.info()
+
+T4 = Transfer("Earth-Venus", byAltitude(Earth, 300e3))
+T4.exit(Venus.a)
+T4.enter(byAltitude(Venus, 1000e3), 0.5)
+T4.info()
+
 # Earth-Mars w/o gravity
 
 T1 = Transfer.Hohmann("Earth-Mars", Sun, Earth.a, Mars.a)
@@ -29,13 +38,22 @@ T2.enter(byAltitude(Mars, 1000e3), 0.5)
 T2.info()
 
 print("---")
-T3 = Transfer.Hohmann("Earth-Venus", Sun, Earth.a, Venus.a)
-T3.info()
 
-T4 = Transfer("Earth-Venus", byAltitude(Earth, 300e3))
-T4.exit(Venus.a)
-T4.enter(byAltitude(Venus, 1000e3), 0.5)
-T4.info()
+Tx = Transfer("Earth-Jupiter", byAltitude(Earth, 300e3))
+Tx.exit(Jupiter.a)
+Tx.info()
+
+Tx = Transfer("Earth-Saturn", byAltitude(Earth, 300e3))
+Tx.exit(Saturn.a)
+Tx.info()
+
+Tx = Transfer("Earth-Uranus", byAltitude(Earth, 300e3))
+Tx.exit(Uranus.a)
+Tx.info()
+
+Tx = Transfer("Earth-Neptune", byAltitude(Earth, 300e3))
+Tx.exit(Neptune.a)
+Tx.info()
 
 exit()
 
