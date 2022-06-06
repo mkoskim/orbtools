@@ -13,7 +13,6 @@ from orbtools.systems.solsystem import *
 from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
-# How we want to make surface to orbit transfers?
 
 def plot():
 
@@ -39,40 +38,31 @@ def plot():
 
     plotter.show()
 
-#T1 = Burn(A)
-
-plot()
-exit()
+#plot()
 
 #------------------------------------------------------------------------------
 
 def info():
-    SuperEarth = Mass("Super", GM_Earth*4, Mass.rFromV(GM2kg(GM_Earth*4) / Earth.density), 0)
+    alt = 300e3
+    Earthx4 = Mass("Earth x 4", GM_Earth*4, Mass.rFromV(GM2kg(GM_Earth*4) / Earth.density), 0)
 
-    SuperLEO = byAltitude(SuperEarth, 0, 300e3)
-    EarthLEO = byAltitude(Earth, 0, 300e3)
-    MarsLMO = byAltitude(Mars, 0, 300e3)
-    MoonLMO = byAltitude(Moon, 0, 300e3)
+    SuperLEO = Transfer.TakeOff("Earth x 4", Earthx4, alt)
+    EarthLEO = Transfer.TakeOff("Earth", Earth, alt)
+    MarsLMO  = Transfer.TakeOff("Mars", Mars, alt)
+    MoonLMO  = Transfer.TakeOff("Moon", Moon, alt)
 
-    for orbit in [SuperLEO, EarthLEO, MarsLMO, MoonLMO]:
-        dv1 = abs(orbit.v(0))
-        v2 = abs(orbit.v(0.5))
-        vf = v_circular(orbit.center.GM, orbit.r2)
-        dv2 = vf - v2
-        g = orbit.center.g_surface
-
-        print(orbit.center.name,
-            ("%.2f g" % (g / const_g)),
-            ("%.2f m/s" % dv1),
-            ("%.2f min" % (solve_vat(dv1, g + 0.7*9.81, None)/60)),
-            #fmteng(v2, "m/s"),
-            #fmteng(vf, "m/s"),
-            ("%.2f min" % ((orbit.P/2)/60)),
-            fmteng(dv2, "m/s"),
-        )
+    for transfer in [SuperLEO, EarthLEO, MarsLMO, MoonLMO]:
+        print("- - -")
+        transfer.info()
+        g_surface = transfer.initial.center.g_surface
+        g  = g_surface + 0.7*const_g
+        dv = abs(transfer.burns[1].dv)
+        print("Surface g: %.2f g" % (g_surface / const_g)),
+        print("Burn g: %.2f g" % (g / const_g)),
+        print("Takeoff burn: %.2f" % TtoMinutes(dv / g))
     exit()
 
-#info()
+info()
 
 #------------------------------------------------------------------------------
 # Example rocket: Falcon-9 v1.2 / Block 5 TSTO

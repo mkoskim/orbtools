@@ -20,7 +20,7 @@ class Transfer:
 
     def __init__(self, name, orbit):
         self.name = name
-        self.burns = [ Transfer.Burn(orbit)]
+        self.burns = [Transfer.Burn(orbit)]
 
     #--------------------------------------------------------------------------
     # Properties
@@ -52,14 +52,28 @@ class Transfer:
     # Transfer operations
     #--------------------------------------------------------------------------
 
-    def liftTo(self, dist, t = 0):
-        A = self.orbit
-        f, r = A.fr(t)
-        orbit = Orbit(A.center, r, dist, arg = f)
-        dv = orbit.v(0) - A.v(t)
+    class Burn:
+        def __init__(self, orbit, dv = Vec2d()):
+            self.orbit = orbit
+            self.dv = dv
+            self.stay = 0.0
+
+        @property
+        def t(self): return self.stay * self.orbit.P
+
+    def addBurn(self, orbit, dv, t):
         self.latest.stay = t
         self.burns.append(Transfer.Burn(orbit, dv))
         return orbit, dv
+
+    #--------------------------------------------------------------------------
+
+    def liftTo(self, dist, t = 0):
+        A = self.orbit
+        f, r = A.fr(t)
+        B = Orbit(A.center, r, dist, arg = f)
+        dv = B.v(0) - A.v(t)
+        return self.addBurn(B, dv, t)
 
     def lift(self, height, t = 0):
         A = self.orbit
@@ -71,14 +85,28 @@ class Transfer:
 
     #--------------------------------------------------------------------------
 
-    class Burn:
-        def __init__(self, orbit, dv = Vec2d()):
-            self.orbit = orbit
-            self.dv = dv
-            self.stay = 0.0
+    def exit(self, dist, t = 0):
+        A = self.orbit
+        B = A.center.orbit
+        f, r = B.fr(t)
 
-        @property
-        def t(self): return self.stay * self.orbit.P
+        C = Orbit(B.center, r, dist, arg = f)
+
+        v_inf = abs(C.v()) - abs(B.v(t))
+        dv = solve_rvrv(A.center.GM, A.r(), None, Inf, v_inf) - abs(A.v())
+        self.addBurn(B, 0, 0)
+        return self.addBurn(C, dv, t)
+
+    def enter(self, A, t = 0):
+        B = self.orbit
+        C = A.center.orbit
+
+        v_inf = abs(B.v(t) - C.v(t))
+        v_atr = solve_rvrv(A.center.GM, A.r(), None, Inf, v_inf)
+        dv = v_atr - abs(A.v())
+        self.addBurn(A, dv, t)
+
+        #A.info()
 
     #--------------------------------------------------------------------------
 
@@ -86,6 +114,13 @@ class Transfer:
     def TakeOff(name, mass, altitude):
         T = Transfer(name, Surface(mass))
         T.lift(altitude)
+        T.circulate(t=0.5)
+        return T
+
+    @staticmethod
+    def Hohmann(name, mass, r1, r2):
+        T = Transfer(name, Orbit(mass, r1))
+        T.liftTo(r2)
         T.circulate(t=0.5)
         return T
 
@@ -97,32 +132,8 @@ class Transfer:
         print("- Time....:", fmttime(self.t))
 
         print("- Burns:")
-        for burn in self.burns:
-            print("  - DV:", abs(burn.dv))
-
-#def Burn(orbFrom, orbTo):
-
-#    assert orbFrom.center == orbTo.center, "Orbits have different central masses"
-
-    #if initial:
-    #    self.dv = abs(orbTo.v_initial - orbFrom.v_initial)
-    #else:
-    #    self.dv = abs(orbTo.v_final - orbFrom.v_final)
-
-    #self.dt = orbTo.T_to_target * orbTo.P
-    #self.name = name
-    #self.orbit = orbTo
-
-#------------------------------------------------------------------------------
-# Loss (friction, gravity) estimations
-#------------------------------------------------------------------------------
-
-class Loss:
-    def __init__(self, name, orbit, loss):
-        self.name = name
-        self.orbit = orbit
-        self.dv = loss
-        self.dt = 0
+        for burn in self.burns[1:]:
+            print("  - DV: %.2f m/s" % (abs(burn.dv)), "t:", fmttime(burn.t))
 
 #------------------------------------------------------------------------------
 # Entering system to given orbit

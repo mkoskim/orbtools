@@ -15,9 +15,9 @@ from orbtools.systems.exoplanets import *
 
 def calc(k):
   if not k:
-    print("%7s %12s" % ("k", "R-1"))
+    print("%7s %12s" % ("k", "R"))
     return
-  print("%7.2f %12.2f" % (k, exp(k)-1))
+  print("%7.2f %12.2f" % (k, exp(k)))
 
 for k in [None, 0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 10.0, 20.0]:
   calc(k)

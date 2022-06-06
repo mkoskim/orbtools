@@ -367,7 +367,7 @@ class Vec2d:
 
 def pos_xy(r1, r2, T):
 
-    #if r1 > r2: T = T + 0.5
+    if r1 > r2: T = T + 0.5
     T = T % 1.0
 
     e  = eccentricity(r1, r2)
@@ -386,8 +386,7 @@ def pos_xy(r1, r2, T):
         b*sin(E)
     )
 
-    #return (r1 > r2) and -p or p
-    return p
+    return (r1 > r2) and -p or p
 
 ################################################################################
 #
@@ -404,19 +403,23 @@ class Orbit(object):
         center = Mass.resolve(center)
         assert not center.isMassless, "Cannot orbit massless particle."
         self.center = center
-        self.r1  = float(min(r1, r2))   # Periapsis
-        self.r2  = float(max(r1, r2))   # Apoapsis
+        self.r1  = float(r1)            # Periapsis
+        self.r2  = float(r2)            # Apoapsis
         self.arg = arg and arg or 0.0   # Argument of periapsis
+
+        #self.r1  = float(min(r1, r2))   # Periapsis
+        #self.r2  = float(max(r1, r2))   # Apoapsis
+        #self.arg = arg and arg or 0.0   # Argument of periapsis
 
     #--------------------------------------------------------------------------
     # Basic properties
     #--------------------------------------------------------------------------
 
     @property
-    def periapsis(self): return self.r1
+    def periapsis(self): return min(self.r1, self.r2)
 
     @property
-    def apoapsis(self): return self.r1
+    def apoapsis(self): return max(self.r1, self.r2)
 
     @property
     def diam(self): return self.r1 + self.r2
@@ -485,7 +488,7 @@ class Orbit(object):
             E, Ekin, Epot = (self.E(t), self.Ekin(t), self.Epot(t))
 
             print(prefix + "- r.....:", fmtdist(r), "alt:", fmtdist(r - self.center.radius))
-            print(prefix + "- v.....:", fmteng(v, "m/s"))
+            print(prefix + "- v.....: %.2f m/s" % v)
             print(prefix + "- E.....:", fmteng(E, "J"), "(%s %s)" % (fmteng(Ekin, "J"), fmteng(Epot, "J")))
 
         print("Orbit")

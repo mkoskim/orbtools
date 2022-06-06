@@ -81,8 +81,8 @@ def plot(A, B, C):
     plotter.travel(C, 0.00, 0.50, color="orange")
     plotter.travel(C, 0.50, 1.00, color="blue")
 
-    plotter.event(C, 0.05, "Nousu", offset=(5, -5))
-    plotter.event(C, 0.65, "Lasku", offset=(5, -5))
+    plotter.event(C, 0.09, "Ascend", offset=(5, -5))
+    plotter.event(C, 0.75, "Descend", offset=(5, -5))
 
     #plotter.travel(A,  0.00, 0.25, color="grey")
     #plotter.event(C, 0.0, "A")
