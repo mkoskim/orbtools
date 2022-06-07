@@ -401,15 +401,11 @@ class Orbit(object):
         assert r1 > 0
         assert r2 > 0
         center = Mass.resolve(center)
-        assert not center.isMassless, "Cannot orbit massless particle."
+        assert not center.isMassless, "Cannot orbit massless object"
         self.center = center
         self.r1  = float(r1)            # Periapsis
         self.r2  = float(r2)            # Apoapsis
         self.arg = arg and arg or 0.0   # Argument of periapsis
-
-        #self.r1  = float(min(r1, r2))   # Periapsis
-        #self.r2  = float(max(r1, r2))   # Apoapsis
-        #self.arg = arg and arg or 0.0   # Argument of periapsis
 
     #--------------------------------------------------------------------------
     # Basic properties
@@ -435,6 +431,14 @@ class Orbit(object):
 
     @property
     def P(self): return P_orbit(self.center.GM, self.a)
+
+    #--------------------------------------------------------------------------
+    # Synodic period to given orbit
+    #--------------------------------------------------------------------------
+
+    def P_synodic(self, B):
+        A, B = self.P, B.P
+        return abs((A * B) / float(A - B))
 
     #--------------------------------------------------------------------------
     # Position (x,y) or (f,r) at given moment t = [0...1]
@@ -478,12 +482,11 @@ class Orbit(object):
     def E(self, t = 0): return self.Ekin(t) + self.Epot(t)
 
     #--------------------------------------------------------------------------
-    # Synodic period to given orbit
+    # C3, characteristic energy for trajectories
     #--------------------------------------------------------------------------
 
-    def P_synodic(self, B):
-        A, B = self.P, B.P
-        return abs((A * B) / float(A - B))
+    def C3(self, v, t = 0):
+        return solve_rvrv(self.center.GM, self.r(t), None, Inf, v)
 
     #--------------------------------------------------------------------------
     # Orbit info dump

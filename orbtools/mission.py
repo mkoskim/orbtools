@@ -93,7 +93,8 @@ class Transfer:
         C = Orbit(B.center, r, dist, arg = f)
 
         v_inf = abs(C.v()) - abs(B.v(t))
-        dv = solve_rvrv(A.center.GM, A.r(), None, Inf, v_inf) - abs(A.v())
+        #dv = solve_rvrv(A.center.GM, A.r(), None, Inf, v_inf) - abs(A.v())
+        dv = A.C3(v_inf) - abs(A.v())
         self.addBurn(B, 0, 0)
         return self.addBurn(C, dv, t)
 
