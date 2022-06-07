@@ -40,7 +40,7 @@ class Star(Mass):
         else:
             self.dist = ly2m(dist)
 
-        stars[name] = self
+        if name: stars[name] = self
 
     #--------------------------------------------------------------------------
     # Radiation at given distance, relative to flux received by Earth:
@@ -77,6 +77,33 @@ class Star(Mass):
             k, a = 32e3, 1.0
 
         return k * (MxSun ** a)
+
+    #---------------------------------------------------------------------------
+    # Create star with specific flux at certain orbital period
+    #---------------------------------------------------------------------------
+
+    @staticmethod
+    def byFluxPeriod(P_target, flux = 1.0):
+        S_max, S_min = Mass.resolve("F0"), Mass.resolve("M9")
+
+        def P_max(): return S_max.orbitByFlux(flux).P
+        def P_min(): return S_min.orbitByFlux(flux).P
+
+        assert P_target > P_min(), "Period too small"
+        assert P_target < P_max(), "Period too large"
+
+        while P_max() - P_min() > TasDays(0.5):
+            MxSun = 0.5 * (S_max.GM + S_min.GM) / GM_Sun
+            star = Star(None, MxSun = MxSun, L = Star.MLR(MxSun))
+            P = star.orbitByFlux().P
+            #print(fmtGM(star.GM), "L=%.2f" % star.L, "P=", fmttime(P))
+
+            if(P > P_target):
+                S_max = star
+            else:
+                S_min = star
+
+        return star
 
     #--------------------------------------------------------------------------
     # Lifetime approx

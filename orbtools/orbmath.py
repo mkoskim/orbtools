@@ -243,7 +243,7 @@ class Mass(object):
         print("-------------------")
         print("Name..............:", self.name)
         if not self.isMassless:
-            print("Mass..............: %.4g kg (%.4g x M_earth)" % (self.kg, self.GM/GM_Earth))
+            print("Mass..............: %s" % (fmtmass(self.kg)))
             if hasattr(self, "L"):
                 print("Luminosity........: %.4f x Sun" % (self.L))
                 HZ = Orbit(self, self.HZ())
@@ -476,6 +476,14 @@ class Orbit(object):
     def Ekin(self, t = 0): return solve_Emv(None, 1.0, abs(self.v(t)))
 
     def E(self, t = 0): return self.Ekin(t) + self.Epot(t)
+
+    #--------------------------------------------------------------------------
+    # Synodic period to given orbit
+    #--------------------------------------------------------------------------
+
+    def P_synodic(self, B):
+        A, B = self.P, B.P
+        return abs((A * B) / float(A - B))
 
     #--------------------------------------------------------------------------
     # Orbit info dump

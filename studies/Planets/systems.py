@@ -24,16 +24,16 @@ def travelTime(T_unit, A, B):
     A = Mass.resolve(A)
     B = Mass.resolve(B)
 
-    T0 = (A.orbit.P + B.orbit.P)
-    T1 = (A.orbit.P + B.orbit.P) / 4.0
-    T2 = solve_aPaP(A.orbit.a, A.orbit.P, (A.orbit.a + B.orbit.a) / 2, None) / 2
-    T3 = Orbit(A.orbit.center, A.orbit.a, B.orbit.a).P / 2
+    T0 = (A.P + B.P)
+    T1 = (A.P + B.P) / 4.0
+    T2 = solve_aPaP(A.a, A.P, (A.a + B.a) / 2, None) / 2
+    T3 = Orbit(A.orbit.center, A.a, B.a).P / 2
 
-    print(A.name, "->", B.name, ":",
+    print(A.center.name, ":", A.name, "->", B.name, ":",
         "T0=%.2f" % (T0 / T_unit),
         "T1=%.2f" % (T1 / T_unit),
-        "T2=%.2f" % (T2 / T_unit),
-        "T3=%.2f" % (T3 / T_unit)
+        "Kepler=%.2f" % (T2 / T_unit),
+        "Newton=%.2f" % (T3 / T_unit)
     )
 
 def travelTimes():
@@ -68,28 +68,6 @@ def flux2P(flux):
     r = 1 / sqrt(flux)
     return solve_aPaP(1.0, 1.0, r, None)
 
-def kepler():
-    # Flux to period
-
-    def solve_P(a):
-        return sqrt(a ** 3.0)
-
-    for flux in [4.0, 2.0, 1.0, 0.5, 0.25, 0.125]:
-    #for r in [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]:
-        r = 1/(flux ** 0.5)
-        #flux = 1/(r ** 2)
-        P = solve_P(r)
-        print(r ** 3)
-        print("%.2f %.2f %.2f" % (flux, r, P))
-        #P = solve_aPaP(1.0, 1.0, i, None)
-        #a = solve_aPaP(1.0, 1.0, None, i)
-
-        #print(i, "a -> P", i, P)
-        #print(i, "P -> a", i, a)
-    exit()
-
-#kepler()
-
 #------------------------------------------------------------------------------
 
 import matplotlib.pyplot as plt
@@ -97,31 +75,32 @@ import numpy as np
 
 fig, ax = plt.subplots()  # Create a figure containing a single axes.
 
-ax.set_ylim(0.5, 3.5)
-ax.set_yticks([1, 2, 3])
-ax.set_yticklabels(["TRAPPIST-1", "Esimerkki", "Aurinko"])
+ax.set_ylim(0.5, 4.5)
+ax.set_yticks([1, 2, 3, 4])
+ax.set_yticklabels(["TRAPPIST-1", "E=120 d", "E=150 d", "Aurinko\nE=365 d"])
 plt.axhline(y = 1, linestyle="dashed", color="grey", linewidth=0.5)
 plt.axhline(y = 2, linestyle="dashed", color="grey", linewidth=0.5)
 plt.axhline(y = 3, linestyle="dashed", color="grey", linewidth=0.5)
+plt.axhline(y = 4, linestyle="dashed", color="grey", linewidth=0.5)
 
 ax.invert_xaxis()
 ax.set_xscale('log')
-xticks = [4.0, 2.0, 1.0, 0.5, 0.25, 0.125]
+xticks = [8.0, 4.0, 2.0, 1.0, 0.5, 0.25, 0.125]
 ax.set_xticks(xticks)
 ax.set_xticklabels(xticks)
 ax.set_xlabel("Säteilyteho (x Maa)")
 
 flux_lim = [2.0, 1.0, 0.396]
 
-ax.fill_between([flux_lim[0], flux_lim[1]], 0, 4, color="lightyellow")
-ax.fill_between([flux_lim[1], flux_lim[2]], 0, 4, color="lightgreen")
+ax.fill_between([flux_lim[0], flux_lim[1]], 0, 5, color="lightyellow")
+ax.fill_between([flux_lim[1], flux_lim[2]], 0, 5, color="lightgreen")
 plt.axvline(x = flux_lim[0], color="red")
 plt.axvline(x = flux_lim[1], color="green")
 plt.axvline(x = flux_lim[2], color="blue")
 
 #------------------------------------------------------------------------------
 
-def bodies(row, bodies):
+def placebodies(bodies, row):
     xy = [(body.flux, row) for body in bodies]
     x = [xy[0] for xy in xy]
     y = [xy[1] for xy in xy]
@@ -129,48 +108,85 @@ def bodies(row, bodies):
     ax.scatter(x, y)
     for i, body in enumerate(bodies):
         ax.annotate(
-            body.name.replace(body.orbit.center.name, ""),
+            body.orbit.center.name and body.name.replace(body.orbit.center.name, ""),
             (x[i], y[i]),
             xytext=(0, 5),
             textcoords="offset points"
         )
+
+def bodies(row, center, bodies, moons = []):
+    placebodies([Mass.resolve(body) for body in bodies], row)
+    placebodies([Mass.resolve(moon) for moon in moons], row - 0.33)
     #for body in bodies:
     #    print("- %10s %7.2f %7.2f" % (body.name, body.flux, m2AU(body.orbit.a)))
     #print()
 
 #------------------------------------------------------------------------------
 
-bodies(3, [
-    Mercury, Venus, Earth, Mars, masses["Ceres"], Jupiter, Saturn
+def EarthEquivalent(row, star, bodies):
+    HZ_inner = star.orbitByFlux(flux_lim[0])
+    HZ = star.orbitByFlux()
+    HZ_outer = star.orbitByFlux(flux_lim[2])
+    print(TtoDays(HZ_inner.P), "-", TtoDays(HZ.P), "-", TtoDays(HZ_outer.P))
+
+#------------------------------------------------------------------------------
+
+bodies(4, Sun, [
+    Mercury, Venus, Earth, Mars, "Ceres", Jupiter, Saturn
+],
+#[Moon, "Ganymede", "Titan"]
+)
+
+bodies(1, "TRAPPIST-1", [
+    "TRAPPIST-1c",
+    "TRAPPIST-1d",
+    "TRAPPIST-1e",
+    "TRAPPIST-1f",
+    "TRAPPIST-1g",
 ])
 
-bodies(1, [
-    masses["TRAPPIST-1c"],
-    masses["TRAPPIST-1d"],
-    masses["TRAPPIST-1e"],
-    masses["TRAPPIST-1f"],
-    masses["TRAPPIST-1g"],
-])
-
-star = stars["K3"]
-
-HZ_inner = star.orbitByFlux(flux_lim[0])
-HZ = star.orbitByFlux()
-HZ_outer = star.orbitByFlux(flux_lim[2])
-print(TtoDays(HZ_inner.P), "-", TtoDays(HZ.P), "-", TtoDays(HZ_outer.P))
-
-bodies(2, [
+star = Star.byFluxPeriod(TasDays(150))
+bodies(3, star, [
     Mass("A", orbit=byPeriod(star, TasDays(80))),
     Mass("B", orbit=byPeriod(star, TasDays(150))),
     Mass("C", orbit=byPeriod(star, TasDays(300))),
     Mass("D", orbit=byPeriod(star, TasDays(600))),
-    Mass("E", orbit=byPeriod(star, TasDays(1780))),
+    Mass("E", orbit=byPeriod(star, TasDays(12 * 150))),
 ])
 
+star.info()
+B, C = masses["B"], masses["C"]
+travelTime(TasDays(1), B, C)
+print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
+print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
+
+star = Star.byFluxPeriod(TasDays(120))
+bodies(2, star, [
+    Mass("A", orbit=byPeriod(star, TasDays(80))),
+    Mass("B", orbit=byPeriod(star, TasDays(150))),
+    Mass("C", orbit=byPeriod(star, TasDays(300))),
+    Mass("D", orbit=byPeriod(star, TasDays(600))),
+])
+
+star.info()
+B, C = masses["B"], masses["C"]
+travelTime(TasDays(1), B, C)
+print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
+print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
+
+#------------------------------------------------------------------------------
+
+B = Mass("B", orbit = byPeriod(Sun, TasDays(150)))
+C = Mass("C", orbit = byPeriod(Sun, TasDays(300)))
+travelTime(TasDays(1), B, C)
+print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
+print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
+
+
 #print(150+300 / 4.)
-x_Jupiter = (Jupiter.orbit.P / Earth.orbit.P)
-print("%.2f" % x_Jupiter)
-print("%.2f" % (x_Jupiter * 150))
+#x_Jupiter = (Jupiter.orbit.P / Earth.orbit.P)
+#print("%.2f" % x_Jupiter)
+#print("%.2f" % (x_Jupiter * 150))
 
 #------------------------------------------------------------------------------
 

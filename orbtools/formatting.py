@@ -33,10 +33,22 @@ def fmteng(val, unit):
 # M(jupiter) and M(sun)
 #------------------------------------------------------------------------------
 
-def fmtmass(val, unit = "g"):
+def fmtGM(GM):
+    if GM / GM_Sun > 0.01:
+        return "%.2f x Sun" % (GM/GM_Sun)
+    if GM / GM_Jupiter > 0.01:
+        return "%.2f x Jupiter" % (GM/GM_Jupiter)
+    #if GM / GM_Earth > 0.01:
+    return "%.2f x Earth" % (GM/GM_Earth)
+
+def fmtmass(val):
     if val < 0.5:
-        return fmteng(val*1e3, unit)
-    return "%.2f k%s" % (val, unit)
+        return fmteng(val*1e3, "g")
+
+    if val > GM2kg(0.01*GM_Earth):
+        return fmtGM(kg2GM(val))
+
+    return "%.2f kg" % val
 
 #------------------------------------------------------------------------------
 # Distance prints
