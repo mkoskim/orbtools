@@ -145,48 +145,58 @@ bodies(1, "TRAPPIST-1", [
     "TRAPPIST-1g",
 ])
 
-star = Star.byFluxPeriod(TasDays(150))
-bodies(3, star, [
-    Mass("A", orbit=byPeriod(star, TasDays(80))),
-    Mass("B", orbit=byPeriod(star, TasDays(150))),
-    Mass("C", orbit=byPeriod(star, TasDays(300))),
-    Mass("D", orbit=byPeriod(star, TasDays(600))),
-    Mass("E", orbit=byPeriod(star, TasDays(12 * 150))),
+E150 = Star.byFluxPeriod(TasDays(150))
+bodies(3, E150, [
+    Mass("A", orbit=byPeriod(E150, TasDays(80))),
+    Mass("B", orbit=byPeriod(E150, TasDays(150))),
+    Mass("C", orbit=byPeriod(E150, TasDays(300))),
+    Mass("D", orbit=byPeriod(E150, TasDays(600))),
+    Mass("E", orbit=byPeriod(E150, TasDays(12 * 150))),
 ])
 
-star.info()
 B, C = masses["B"], masses["C"]
 travelTime(TasDays(1), B, C)
-print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
-print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
 
-star = Star.byFluxPeriod(TasDays(120))
-bodies(2, star, [
-    Mass("A", orbit=byPeriod(star, TasDays(80))),
-    Mass("B", orbit=byPeriod(star, TasDays(150))),
-    Mass("C", orbit=byPeriod(star, TasDays(300))),
-    Mass("D", orbit=byPeriod(star, TasDays(600))),
+E120 = Star.byFluxPeriod(TasDays(120))
+bodies(2, E120, [
+    Mass("A", orbit=byPeriod(E120, TasDays(80))),
+    Mass("B", orbit=byPeriod(E120, TasDays(150))),
+    Mass("C", orbit=byPeriod(E120, TasDays(300))),
+    Mass("D", orbit=byPeriod(E120, TasDays(600))),
 ])
 
-star.info()
 B, C = masses["B"], masses["C"]
 travelTime(TasDays(1), B, C)
-print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
-print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
 
 #------------------------------------------------------------------------------
 
-B = Mass("B", orbit = byPeriod(Sun, TasDays(150)))
-C = Mass("C", orbit = byPeriod(Sun, TasDays(300)))
-travelTime(TasDays(1), B, C)
-print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
-print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
+Sun.info()
+E150.info()
+E120.info()
 
+A = byPeriod(Sun,  TasDays(150))
+B = byPeriod(E150, TasDays(150))
+C = byPeriod(E120, TasDays(150))
 
-#print(150+300 / 4.)
-#x_Jupiter = (Jupiter.orbit.P / Earth.orbit.P)
-#print("%.2f" % x_Jupiter)
-#print("%.2f" % (x_Jupiter * 150))
+for orbit in [A, B, C]:
+    print(
+        orbit.center.name,
+        fmttime(orbit.P),
+        fmtdist(orbit.a),
+        fmteng(abs(orbit.v()), "m/s")
+    )
+
+#print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
+#print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
+
+#print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
+#print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
+
+#B = Mass("B", orbit = byPeriod(Sun, TasDays(150)))
+#C = Mass("C", orbit = byPeriod(Sun, TasDays(300)))
+#travelTime(TasDays(1), B, C)
+#print("B a=", fmtdist(B.orbit.a), "v=", fmteng(abs(B.orbit.v()), "m/s"))
+#print("C a=", fmtdist(C.orbit.a), "v=", fmteng(abs(C.orbit.v()), "m/s"))
 
 #------------------------------------------------------------------------------
 
