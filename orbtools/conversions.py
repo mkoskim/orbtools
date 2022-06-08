@@ -17,6 +17,8 @@ from constants import *
 #------------------------------------------------------------------------------
 
 def TasDHMS(d, h, m, s):    return d*24*3600.0 + h*60*60.0 + m*60.0 + s
+def TasMinutes(d):          return float(d)*60
+def TasHours(d):            return float(d)*3600
 def TasDays(d):             return float(d)*24*3600
 def TasYears(a):            return float(a)*const_year
 

@@ -59,6 +59,9 @@ class Star(Mass):
     def orbitByFlux(self, flux = 1.0):
         return Orbit(self, self.HZ(flux))
 
+    def EarthEquivalence(self):
+        return self.orbitByFlux(1.0)
+
     #---------------------------------------------------------------------------
     # MLR, Mass-Luminosity Relation.
     # Luminosity approxmation from star mass (as Sun mass)
