@@ -73,6 +73,7 @@ class Transfer:
         f, r = A.fr(t)
         B = Orbit(A.center, r, dist, arg = f)
         dv = B.v(0) - A.v(t)
+        #print(B.v(0), A.v(t))
         return self.addBurn(B, dv, t)
 
     def lift(self, height, t = 0):
@@ -92,20 +93,23 @@ class Transfer:
 
         C = Orbit(B.center, r, dist, arg = f)
 
+        toC3 = A.C3(0) - abs(A.v())
         v_inf = abs(C.v()) - abs(B.v(t))
-        #dv = solve_rvrv(A.center.GM, A.r(), None, Inf, v_inf) - abs(A.v())
-        dv = A.C3(v_inf) - abs(A.v())
-        self.addBurn(B, 0, 0)
-        return self.addBurn(C, dv, t)
+        transfer = A.C3(v_inf) - A.C3(0)
+        self.addBurn(B, toC3, t)
+        return self.addBurn(C, transfer, 0)
 
     def enter(self, A, t = 0):
         B = self.orbit
         C = A.center.orbit
 
+        # Capture
         v_inf = abs(B.v(t) - C.v(t))
-        v_atr = solve_rvrv(A.center.GM, A.r(), None, Inf, v_inf)
-        dv = v_atr - abs(A.v())
-        self.addBurn(A, dv, t)
+        toC3 = A.C3(v_inf) - A.C3(0)
+        toOrbit = A.C3(0) - abs(A.v())
+
+        self.addBurn(A, toC3, t)
+        self.addBurn(A, toOrbit, 0)
 
         #A.info()
 

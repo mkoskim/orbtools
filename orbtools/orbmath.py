@@ -482,7 +482,7 @@ class Orbit(object):
     def E(self, t = 0): return self.Ekin(t) + self.Epot(t)
 
     #--------------------------------------------------------------------------
-    # C3, characteristic energy for trajectories
+    # C3, characteristic energy for interplanetary exit & entry trajectories
     #--------------------------------------------------------------------------
 
     def C3(self, v, t = 0):
