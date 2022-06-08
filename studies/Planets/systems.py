@@ -108,7 +108,7 @@ def placebodies(bodies, row):
     ax.scatter(x, y)
     for i, body in enumerate(bodies):
         ax.annotate(
-            body.orbit.center.name and body.name.replace(body.orbit.center.name, ""),
+            body.orbit.center.name and body.name.replace(body.orbit.center.name, "") or body.name,
             (x[i], y[i]),
             xytext=(0, 5),
             textcoords="offset points"
