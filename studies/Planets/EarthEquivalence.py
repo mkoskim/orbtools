@@ -133,11 +133,13 @@ systems = [
         Mass("D", orbit=byPeriod(E120, TasDays(600))),
     ]],
     ["TRAPPIST-1", [
+        "TRAPPIST-1b",
         "TRAPPIST-1c",
         "TRAPPIST-1d",
         "TRAPPIST-1e",
         "TRAPPIST-1f",
         "TRAPPIST-1g",
+        "TRAPPIST-1h",
     ]],
 ]
 
@@ -193,6 +195,8 @@ import numpy as np
 
 fig, ax = plt.subplots()  # Create a figure containing a single axes.
 
+plt.subplots_adjust(left=0.15, right=0.85)  # adjust plot area
+
 #------------------------------------------------------------------------------
 
 def starLabel(star):
@@ -224,11 +228,12 @@ ax.set_ylabel("Säteilyteho (x Maa)")
 
 flux_lim = [2.0, 1.0, 0.396]
 
-ax.fill_between(ax.get_xlim(), flux_lim[0], flux_lim[1], color="lightyellow")
-ax.fill_between(ax.get_xlim(), flux_lim[1], flux_lim[2], color="lightgreen")
 plt.axhline(y = flux_lim[0], color="red")
 plt.axhline(y = flux_lim[1], color="green")
 plt.axhline(y = flux_lim[2], color="blue")
+
+ax.fill_between(ax.get_xlim(), flux_lim[1], flux_lim[2], color="lightgreen")
+ax.fill_between(ax.get_xlim(), flux_lim[0], flux_lim[1], color="lightyellow")
 
 for i, system in enumerate(systems):
     star, planets = system
@@ -238,8 +243,8 @@ ax2 = ax.twinx()
 ax2.set_yscale('log')
 ax2.set_ylim(ax.get_ylim())
 ax2.set_yticks(flux_lim)
-ax2.set_yticklabels([("x%.1f" % flux2P(flow)) for flow in flux_lim])
-ax2.set_ylabel("Kiertoaika")
+ax2.set_yticklabels([("%.1f" % flux2P(flow)) for flow in flux_lim])
+ax2.set_ylabel("Kiertoaika (x E)")
 
 #print(flux2P(Venus.flux) * 365)
 #print(flux2P(Mars.flux) * 365)

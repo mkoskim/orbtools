@@ -93,6 +93,7 @@ orbits = [
   #Energy("Surface", orbit = byAltitude(Earth, 0)),
   #Energy("LEO", orbit = byAltitude(Earth, 150e3)),
   Energy("ISS", orbit = byAltitude(Earth, 450e3)),
+  Energy("GPS", orbit = byAltitude(Earth, 20_000e3)),
   Energy("GEO", orbit = byPeriod(Earth, Earth.rotate)),
   Energy("Moon", orbit = Moon.orbit),
 ]
@@ -103,6 +104,7 @@ orbitlines = [
   Energy("12 h",  orbit = byPeriod(Earth, TasHours(12))),
   Energy("1 d",  orbit = byPeriod(Earth, TasDays(1))),
   Energy("30 d", orbit = byPeriod(Earth, TasDays(30))),
+  Energy("C3=0", center=Earth, dv=0),
 ]
 
 C3 = Energy("C3", center = Earth, dv=0)
@@ -116,7 +118,7 @@ energies = [
 
 import matplotlib.pyplot as plt
 import numpy as np
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+#from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 fig, axOrbit = plt.subplots()  # Create a figure containing a single axes.
 
@@ -126,7 +128,7 @@ fig, axOrbit = plt.subplots()  # Create a figure containing a single axes.
 #gs  = fig.add_gridspec(2, hspace=0, height_ratios=[1, 4])
 #axEnergy, axOrbit = gs.subplots(sharex = True)
 
-plt.subplots_adjust(left=0.2, right=0.8)  # adjust plot area
+plt.subplots_adjust(left=0.3, right=0.7)  # adjust plot area
 
 #------------------------------------------------------------------------------
 # orbit axes
@@ -183,6 +185,10 @@ axDV.set_yscale(axOrbit.get_yscale())
 #axDV.set_yticks([int(x) for x in ticks])
 #axDV.set_yticklabels([int(x) for x in ticks])
 #axDV.set_ylim((lmin, lmax))
+
+import matplotlib.ticker as ticker
+
+axDV.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: "%+.0f km/s" % (x*1e-3)))
 
 print(axOrbit.get_ylim())
 print(axDV.get_ylim())

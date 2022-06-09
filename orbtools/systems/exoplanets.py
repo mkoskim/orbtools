@@ -62,14 +62,14 @@ Mass("Gliese 876d", 6.83 * GM_Earth, radius = 1.65 * r_Earth)
 #
 ################################################################################
 
-Star("TRAPPIST-1", 0.089, 0.121,  sptype = "M8", L = 0.000522, dist = 39.60, rotate = TasDays(3.295))		
-Mass("TRAPPIST-1b",  1.017 * GM_Earth, radius = 1.121 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.01154775)))
-Mass("TRAPPIST-1c",  1.156 * GM_Earth, radius = 1.095 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.01581512)))
-Mass("TRAPPIST-1d",  0.297 * GM_Earth, radius = 0.784 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.02228038)))
-Mass("TRAPPIST-1e",  0.772 * GM_Earth, radius = 0.910 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.02928285)))
-Mass("TRAPPIST-1f",  0.934 * GM_Earth, radius = 1.046 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.03853361)))
-Mass("TRAPPIST-1g",  1.148 * GM_Earth, radius = 1.148 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.04687692)))
-Mass("TRAPPIST-1h",  0.331 * GM_Earth, radius = 0.773 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.06193488)))
+Star("TRAPPIST-1", 0.089, 0.121,  sptype = "M8", L = 0.000522, dist = 39.60, rotate = TasDays(3.295))
+Mass("TRAPPIST-1b",  1.3771 * GM_Earth, radius = 1.116 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.01154)))
+Mass("TRAPPIST-1c",  1.3105 * GM_Earth, radius = 1.097 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.01580)))
+Mass("TRAPPIST-1d",  0.3885 * GM_Earth, radius = 0.778 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.02227)))
+Mass("TRAPPIST-1e",  0.6932 * GM_Earth, radius = 0.920 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.02925)))
+Mass("TRAPPIST-1f",  1.0411 * GM_Earth, radius = 1.045 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.03849)))
+Mass("TRAPPIST-1g",  1.3238 * GM_Earth, radius = 1.129 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.04683)))
+Mass("TRAPPIST-1h",  0.3261 * GM_Earth, radius = 0.775 * r_Earth, orbit = Orbit("TRAPPIST-1", AU2m(0.06189)))
 
 ################################################################################
 #
@@ -77,7 +77,7 @@ Mass("TRAPPIST-1h",  0.331 * GM_Earth, radius = 0.773 * r_Earth, orbit = Orbit("
 #
 ################################################################################
 
-Star("61 Virginis", 0.93, 0.9867, sptype = "G7", L = 0.822200, dist = 27.90)		
+Star("61 Virginis", 0.93, 0.9867, sptype = "G7", L = 0.822200, dist = 27.90)
 Mass("61 Virginis b", MasEarth(5.3), orbit = Orbit("61 Virginis", AU2m(0.050201)))
 Mass("61 Virginis c", MasEarth(18.8), orbit = Orbit("61 Virginis", AU2m(0.2175)))
 Mass("61 Virginis d", MasEarth(23.7), orbit = Orbit("61 Virginis", AU2m(0.476)))

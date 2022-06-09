@@ -33,6 +33,9 @@ def P_launchwindow(A, B):
 
   print(
     "%s -> %s" % (A.name, B.name),
+    "P: %.2f %.2f" % (TtoDays(A.P), TtoDays(B.P)),
+    "AB = %.2f" % (TtoDays(A.P) * TtoDays(B.P)),
+    "A-B = %.2f" % abs(TtoDays(A.P) - TtoDays(B.P)),
     "days: %.2f" % synodic(TtoDays(A.P), TtoDays(B.P)),
     "years: %.2f" % synodic(TtoYears(A.P), TtoYears(B.P)),
     "P: %.2f" % TtoDays(A.orbit.P_synodic(B.orbit))
@@ -59,6 +62,7 @@ P_launchwindow("Earth", "Mars")
 P_launchwindow("Earth", "Venus")
 P_launchwindow("Earth", "Jupiter")
 P_launchwindow("Ganymede", "Callisto")
+P_launchwindow("TRAPPIST-1d", "TRAPPIST-1f")
 
 exit()
 
