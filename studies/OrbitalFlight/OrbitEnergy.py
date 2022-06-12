@@ -43,20 +43,14 @@ class Energy:
   def getEdv(self):
     E = self.getE()
     if E < 0:
-      return -sqrt(abs(E))
+      return -solve_Emv(abs(E), 1.0, None)
     return sqrt(E)
 
   def getdv(self):
-
-    surface = byAltitude(self.center, 0)
-
     if hasattr(self, "orbit"):
-      transfer = Orbit(self.center, self.center.radius, self.orbit.r())
-      dv = abs(transfer.v())
+      return -(self.orbit.v_escape() - abs(self.orbit.v()))
     else:
-      dv = self.center.v_escape() + self.dv
-
-    return dv - abs(surface.v())
+      return +self.dv
 
   def getalt(self):
     if not hasattr(self, "orbit"): return None
@@ -89,17 +83,23 @@ class Energy:
 
 #------------------------------------------------------------------------------
 
+ISS = byAltitude(Earth, 450e3)
+GPS = byAltitude(Earth, 20_000e3)
+GEO = byPeriod(Earth, Earth.rotate)
+
 orbits = [
   #Energy("Surface", orbit = byAltitude(Earth, 0)),
   #Energy("LEO", orbit = byAltitude(Earth, 150e3)),
-  Energy("ISS", orbit = byAltitude(Earth, 450e3)),
-  Energy("GPS", orbit = byAltitude(Earth, 20_000e3)),
-  Energy("GEO", orbit = byPeriod(Earth, Earth.rotate)),
+  Energy("Surface", orbit = Surface(Earth)),
+  Energy("ISS", orbit = ISS),
+  Energy("GPS", orbit = GPS),
+  Energy("GEO", orbit = GEO),
   Energy("Moon", orbit = Moon.orbit),
 ]
 
 orbitlines = [
   #Energy("1 h",  orbit = byPeriod(Earth, TasHours(1))),
+  Energy("Surface", orbit = Surface(Earth)),
   Energy("2 h",  orbit = byPeriod(Earth, TasHours(2))),
   Energy("12 h",  orbit = byPeriod(Earth, TasHours(12))),
   Energy("1 d",  orbit = byPeriod(Earth, TasDays(1))),
@@ -113,6 +113,24 @@ energies = [
   Energy("MTO", center = Earth, dv=389.02),
   Energy("JTO", center = Earth, dv=3065.26)
 ]
+
+def printParams(name, orbit):
+  print(name)
+  print("   ", "E     =", fmteng(orbit.E(), "J"))
+  print("   ", "- Ekin=", fmteng(orbit.Ekin(), "J"))
+  print("   ", "- Epot=", fmteng(orbit.Epot(), "J"))
+  print("   ", "v(Ekin)=", fmteng(solve_Emv(orbit.Ekin(), 1.0, None), "m/s"))
+  print("   ", "v      =", fmteng(abs(orbit.v()), "m/s"))
+  #print("   ", "r=", fmteng(orbit.r(), "m"))
+  print("   ", "v(Epot)=", fmteng(solve_Emv(abs(orbit.Epot()), 1.0, None), "m/s"))
+  print("   ", "v(esc) =", fmteng(orbit.v_escape(), "m/s"))
+  print("   ", "v(diff)=", fmteng(solve_Emv(abs(orbit.E()), 1.0, None), "m/s"))
+  print("   ", "dv(esc)=", orbit.v_escape() - abs(orbit.v()))
+
+printParams("Earth surface", Surface(Earth))
+printParams("ISS", ISS)
+printParams("GEO", GEO)
+#exit()
 
 #------------------------------------------------------------------------------
 

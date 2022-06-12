@@ -471,6 +471,12 @@ class Orbit(object):
         h = 1/self.P
         return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0)
 
+    def v_escape(self, t = 0):
+        return self.center.v_escape(self.r(t))
+
+    def v_circular(self, t = 0):
+        return self.center.v_circular(self.r(t))
+
     #--------------------------------------------------------------------------
     # Energy
     #--------------------------------------------------------------------------
