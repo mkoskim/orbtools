@@ -101,7 +101,7 @@ orbitlines = [
   #Energy("1 h",  orbit = byPeriod(Earth, TasHours(1))),
   Energy("Surface", orbit = Surface(Earth)),
   Energy("2 h",  orbit = byPeriod(Earth, TasHours(2))),
-  Energy("12 h",  orbit = byPeriod(Earth, TasHours(12))),
+  Energy("12 h", orbit = byPeriod(Earth, TasHours(12))),
   Energy("1 d",  orbit = byPeriod(Earth, TasDays(1))),
   Energy("30 d", orbit = byPeriod(Earth, TasDays(30))),
   Energy("C3=0", center=Earth, dv=0),
