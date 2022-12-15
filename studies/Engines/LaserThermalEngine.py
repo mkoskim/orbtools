@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 ###############################################################################
 #
-# Fictive engine SSE-1 for ascending from planet surfaces
-#
-# SSE, Speculative Space Engines
+# Laser Thermal Engine
 #
 ###############################################################################
 

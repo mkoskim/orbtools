@@ -20,31 +20,6 @@ def solve_rocket_eq(M0, M1, dv, ve):
     if dv == None: return ve * Rm(M0, M1)
     return dv / Rm(M0, M1)
 
-#-------------------------------------------------------------------------------
-# Temperature equations:
-# T = temperature (Kelvin)
-# M = Molar mass (g/mol)
-# v = speed
-#-------------------------------------------------------------------------------
-
-def solve_MTv(M, T, v = None):
-    if isinstance(M, str): M = Fuel.atomic_mass(M)
-    if T == None: return (M*1e-3 * v**2 / (3*const_R))
-    if M == None: return (2.5*const_R*T / (v**2)) * 1e3
-    return 1.6 * sqrt(T * const_R/M*1e3)
-
-def de_laval(M, T, p, r_exp, gamma):
-    if isinstance(M, str): M = Fuel.atomic_mass(M)
-
-    p_ex = p / r_exp
-    f = gamma / (gamma - 1)
-
-    return sqrt(
-        T * (const_R/M*1e3)*
-        2*f *
-        (1 - (p_ex / p) ** (1 / f))
-    )
-
 ###############################################################################
 #
 # Fixed-Isp rocket engines
@@ -254,6 +229,8 @@ class Fuel:
 
     @staticmethod
     def atomic_mass(particles):
+        if isinstance(particles, float): return particles
+        if isinstance(particles, int): return float(particles)
         if isinstance(particles, str): return Fuel.mole_mass[particles]
         return sum([Fuel.mole_mass[x] for x in particles])
 
@@ -384,3 +361,66 @@ Fuel("Hydrazine", E = 1.600e6)
 #------------------------------------------------------------------------------
 
 Fuel("APCP", E = 31.0e6 * 0.16)  # Guessed
+
+###############################################################################
+#
+# Sketching temperature equations (to be used with speculative engines)
+#
+###############################################################################
+
+# Heat capacities for gases
+
+heat_capacity = {
+    "H": 14.3e3,
+    "He": 5.1932e3,
+    "O": 0.918e3,
+
+    "H2O": 2.080e3,
+    "CO2": 0.839e3,
+}
+
+#-------------------------------------------------------------------------------
+# Energy to temperature: what we like to know is that how much the temperature
+# is changed when given X amount of energy
+#-------------------------------------------------------------------------------
+
+def Esp2T(M, Esp): return Esp / heat_capacity[M]
+def T2Esp(M, T): return T * heat_capacity[M]
+
+#-------------------------------------------------------------------------------
+# Temperature equations:
+# M = Molar mass (g/mol)
+# T = temperature (Kelvin)
+# v = speed
+#-------------------------------------------------------------------------------
+
+def solve_MTv(M, T, v = None):
+    M = Fuel.atomic_mass(M)
+    if T == None: return (M*1e-3 * v**2 / (3*const_R))
+    if M == None: return (2.5*const_R*T / (v**2)) * 1e3
+    return 1.6 * sqrt(T * const_R/M*1e3)
+
+#-------------------------------------------------------------------------------
+# ve = de_laval(M, T, p, r_exp, gamma):
+# M     = Molar mass (g/mol)
+# T     = combustion chamber temperature (Kelvin)
+# p     = combustion chamber pressure
+# r_exp = nozzle expansion ratio
+# gamma = heat capacity ratio
+#-------------------------------------------------------------------------------
+
+def de_laval(M, T, p_ratio, gamma):
+    M = Fuel.atomic_mass(M)
+
+    f = gamma / (gamma - 1)
+
+    print("Mole mass..:", M)
+    print("Temperature:", T)
+    print("p (ratio).:", p_ratio)
+    print("gamma......:", gamma)
+
+    return sqrt(
+        T * (const_R/M*1e3)*
+        2*f *
+        (1 - (p_ratio) ** (1 / f))
+    )

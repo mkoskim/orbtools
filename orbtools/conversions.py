@@ -86,3 +86,11 @@ def rad2deg(r): return degrees(r)
 def Isp2ve(isp): return const_g * float(isp)
 def ve2Isp(ve):  return float(ve) / const_g
 
+#------------------------------------------------------------------------------
+# Pressure
+#------------------------------------------------------------------------------
+
+def bar2Pa(bar): return bar*100e3
+def Pa2bar(pa): return pa / 100e3
+def psi2Pa(psi): return psi * 6.895e3
+def Pa2psi(pa): return pa / 6.895e3
