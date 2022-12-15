@@ -23,8 +23,17 @@ def show(propellant, E = None, T = None):
   print(M, "@", T, "=", fmteng(E, "J"))
   print("ve = ", solve_Emv(E, 1.0, None))
 
-show("H2O", E = 15e6)
+def ve2T(ve):
+  E = solve_Emv(None, 1.0, ve)
+  show("H", E)
+
+# Hydrogen propellant at 2000K
 show("H", T = 2000)
+ve2T(10e3)
+ve2T(50e3)
+ve2T(100e3)
+
+#show("H2O", E = 15e6)
 
 exit()
 
