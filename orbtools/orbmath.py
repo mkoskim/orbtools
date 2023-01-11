@@ -118,13 +118,16 @@ class Mass(object):
     def __init__(self, name = None, GM = 0, radius = 0, rotate = 0, orbit = None):
         self.name = name
         self.GM = float(GM)
-        self.radius = float(radius)
+        self.radius = radius and float(radius) or None
         if rotate == "S":
             self.rotate = orbit.P;
         else:
             self.rotate = float(rotate)
         self.orbit = orbit
-        if name: masses[name] = self
+
+        if name:
+            assert name not in masses, "Mass '%s' already exists." % name
+            masses[name] = self
 
     @staticmethod
     def fromGM(GM): return Mass(GM = GM)
@@ -205,12 +208,18 @@ class Mass(object):
     # Finding satellites
     #--------------------------------------------------------------------------
 
+    @property
     def satellites(self):
-        s = []
-        for m in masses.values():
-            if m.orbit != None and m.orbit.center == self:
-                s.append(m)
-        return s
+        return list(filter(lambda m: m.orbit != None and m.orbit.center == self, masses.values()))
+
+    @property
+    def system(self):
+        if not self.orbit: return self
+        return self.orbit.center.system
+
+    #--------------------------------------------------------------------------
+    # Finding system
+    #--------------------------------------------------------------------------
 
     #--------------------------------------------------------------------------
     # Lagrangian distances (e.g. SOI, Sphere of Influence)
@@ -231,9 +240,9 @@ class Mass(object):
 
     @property
     def flux(self):
-        if not self.center:return None
+        if not self.center: return None
         if not hasattr(self.center, "radiation"): return self.center.flux
-        return self.center.radiation(self.orbit.r())
+        return self.center.radiation(self.orbit.a)
 
     #--------------------------------------------------------------------------
     # Info dump
@@ -244,15 +253,29 @@ class Mass(object):
         print("Name..............:", self.name)
         if not self.isMassless:
             print("Mass..............: %s" % (fmtmass(self.kg)))
-            if hasattr(self, "L"):
-                print("Luminosity........: %.4f x Sun" % (self.L))
+            if hasattr(self, "sptype"):
+                print("Spectral type.....: %s" % self.sptype)
+            if hasattr(self, "T") and not self.T is None:
+                print("Temperature.......: %.0f K" % self.T)
+            if hasattr(self, "magV") and not self.magV is None:
+                print("Magnitude (visual): %.2f" % self.magV)
+            if hasattr(self, "mag") and not self.mag is None:
+                print("Magnitude (abs)...: %.2f" % self.mag)
+            if hasattr(self, "dist") and not self.dist is None:
+                print("Distance..........: %.2f ly" % m2ly(self.dist))
+            if hasattr(self, "L") and not self.L is None:
+                print("Luminosity........: %.5f x Sun" % (self.L))
                 HZ = Orbit(self, self.HZ())
                 print("Habitable zone....: ")
                 print("    - Distance....: %.4f AU" % m2AU(HZ.a))
                 print("    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P)))
-            if self.radius:
-                print("Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth))
-                print("Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth))
+            if not self.radius is None:
+                if self.sptype:
+                    print("Radius............: %s (%.4g x R_sun)" % (fmtdist(self.radius), self.radius/r_Sun))
+                    print("Volume............: %.4g m3 (%.4g x V_sun)" % (self.V, self.V/V_Sun))
+                else:
+                    print("Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth))
+                    print("Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth))
                 print("Density...........: %.3f kg/m3" % (self.density))
                 print("Surface gravity...: %.2f g (%.2f m/s^2)" % (self.g_surface/const_g, self.g_surface))
                 print("Escape velocity...: %s" % fmteng(self.v_escape(), "m/s"))
@@ -268,7 +291,7 @@ class Mass(object):
             #print("   L1/L2 distance.:", fmtdist(self.Lagrangian()))
             #print("   Hill Sphere....:", fmtdist(self.HillSphere()))
             #print("   SOI............:", fmtdist(self.SOI()))
-        s = self.satellites()
+        s = self.satellites
         if len(s):
             print("Satellites........:")
             s.sort(key=lambda x: x.orbit.a)

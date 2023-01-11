@@ -49,9 +49,11 @@ def MtoEarth(GM): return float(GM)/GM_Earth
 #------------------------------------------------------------------------------
 
 def RtoSun(R): return float(R) / r_Sun
+def RtoJupiter(R): return float(R) / r_Jupiter
 def RtoEarth(R): return float(R) / r_Earth
 
 def RasSun(R): return float(R) * r_Sun
+def RasJupiter(R): return float(R) * r_Jupiter
 def RasEarth(R): return float(R) * r_Earth
 
 #------------------------------------------------------------------------------
@@ -62,6 +64,9 @@ def AU2m(AU):   return float(AU)*const_AU
 def m2AU(m):    return float(m)/const_AU
 def ly2m(ly):   return float(ly)*const_ly
 def m2ly(m):    return float(m)/const_ly
+
+def m2parsec(m):  return m2ly(float(m))/3.262
+def parsec2m(pc):  return ly2m(float(pc)*3.262)
 
 #------------------------------------------------------------------------------
 # Speed

@@ -18,27 +18,43 @@ stars = {}
 
 class Star(Mass):
 
-    def __init__(self, name, MxSun, RxSun = 0, sptype = None, L = None, T = None, BV = None, rotate = 0, orbit = None, dist = None):
+    def __init__(self, name, MxSun, RxSun = None, sptype = None, L = None, magV = None, mag = None, T = None, BV = None, rotate = 0, dist = None, orbit = None):
 
         self.sptype = sptype
         if not name: name = sptype
 
         super(Star, self).__init__(
             name,
-            GM     = MasSun(MxSun),
-            radius = RasSun(RxSun),
+            GM     = MasSun(float(MxSun)),
+            radius = RxSun and RasSun(float(RxSun)) or None,
             rotate = rotate,
             orbit  = orbit
         )
 
-        self.L      = (L is None) and Star.MLR(MxSun) or L
-        self.T      = T
-        self.BV     = BV
+        def getMagnitude():
+            if not mag is None: return mag
+            try:
+                return Star.magVtoAbs(float(magV), dist)
+            except: pass
+            return None
 
-        if dist is None:
-            self.dist = None
-        else:
-            self.dist = ly2m(dist)
+        def getLuminosity():
+            if L: return L
+            #print(name, RxSun, T, magV)
+            try: return Star.RT2L(self.radius, float(T))
+            except: pass
+            #try: return Star.mag2L(self.mag)
+            #except: pass
+            #return Star.MLR(float(MxSun))
+            return None
+
+        self.magV = (not magV is None) and float(magV) or None
+        self.mag = getMagnitude()
+        self.L = getLuminosity()
+
+        self.T    = T and float(T) or None
+        self.BV   = BV
+        self.dist = dist
 
         if name: stars[name] = self
 
@@ -47,6 +63,7 @@ class Star(Mass):
     #--------------------------------------------------------------------------
 
     def radiation(self, distance = AU2m(1.0)):
+        if not self.L: return None
         return self.L / (m2AU(distance) ** 2)
 
     #--------------------------------------------------------------------------
@@ -61,6 +78,31 @@ class Star(Mass):
 
     def EarthEquivalence(self):
         return self.orbitByFlux(1.0)
+
+    #-------------------------------------------------------------------------------
+    # Visual magnitude to absolute
+    #-------------------------------------------------------------------------------
+
+    @staticmethod
+    def magVtoAbs(mag, dist):
+        return mag - 5*(log10(m2parsec(dist)) - 1)
+
+    #-------------------------------------------------------------------------------
+    # Radius (m) and Temperature (K) to luminosity (x Sun)
+    #-------------------------------------------------------------------------------
+
+    @staticmethod
+    def RT2L(r, T):
+        return 5.670374419e-8 * (4 * pi * r ** 2) * (T ** 4) / L_Sun
+
+    #-------------------------------------------------------------------------------
+    # Absolute magnitude to luminosity (x Sun) conversion (Do not work)
+    #-------------------------------------------------------------------------------
+
+    @staticmethod
+    def mag2L(mag):
+        return 10 ** ((4.85 - mag) / 2.5)
+        #return 10 ** (0.4*(4.85 - mag))
 
     #---------------------------------------------------------------------------
     # MLR, Mass-Luminosity Relation.

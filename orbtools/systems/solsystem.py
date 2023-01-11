@@ -5,13 +5,14 @@
 ################################################################################
 
 from orbtools import *
-from orbtools.systems.stars import *
 
 ################################################################################
 #
 # Sun & planets
 #
 ################################################################################
+
+Sun = Star("Sun", 1.0, 1.0, sptype = "G2", L=1, mag = 4.83, T=5772, rotate = TasDays(24.6), dist = 0.00)
 
 Mercury = Mass("Mercury",   GM_Mercury,	    2440e3,     TasDays(58.6),          Orbit("Sun",	  57910e6))
 Venus   = Mass("Venus",     GM_Venus,	    6052e3,     TasDays(-243),          Orbit("Sun",	 108200e6))
@@ -20,7 +21,7 @@ Mars    = Mass("Mars",      GM_Mars,	    3397e3,     TasDays(1.03),          Orb
 Jupiter = Mass("Jupiter",   GM_Jupiter,	    71492e3,    TasDays(0.41),          Orbit("Sun",	 778330e6))
 Saturn  = Mass("Saturn",    GM_Saturnus,    60268e3,    TasDays(0.45),          Orbit("Sun",	1433530e6))
 Uranus  = Mass("Uranus",    GM_Uranus,	    25559e3,    TasDays(-0.72),         Orbit("Sun",	2870972e6))
-Neptune = Mass("Neptune",   GM_Neptunus,    24766e3,    TasDays(0.67),          Orbit("Sun",	4504300e6))
+Neptune = Mass("Neptune",   GM_Neptune,    24766e3,    TasDays(0.67),          Orbit("Sun",	4504300e6))
 Pluto   = Mass("Pluto",	    kg2GM(1.3E+22), 1150e3,     TasDays(-6.39),         Orbit("Sun",	5913520e6))
 
 #-------------------------------------------------------------------------------
@@ -54,6 +55,12 @@ Mass("Deimos",	kg2GM(1.8E+15),	6e3,	"S",	Orbit("Mars",	23e6))
 # Asteroid belt objects
 #-------------------------------------------------------------------------------
 
+Mass("Ceres",     kg2GM(8.70e20),    466e3,     0,  Orbit("Sun",     413_900e6))
+Mass("Pallas",    kg2GM(3.18e20),    261e3,     0,  Orbit("Sun",     414_500e6))
+Mass("Vesta",     kg2GM(3.00e20),    265e3,     0,  Orbit("Sun",     353_400e6))
+Mass("Hygiea",    kg2GM(9.30e19),    215e3,     0,  Orbit("Sun",     470_300e6))
+Mass("Eunomia",   kg2GM(8.30e18),    136e3,     0,  Orbit("Sun",     395_500e6))
+
 Mass("Aten",            kg2GM(0),    0.5e3,     0,  Orbit("Sun",     144_514e6))
 Mass("Amun",            kg2GM(0),    0.0e3,     0,  Orbit("Sun",     145_710e6))
 Mass("Icarus",          kg2GM(0),    0.7e3,     0,  Orbit("Sun",     161_269e6))
@@ -61,13 +68,8 @@ Mass("Gaspra",          kg2GM(0),      8e3,     0,  Orbit("Sun",     205_000e6))
 Mass("Apollo",          kg2GM(0),    0.7e3,     0,  Orbit("Sun",     220_061e6))
 Mass("Ida",             kg2GM(0),     35e3,     0,  Orbit("Sun",     270_000e6))
 Mass("Hephaistos",      kg2GM(0),    4.4e3,     0,  Orbit("Sun",     323_884e6))
-Mass("Vesta",     kg2GM(3.00e20),    265e3,     0,  Orbit("Sun",     353_400e6))
 Mass("Juno",            kg2GM(0),    123e3,     0,  Orbit("Sun",     399_400e6))
-Mass("Eunomia",   kg2GM(8.30e18),    136e3,     0,  Orbit("Sun",     395_500e6))
-Mass("Ceres",     kg2GM(8.70e20),    466e3,     0,  Orbit("Sun",     413_900e6))
-Mass("Pallas",    kg2GM(3.18e20),    261e3,     0,  Orbit("Sun",     414_500e6))
 Mass("Europa(a)",       kg2GM(0),    156e3,     0,  Orbit("Sun",     463_300e6))
-Mass("Hygiea",    kg2GM(9.30e19),    215e3,     0,  Orbit("Sun",     470_300e6))
 Mass("Davida",          kg2GM(0),    168e3,     0,  Orbit("Sun",     475_400e6))
 Mass("Agamemnon",       kg2GM(0),     88e3,     0,  Orbit("Sun",     778_100e6))
 Mass("Chiron",          kg2GM(0),     85e3,     0,  Orbit("Sun",   2_051_900e6))

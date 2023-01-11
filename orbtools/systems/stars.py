@@ -6,35 +6,25 @@
 
 from orbtools import *
 
-#-------------------------------------------------------------------------------
-# Magnitude to luminosity (x Sun) conversion
-#-------------------------------------------------------------------------------
-
-def mag2L(mag): return 10 ** ((4.85 - mag) / 2.5)
-
 ################################################################################
 #
 # Real stars
 #
 ################################################################################
 
-Sun = Star("Sun", 1.0, 1.0, sptype = "G2", L=1, T=5772, rotate = TasDays(24.6), dist = 0.00)
+"""
+Star("Proxima Centauri", 1.100, sptype = "M5",  L = 0.0017, dist = ly2m(4.244))
+Star("Alpha Centauri A", 1.100, sptype = "G2", L = 1.5190, dist = ly2m(4.370))
+Star("Alpha Centauri B", 0.907, sptype = "K1", L = 0.5002, dist = ly2m(4.370))
 
-Star("Proxima Centauri", 1.100, sptype = "M5",  L = 0.0017, dist = 4.244)
-Star("Alpha Centauri A", 1.100, sptype = "G2", L = 1.5190, dist = 4.370)
-Star("Alpha Centauri B", 0.907, sptype = "K1", L = 0.5002, dist = 4.370)
+Star("Sirius A",         2.063, sptype = "A1", L = 25.40, dist = ly2m(8.60))
+Star("61 Cygni A",       0.700, sptype = "K5", L = 0.153, dist = ly2m(11.41))
+Star("61 Cygni B",       0.630, sptype = "K7", L = 0.085, dist = ly2m(11.41))
 
-Star("Sirius A",         2.063, sptype = "A1", L = 25.40, dist = 8.60)
-Star("61 Cygni A",       0.700, sptype = "K5", L = 0.153, dist = 11.41)
-Star("61 Cygni B",       0.630, sptype = "K7", L = 0.085, dist = 11.41)
+Star("Procyon",          1.499, sptype = "F5",  L = 6.93, dist = ly2m(11.46))
 
-Star("Procyon",          1.499, sptype = "F5",  L = 6.93, dist = 11.46)
-
-Star("Tau Ceti",         0.783, sptype = "G8", L = 0.520, dist = 11.905)
-
-#-------------------------------------------------------------------------------
-# More stars in exoplanets.py
-#-------------------------------------------------------------------------------
+Star("Tau Ceti",         0.783, sptype = "G8", L = 0.520, dist = ly2m(11.905))
+"""
 
 ################################################################################
 #

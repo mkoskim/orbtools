@@ -6,7 +6,112 @@
 
 from orbtools import *
 
+import os, sys
+sys.path.append(os.path.abspath("."))
 
+from orbtools import *
+#import orbtools.systems.stars
+
+import xml.etree.ElementTree as ET, urllib.request, gzip, io
+url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
+oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
+
+#------------------------------------------------------------------------------
+
+def doPlanet(planet, star):
+  name = planet.findtext("name")
+  mass = planet.findtext("mass")
+
+  radius = planet.findtext("radius") or None
+
+  P = planet.findtext("period")
+  A = planet.findtext("semimajoraxis")
+
+  if P:
+    orbit = byPeriod(star, float(TasDays(P)))
+  elif A:
+    orbit = Orbit(star, float(AU2m(A)))
+  else:
+    orbit = None
+
+  #if not radius or not orbit: print(name, mass, radius, P, A)
+
+  if not mass: return
+
+  Mass(name, GM = MasJupiter(mass), radius = radius and RasJupiter(radius), orbit = orbit)
+
+#------------------------------------------------------------------------------
+
+def doStar(star, dist):
+  name = star.findtext("name")
+  if not name: return
+  if name == "Sun": return
+
+  sptype = star.findtext("spectraltype") or None
+  mass = star.findtext("mass") or None
+  radius = star.findtext("radius") or None
+  T = star.findtext("temperature") or None
+  magV = star.findtext("magV") or None
+
+  #if not radius or not T: print(name, mass, radius, T)
+
+  if not mass: return
+  if sptype is None: return
+  if sptype[0] not in ["F", "G", "K", "M"]: return
+
+  s = Star(name, MxSun = mass, RxSun = radius, sptype = sptype, T = T, magV = magV, dist = dist)
+
+  for planet in star.findall(".//planet"):
+    doPlanet(planet, s)
+
+#------------------------------------------------------------------------------
+
+def doSystem(system):
+  dist = system.findtext("distance")
+  if dist: dist = parsec2m(dist)
+
+  for star in system.findall(".//star"):
+    doStar(star, dist)
+
+#------------------------------------------------------------------------------
+
+for system in oec.getroot():
+  doSystem(system)
+
+#------------------------------------------------------------------------------
+# Missing data in catalogue
+#------------------------------------------------------------------------------
+
+stars["GJ 163"].radius = RasSun(0.409)
+stars["GJ 163"].T = 3_460
+stars["GJ 163"].L = 0.02163
+
+stars["GJ 180"].radius = RasSun(0.4229)
+stars["GJ 180"].T = 3_634
+stars["GJ 180"].L = 0.02427
+
+stars["GJ 229"].radius = RasSun(0.69)
+stars["GJ 229"].T = 3_700
+stars["GJ 229"].L = 0.0430
+
+stars["GJ 433"].radius = RasSun(0.529)
+stars["GJ 433"].T = 3_445
+stars["GJ 433"].L = 0.034
+
+stars["Gliese 1002"].radius = RasSun(0.137)
+stars["Gliese 1002"].T = 3_024
+stars["Gliese 1002"].L = 0.001406
+Mass("Gliese 1002 a", MasEarth(1.08), orbit = Orbit("Gliese 1002", AU2m(0.0457)))
+Mass("Gliese 1002 b", MasEarth(1.36), orbit = Orbit("Gliese 1002", AU2m(0.0738)))
+
+#------------------------------------------------------------------------------
+# Missing in catalogue
+#------------------------------------------------------------------------------
+
+Star("Gliese 163", MxSun=0.405, RxSun=0.409, T=3460, L=0.02163, sptype="M3.5V", dist = ly2m(49.36), mag=10.91)
+#Mass("Gliese 163 b", MasEarth(9.9), orbit=Orbit("Gliese 163", AU2m(0.060)))
+
+"""
 ################################################################################
 
 Star("Epsilon Eridani",  0.820, sptype = "K2", L = 0.340, dist = 10.475)
@@ -55,7 +160,6 @@ Mass("Gliese 581d (?)",  6.98 * GM_Earth, orbit = Orbit("Gliese 581", AU2m(0.218
 Mass("Gliese 876d", 6.83 * GM_Earth, radius = 1.65 * r_Earth)
 #Mass("Test", 2 * GM_Earth, radius = 1 * r_Earth)
 
-
 ################################################################################
 #
 # TRAPPIST-1 (M8 type dwarf star) & planets
@@ -81,3 +185,4 @@ Star("61 Virginis", 0.93, 0.9867, sptype = "G7", L = 0.822200, dist = 27.90)
 Mass("61 Virginis b", MasEarth(5.3), orbit = Orbit("61 Virginis", AU2m(0.050201)))
 Mass("61 Virginis c", MasEarth(18.8), orbit = Orbit("61 Virginis", AU2m(0.2175)))
 Mass("61 Virginis d", MasEarth(23.7), orbit = Orbit("61 Virginis", AU2m(0.476)))
+"""
