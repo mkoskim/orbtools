@@ -94,6 +94,7 @@ def doFilters(data, *filters):
   return len(filters) and filter(filters[0], doFilters(data, *filters[1:])) or data
 
 def isStar(mass): return mass.type == "star"
+
 def isPlanet(mass): return mass.type == "planet"
 
 def hasMass(mass):
@@ -120,6 +121,11 @@ def hasFlux(planet):
 
 def hasPeriod(mass):
   return not mass.orbit is None
+
+def isExoplanet(mass):
+  if mass.type != "planet": return False
+  if mass.system.name == "Sun": return False
+  return True
 
 def isJovian(planet):
   return planet.GM > MasJupiter(0.2) and planet.GM < MasJupiter(78)
@@ -152,9 +158,6 @@ def isInHZ(planet):
   if isHot(planet): return False
   if isCold(planet): return False
   return True
-
-def isExoplanet(planet):
-  return planet.system.name != "Sun"
 
 def isSpectralClass(star, *sptypes): return star.sptype and star.sptype[:1] in sptypes
 def isSpectralType(star, sptype): return star.sptype and star.sptype[:len(sptype)] == sptype
