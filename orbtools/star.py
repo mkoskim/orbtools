@@ -6,6 +6,30 @@
 
 from orbtools import *
 
+stars = {}
+planets = {}
+
+#-------------------------------------------------------------------------------
+#
+# Planet: Just a big object.
+#
+#-------------------------------------------------------------------------------
+
+class Planet(Mass):
+    def __init__(self, name, GM, radius = None, rotate = 0, orbit = None):
+
+        self.type = "planet"
+
+        super(Planet, self).__init__(
+            name,
+            GM     = float(GM),
+            radius = radius and float(radius) or None,
+            rotate = rotate,
+            orbit  = orbit
+        )
+
+        if name: planets[name] = self
+
 #-------------------------------------------------------------------------------
 #
 # Stars:
@@ -14,11 +38,11 @@ from orbtools import *
 #
 #-------------------------------------------------------------------------------
 
-stars = {}
-
 class Star(Mass):
 
     def __init__(self, name, MxSun, RxSun = None, sptype = None, L = None, magV = None, mag = None, T = None, BV = None, rotate = 0, dist = None, orbit = None):
+
+        self.type = "star"
 
         self.sptype = sptype
         if not name: name = sptype
@@ -62,7 +86,7 @@ class Star(Mass):
     # Radiation at given distance, relative to flux received by Earth:
     #--------------------------------------------------------------------------
 
-    def radiation(self, distance = AU2m(1.0)):
+    def fluxAt(self, distance = AU2m(1.0)):
         if not self.L: return None
         return self.L / (m2AU(distance) ** 2)
 
@@ -102,6 +126,16 @@ class Star(Mass):
     @staticmethod
     def mag2L(mag):
         return 10 ** ((4.85 - mag) / 2.5)
+        #return 10 ** (0.4*(4.85 - mag))
+
+    #-------------------------------------------------------------------------------
+    # Luminosity as log10(L_Sun)
+    #-------------------------------------------------------------------------------
+
+    @staticmethod
+    def LasLog10(L):
+        return 10 ** L
+        #return 10 ** ((4.85 - mag) / 2.5)
         #return 10 ** (0.4*(4.85 - mag))
 
     #---------------------------------------------------------------------------

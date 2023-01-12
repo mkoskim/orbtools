@@ -51,3 +51,7 @@ V_Sun       = 4/3.0*pi*(r_Sun ** 3)
 
 L_Mag0 = 3.0128e28
 L_Sun  = 3.828e26
+
+# Solar flux at Frost Line (Sol 2.7AU)
+
+flux_FrostLine = 0.1371742112482853
