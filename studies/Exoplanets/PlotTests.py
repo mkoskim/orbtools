@@ -10,62 +10,6 @@ sys.path.append(os.path.abspath("."))
 
 from orbtools import *
 from PlotUtils import *
-#from orbtools.systems.solsystem import *
-#import orbtools.systems.stars
-#import orbtools.systems.exoplanets
-
-#------------------------------------------------------------------------------
-
-def showStars(data):
-  for star in data:
-    try:
-      print("%-20s %-13s M=%5.2f x Sun" % (star.name, star.sptype, MtoSun(star.GM)),
-        "L=%7s" % (star.L and "%.2f" % float(star.L)),
-        "T=%s" % (star.T and "%.0f" % float(star.T))
-      )
-    except:
-      print("ERROR:", star.name)
-      exit()
-  exit()
-
-def showPlanets(data):
-  print("Points:", len(data))
-  for planet in data:
-    try:
-      print("%-20s M=%7.2f R=%7.2f" % (planet.name, MtoEarth(planet.GM), RtoEarth(planet.radius)),
-        "D=%5.0f" % planet.density,
-        #"F=%7.2f" % planet.flux,
-        "P=%7.2f" % TtoDays(planet.orbit.P),
-        "F=%7.2f" % planet.flux,
-      )
-    except:
-      print("ERROR:", planet.name)
-      exit()
-  exit()
-
-#------------------------------------------------------------------------------
-
-#data = doFilters(planets.values(), hasMass, hasRadius, isInHZ, lambda x: x.GM > 0.01 * GM_Earth)
-#data = doFilters(planets.values(), isRocky, hasFlux, lambda x: x.GM < MasJupiter(0.2), hasMass, hasRadius)
-#data = sorted(data, key=lambda x: x.flux)
-#showPlanets(data)
-
-#data = doFilters(stars.values(), isStar, hasTemperature, lambda x: isSpectralClass(x, "B"))
-#data = sorted(data, key=lambda x: x.T)
-#showStars(data)
-
-#data = reversed(sorted(stars.values(), key=lambda x: x.GM))
-#showStars(list(data)[:30])
-
-#print(Sun.fluxAt(AU2m(2.7)))
-#print(MtoEarth(GM_Sun))
-#print(MtoEarth(MasJupiter(0.2)))
-#print(MtoEarth(MasJupiter(78)))
-#exit()
-
-#Jupiter.info()
-#Saturn.info()
-#exit()
 
 #------------------------------------------------------------------------------
 # Filter and plot
@@ -79,15 +23,15 @@ fig, ax = plt.subplots()  # Create a figure containing a single axes.
 
 # All
 def forAll():
-  data_x, data_y = Mass_Radius(plt, ax, masses.values())
+  #data_x, data_y = Mass_Radius(plt, ax, masses.values())
+  data_x, data_y = Mass_Radius(plt, ax, planets.values(), xticks=ticks_m_planets, yticks=ticks_r_planets)
+
   ax.scatter(data_x, data_y, marker=".")
 
 forAll()
 
 #------------------------------------------------------------------------------
 # Planets
-
-#data_x, data_y = Mass_Radius(plt, ax, planets.values(), xticks=ticks_m_planets, yticks=ticks_r_planets)
 
 #data_x, data_y = Flux_Radius(plt, ax, sol_planets, yticks=[0.05, 0.1] + ticks_r_planets, xticks=ticks_flux)
 #data_x, data_y = Flux_Radius(plt, ax, planets.values(), yticks=ticks_r_planets)

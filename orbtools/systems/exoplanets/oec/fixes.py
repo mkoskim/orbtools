@@ -214,7 +214,23 @@ def doFixes(quiet = False):
 
   #------------------------------------------------------------------------------
 
-  fix("Kepler-22 b", "GM", MasJupiter(0.11))
+  fix("HIP 41378 b", "GM", MasEarth(6.89))
+  fix("HIP 41378 c", "GM", MasEarth(4.4))
+  fix("HIP 41378 d", "GM", MasEarth(4.6))
+  fix("HIP 41378 e", "GM", MasEarth(12))
+  fix("HIP 41378 f", "GM", MasEarth(12))
+
+  fix("K2-138 b", "GM", MasEarth(3.1))
+  fix("K2-138 c", "GM", MasEarth(6.3))
+  fix("K2-138 d", "GM", MasEarth(7.9))
+  fix("K2-138 e", "GM", MasEarth(13.0))
+  fix("K2-138 f", "GM", MasEarth(8.7))
+  fix("K2-138 g", "GM", MasEarth(8.94))
+
+  fix("K2-32 b", "GM", MasEarth(2.1))
+  fix("K2-32 c", "GM", MasEarth(15.0))
+  fix("K2-32 d", "GM", MasEarth(8.1))
+  fix("K2-32 e", "GM", MasEarth(6.7))
 
   fix("Kepler-186 b", "GM", MasEarth(1.24))
   fix("Kepler-186 c", "GM", MasEarth(2.1))
@@ -222,7 +238,18 @@ def doFixes(quiet = False):
   fix("Kepler-186 e", "GM", MasEarth(2.15))
   fix("Kepler-186 f", "GM", MasEarth(1.71))
 
+  fix("Kepler-22 b", "GM", MasJupiter(0.11))
+
+  fix("Kepler-32 b", "GM",  MasJupiter(0.011))
+  fix("Kepler-32 c", "GM",  MasJupiter(0.012))
+
   fix("Kepler-442 b", "GM", MasEarth(2.3))
+
+  #fix("Kepler-444 b", "GM", MasEarth(?))
+  #fix("Kepler-444 c", "GM", MasEarth(?))
+  fix("Kepler-444 d", "GM", MasEarth(0.036))
+  fix("Kepler-444 e", "GM", MasEarth(0.034))
+  #fix("Kepler-444 f", "GM", MasEarth(?))
 
   fix("Kepler-452 b", "GM", MasEarth(5))
 
@@ -231,3 +258,9 @@ def doFixes(quiet = False):
   fix("Kepler-62 d", "GM",  MasEarth(5.5))
   fix("Kepler-62 e", "GM",  MasEarth(4.5))
   fix("Kepler-62 f", "GM",  MasEarth(2.8))
+
+  fix("Kepler-84 b", "GM",  MasJupiter(0.126))
+  fix("Kepler-84 c", "GM",  MasJupiter(0.064))
+  #fix("Kepler-84 d", "GM",  MasEarth(?))
+  #fix("Kepler-84 e", "GM",  MasEarth(?))
+  #fix("Kepler-84 f", "GM",  MasEarth(?))

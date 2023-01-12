@@ -305,7 +305,7 @@ def Period_Radius(plt, ax, data, xticks=None, yticks=None):
   )
 
 def Mass_Radius(plt, ax, data, xticks=None, yticks=None):
-  data = list(doFilters(data, hasRadius, hasMass))
+  data = doFilters(data, hasRadius, hasMass)
   print("Points.:", len(data))
 
   return (
