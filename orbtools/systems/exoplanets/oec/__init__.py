@@ -28,7 +28,7 @@ def doPlanet(planet, star):
   elif A:
     orbit = Orbit(star, float(AU2m(A)))
   else:
-    orbit = None
+    return None
 
   #if not radius or not orbit: print("Planet:", name, mass, radius, P, A)
 

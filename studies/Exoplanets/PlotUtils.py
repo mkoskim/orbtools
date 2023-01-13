@@ -109,11 +109,6 @@ def x_Mass(plt, ax, data, ticks):
       [x.name for x in ticks2]
     )
 
-  #M_lim = [2.0, MtoEarth(MasJupiter(0.2)), MtoEarth(MasJupiter(78))]
-  #plt.axvline(x = M_lim[0], ls="dashed")
-  #plt.axvline(x = M_lim[1], ls="dashed")
-  #plt.axvline(x = M_lim[2], ls="dashed")
-
   return [MtoEarth(planet.GM) for planet in data]
 
 #------------------------------------------------------------------------------
@@ -279,7 +274,7 @@ def x_Flux(plt, ax, data, ticks = None, append = False):
 
 def Flux_Radius(plt, ax, data, xticks=None, yticks=None):
   data = list(doFilters(data, hasRadius, hasFlux))
-  print("Points.:", len(data))
+  plt.title("N=%d" % len(data))
 
   return (
     x_Flux(plt, ax, data, xticks),
@@ -306,7 +301,7 @@ def Period_Radius(plt, ax, data, xticks=None, yticks=None):
 
 def Mass_Radius(plt, ax, data, xticks=None, yticks=None):
   data = doFilters(data, hasRadius, hasMass)
-  print("Points.:", len(data))
+  plt.title("N=%d" % len(data))
 
   return (
     x_Mass(plt, ax, data, xticks),

@@ -33,9 +33,9 @@ def showPlanets(data):
     try:
       print("%-20s M=%7.2f R=%7.2f" % (planet.name, MtoEarth(planet.GM or 0), RtoEarth(planet.radius or 0)),
         #"D=%5.0f" % planet.density,
-        #"F=%7.2f" % planet.flux,
-        "P=%7.2f" % TtoDays(planet.orbit.P),
-        "F=%7.2f" % planet.flux,
+        #"P=%7.2f" % TtoDays(planet.orbit.P),
+        planet.flux and "F=%7.2f" % planet.flux or None,
+        planet.system.name,
       )
     except:
       print("ERROR:", planet.name)
@@ -84,8 +84,10 @@ def isFixable(star):
 
   return not star.name in unfixables
 
+#------------------------------------------------------------------------------
+
 def topStarsToFix():
-  top = doFilters(stars.values(), lambda x: not hasLuminosity(x))
+  top = doFilters(stars.values(), lambda x: not hasLuminosity(x), isFixable)
   top.sort(key = lambda x: len(x.satellites), reverse=True)
   showStars(top[:10])
 
@@ -113,7 +115,18 @@ def topSystemsToFix():
   print("Top pick:")
   showPlanets(top[0].satellites)
 
-topSystemsToFix()
+#topSystemsToFix()
+
+#------------------------------------------------------------------------------
+
+def planetsMissingFlux():
+
+  fluxless = doFilters(planets.values(), hasMass, hasRadius, isFluxless)
+  fluxless.sort(key=lambda x: x.GM)
+
+  showPlanets(fluxless)
+
+planetsMissingFlux()
 
 #------------------------------------------------------------------------------
 

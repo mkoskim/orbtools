@@ -34,8 +34,8 @@ def hasTemperature(mass):
 def hasMagnitude(mass):
   return hasattr(mass, "mag") and mass.mag
 
-def hasFlux(planet):
-  return not planet.flux is None
+def isFluxless(mass): return mass.flux is None
+def hasFlux(mass): return not isFluxless(mass)
 
 def hasPeriod(mass):
   return not mass.orbit is None

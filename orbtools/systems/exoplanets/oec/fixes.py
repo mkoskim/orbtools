@@ -39,6 +39,9 @@ def doFixes(quiet = False):
   #stars["16 Cygni C"].T =
   #stars["16 Cygni C"].L =
 
+  fix("51 Eri", "T", 7331)
+  fix("51 Eri", "L", 6.7)
+
   fix("61 Cygni A", "radius", RasSun(0.665))
   fix("61 Cygni A", "T", 4526)
   fix("61 Cygni A", "L", 0.095)
@@ -46,6 +49,9 @@ def doFixes(quiet = False):
   fix("61 Cygni B", "radius", RasSun(0.595))
   fix("61 Cygni B", "T", 4077)
   fix("61 Cygni B", "L", 0.085)
+
+  fix("EPIC 211089792", "T", 5387.060)
+  fix("EPIC 211089792", "L", Star.LasLog10(-0.2953329))
 
   fix("GJ 163", "radius", RasSun(0.409))
   fix("GJ 163", "T", 3460)
@@ -152,6 +158,9 @@ def doFixes(quiet = False):
   fix("HD 40307", "T", 4977)
   fix("HD 40307", "L", 0.23)
 
+  fix("HD 80653", "T", 5910.000)
+  fix("HD 80653", "L", Star.LasLog10(0.24))
+
   fix("K2-16", "radius", RasSun(0.703181))
   fix("K2-16", "T", 4627.07)
   fix("K2-16", "L", Star.LasLog10(-0.689946))
@@ -211,6 +220,9 @@ def doFixes(quiet = False):
   fix("KOI-1860", "radius", RasSun(1.08916))
   fix("KOI-1860", "T", 5620.270)
   fix("KOI-1860", "L", Star.LasLog10(0.02790548))
+
+  fix("KOI-1599", "T", 5833.0)
+  fix("KOI-1599", "L", Star.LasLog10(0.1619642))
 
   #------------------------------------------------------------------------------
 
