@@ -37,6 +37,8 @@ def doPlanet(planet, star):
 
   p = Planet(name, GM = mass and MasJupiter(mass) or 0, radius = radius and RasJupiter(radius), orbit = orbit)
 
+  p.elem = planet
+
 #------------------------------------------------------------------------------
 
 def doStar(star, dist):
@@ -58,6 +60,8 @@ def doStar(star, dist):
   #if sptype[0] not in ["F", "G", "K", "M"]: return
 
   s = Star(name, MxSun = mass, RxSun = radius, sptype = sptype, T = T, magV = magV, dist = dist)
+
+  s.elem = star
 
   for planet in star.findall(".//planet"):
     doPlanet(planet, s)

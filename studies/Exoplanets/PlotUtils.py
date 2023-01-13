@@ -292,11 +292,20 @@ def Flux_Mass(plt, ax, data, xticks=None, yticks=None, append=False):
 
 def Period_Radius(plt, ax, data, xticks=None, yticks=None):
   data = list(doFilters(data, hasRadius, hasPeriod))
-  print("Points.:", len(data))
+  plt.title("N=%d" % len(data))
 
   return (
     x_Period(plt, ax, data, xticks),
     y_Radius(plt, ax, data, yticks) # Planets
+  )
+
+def Period_Mass(plt, ax, data, xticks=None, yticks=None):
+  data = list(doFilters(data, hasMass, hasPeriod))
+  plt.title("N=%d" % len(data))
+
+  return (
+    x_Period(plt, ax, data, xticks),
+    y_Mass(plt, ax, data, yticks) # Planets
   )
 
 def Mass_Radius(plt, ax, data, xticks=None, yticks=None):

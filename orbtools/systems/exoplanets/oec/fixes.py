@@ -1,6 +1,8 @@
 ################################################################################
 #
-# Fixes for OEC catalog.
+# Fixes for OEC catalog. Some of these are real, like fixing HD 80869 surface
+# temperature (database: 58.37, real: 5837.0). Some are just adding "best guesses"
+# for planet mass/radius, to extend the amount of planets in various plots.
 #
 # Exoplanets imported from Open Exoplanet Catalog, see:
 #

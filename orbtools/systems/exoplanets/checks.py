@@ -28,14 +28,14 @@ def showStars(data):
       exit()
 
 def showPlanets(data):
-  print("Points:", len(data))
+  print("Planets:", len(data))
   for planet in data:
     try:
       print("%-20s M=%7.2f R=%7.2f" % (planet.name, MtoEarth(planet.GM or 0), RtoEarth(planet.radius or 0)),
-        #"D=%5.0f" % planet.density,
+        "D=%5.0f" % planet.density,
         #"P=%7.2f" % TtoDays(planet.orbit.P),
-        planet.flux and "F=%7.2f" % planet.flux or None,
-        planet.system.name,
+        #planet.flux and "F=%7.2f" % planet.flux or None,
+        #planet.system.name,
       )
     except:
       print("ERROR:", planet.name)
@@ -44,6 +44,23 @@ def showPlanets(data):
 #------------------------------------------------------------------------------
 # Search stars missing luminosity, and list ones with most planets
 #------------------------------------------------------------------------------
+
+def showMissing(star):
+  print("Name:", star.name)
+  print("Sp..:", star.sptype)
+  for planet in star.satellites:
+    print("- ",
+      planet.name,
+      "M=%s" % planet.elem.findtext("mass"),
+      "R=%s" % planet.elem.findtext("radius"),
+      planet.elem.findtext("discoverymethod"),
+    )
+
+#showMissing(masses["HD 10180"])
+#showMissing(masses["Kepler-90"])
+#masses["EPIC 22881391 b"].info()
+#showMissing(masses["EPIC 228813918"])
+#exit()
 
 # Some systems are (ATM) unfixable, parameters are not yet available
 def isFixable(star):
@@ -118,15 +135,34 @@ def topSystemsToFix():
 #topSystemsToFix()
 
 #------------------------------------------------------------------------------
+# Planets, which main star misses luminosity
+#------------------------------------------------------------------------------
 
 def planetsMissingFlux():
+
+  print("Planets missing flux:")
 
   fluxless = doFilters(planets.values(), hasMass, hasRadius, isFluxless)
   fluxless.sort(key=lambda x: x.GM)
 
   showPlanets(fluxless)
 
-planetsMissingFlux()
+#planetsMissingFlux()
+
+#------------------------------------------------------------------------------
+# Planets which density > 10 000 kg/m3 (possible error in either mass or radius)
+#------------------------------------------------------------------------------
+
+def ultradensePlanets():
+
+  print("Very dense planets:")
+
+  ultradense = doFilters(planets.values(), hasMass, hasRadius, isUltraDense)
+  ultradense.sort(key=lambda x: x.density, reverse=True)
+
+  showPlanets(ultradense)
+
+ultradensePlanets()
 
 #------------------------------------------------------------------------------
 

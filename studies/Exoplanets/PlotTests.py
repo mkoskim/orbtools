@@ -66,13 +66,16 @@ def Giants():
 def Exoplanets():
   exoplanets = doFilters(planets.values(), isExoplanet)
 
-  #data_x, data_y = Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
-  data_x, data_y = Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
+  data_x, data_y = (
+    #Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_P + [10_000])
+    Period_Mass(plt, ax, exoplanets, yticks=ticks_m_planets + [5000], xticks=ticks_P + [10_000])
+  #data_x, data_y = Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
   #data_x, data_y = Flux_Mass(plt, ax, doFilters(exoplanets, hasMass, hasRadius), yticks=ticks_m_planets)
+  )
 
   ax.scatter(data_x, data_y, marker=".")
 
-Exoplanets()
+#Exoplanets()
 
 #------------------------------------------------------------------------------
 # Planets
@@ -166,10 +169,10 @@ def histSuperearths():
 #------------------------------------------------------------------------------
 # Planet distribution
 
-def doHistorgam2():
-  exoplanets = doFilters(planets.values(), lambda x: isExoplanet, hasRadius)
+def histExoplanets():
+  exoplanets = doFilters(planets.values(), lambda x: isExoplanet)
 
-  def category(planet):
+  def categoryR(planet):
     r = RtoEarth(planet.radius)
     if r <  1.25: return 1
     if r <  2.00: return 2
@@ -177,18 +180,26 @@ def doHistorgam2():
     if r < 15.00: return 4
     return 5
 
-  data = [category(x) for x in exoplanets]
-  #bins = [0, 1.25, 2, 6, 15]
-  bins = 5
-  ax.set_xlabel("Halkaisija (x Maa)")
+  data = [categoryR(x) for x in doFilters(exoplanets, hasRadius)]
+  bins = 6
+
+  #data = [RtoEarth(x.radius) for x in doFilters(exoplanets, hasRadius)]
+  #bins = [1.25, 2, 6, 15]
+  #ax.set_xlabel("Halkaisija (x Maa)")
 
   # We can set the number of bins with the *bins* keyword argument.
   ax.hist(data, bins=bins, rwidth=0.6)
 
   print("Points:", len(data))
 
-#doHistorgam2()
+small = doFilters(planets.values(), isExoplanet, hasMass, lambda x: x.GM < 1.25 * GM_Earth)
+small.sort(key=lambda x: x.GM)
+for p in small:
+  print("%-20s %5.2f - %7.2f" % (p.name, MtoEarth(p.GM), m2ly(p.system.dist)))
 
+exit()
+
+histExoplanets()
 
 plt.grid()
 plt.show()
