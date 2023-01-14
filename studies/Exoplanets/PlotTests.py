@@ -50,6 +50,35 @@ def forAll():
 #forAll()
 
 #------------------------------------------------------------------------------
+# What kind of stars have planets? Interesting results...
+
+def Stars():
+
+  lim_small = (Star.typical["K5"].GM + Star.typical["K6"].GM) / 2
+  lim_large = (Star.typical["F5"].GM + Star.typical["F6"].GM) / 2
+
+  print("lim_small", MtoSun(lim_small))
+  print("lim_large", MtoSun(lim_large))
+
+  exoplanets = doFilters(planets.values(), isExoplanet)
+  #data = doFilters(stars.values(), lambda x: x.hasSatellites)
+
+  categories = [
+    doFilters(exoplanets, lambda x: x.system.GM < lim_small),
+    doFilters(exoplanets, lambda x: x.system.GM > lim_small and x.GM < lim_large),
+    doFilters(exoplanets, lambda x: x.system.GM > lim_large)
+  ]
+
+  print(list(len(x) for x in categories))
+
+  #for star in sorted(categories[1], key=lambda x: x.GM):
+  #  print("%-25s" % star.name, "%-7s" % star.sptype, "%5.2f" % MtoSun(star.GM))
+
+  exit()
+
+Stars()
+
+#------------------------------------------------------------------------------
 # Exoplanet detection method
 
 def Detection():
@@ -61,8 +90,8 @@ def Detection():
     methods[m] = doFilters(data, lambda x: x.detection == m)
   print([(key, len(value)) for key, value in methods.items()])
 
-  data_x, data_y = Period_Radius(plt, ax, methods["transit"], yticks=ticks_r_planets)
-  #data_x, data_y = Period_Mass(plt, ax, methods["RV"], yticks=ticks_m_planets + [1000, 10_000])
+  #data_x, data_y = Period_Radius(plt, ax, methods["transit"], yticks=ticks_r_planets)
+  data_x, data_y = Period_Mass(plt, ax, methods["RV"], yticks=ticks_m_planets + [1000, 10_000])
   #data_x, data_y = Period_Mass(plt, ax, methods["microlensing"], yticks=ticks_m_planets)
   #data_x, data_y = Period_Mass(plt, ax, methods["imaging"], yticks=ticks_m_planets + [1000, 10_000], xticks=ticks_P + [100_000])
   ax.scatter(data_x, data_y, marker=".")
@@ -242,7 +271,7 @@ def Superearths():
 
   #data2 = doFilters(superearths, lambda x: x.flux > 60, hasFlux)
 
-Superearths()
+#Superearths()
 
 #------------------------------------------------------------------------------
 # Planet distribution
@@ -279,6 +308,7 @@ def histExoplanets():
 
 #histExoplanets()
 
+#------------------------------------------------------------------------------
 
 plt.grid()
 plt.show()

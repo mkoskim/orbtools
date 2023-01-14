@@ -13,7 +13,7 @@ from orbtools import *
 ###############################################################################
 
 def arcsec(dist, diam):
-    return atan(diam / dist)/(2*pi)*360*60*60
+  return atan(diam / dist)/(2*pi)*360*60*60
 
 ###############################################################################
 #
@@ -29,17 +29,17 @@ def arcsec(dist, diam):
 
 def solve_aPaP(a1, P1, a2, P2):
 
-    def solve_a_aPaP(a1, p1, _, p2):
-        return ((a1 ** 3.0) * (p2 ** 2.0) / (p1 ** 2.0)) ** (1/3.0)
+  def solve_a_aPaP(a1, p1, _, p2):
+      return ((a1 ** 3.0) * (p2 ** 2.0) / (p1 ** 2.0)) ** (1/3.0)
 
-    def solve_P_aPaP(a1, p1, a2, _):
-        return ((p1 ** 2.0) * (a2 ** 3.0) / (a1 ** 3.0)) ** 0.5
+  def solve_P_aPaP(a1, p1, a2, _):
+      return ((p1 ** 2.0) * (a2 ** 3.0) / (a1 ** 3.0)) ** 0.5
 
-    if a1 == None: return solve_a_aPaP(a2, P2, None, P1)
-    if a2 == None: return solve_a_aPaP(a1, P1, None, P2)
-    if P1 == None: return solve_P_aPaP(a2, P2, a1, None)
-    if P2 == None: return solve_P_aPaP(a1, P1, a2, None)
-    return None
+  if a1 == None: return solve_a_aPaP(a2, P2, None, P1)
+  if a2 == None: return solve_a_aPaP(a1, P1, None, P2)
+  if P1 == None: return solve_P_aPaP(a2, P2, a1, None)
+  if P2 == None: return solve_P_aPaP(a1, P1, a2, None)
+  return None
 
 ################################################################################
 #
@@ -65,17 +65,17 @@ def solve_GM_from_rg(r, g): return g * (r ** 2.0)
 
 def solve_rvrv(GM, r1, v1, r2, v2):
 
-    def solve_v2(GM, r1, v1, r2, _):
-        return sqrt(v1**2.0 + 2.0*GM*(1.0/r2-1.0/r1));
+  def solve_v2(GM, r1, v1, r2, _):
+      return sqrt(v1**2.0 + 2.0*GM*(1.0/r2-1.0/r1));
 
-    def solve_r2(GM, r1, v1, _, v2):
-        return 1.0/( 1.0/r1 + (v2**2.0-v1**2.0)/(2.0*GM) );
+  def solve_r2(GM, r1, v1, _, v2):
+      return 1.0/( 1.0/r1 + (v2**2.0-v1**2.0)/(2.0*GM) );
 
-    if r1 == None: return solve_r2(GM, r2, v2, None, v1)
-    if r2 == None: return solve_r2(GM, r1, v1, None, v2)
-    if v1 == None: return solve_v2(GM, r2, v2, r1, None)
-    if v2 == None: return solve_v2(GM, r1, v1, r2, None)
-    return None
+  if r1 == None: return solve_r2(GM, r2, v2, None, v1)
+  if r2 == None: return solve_r2(GM, r1, v1, None, v2)
+  if v1 == None: return solve_v2(GM, r2, v2, r1, None)
+  if v2 == None: return solve_v2(GM, r1, v1, r2, None)
+  return None
 
 ################################################################################
 #
@@ -88,22 +88,22 @@ def solve_vro_r2(v1, r1, o1, v2, _ , o2): return float(v1)*r1*o1/(v2*o2)
 def solve_vro_o2(v1, r1, o1, v2, r2, _ ): return float(v1)*r1*o1/(v2*r2)
 
 def solve_vrcos(v1, r1, o1, v2, r2, o2):
-    if v1 == None: return solve_vro_v2(v2,r2,cos(deg2rad(o2)),None,r1,cos(deg2rad(o1)))
-    if r1 == None: return solve_vro_r2(v2,r2,cos(deg2rad(o2)),v1,None,cos(deg2rad(o1)))
-    if o1 == None: return rad2deg(acos(solve_vro_o2(v2,r2,cos(deg2rad(o2)),v1,r1,None)))
-    if v2 == None: return solve_vro_v2(v1,r1,cos(deg2rad(o1)),None,r2,cos(deg2rad(o2)))
-    if r2 == None: return solve_vro_r2(v1,r1,cos(deg2rad(o1)),v2,None,cos(deg2rad(o2)))
-    if o2 == None: return rad2deg(acos(solve_vro_o2(v1,r1,cos(deg2rad(o1)),v2,r2,None)))
-    return None
+  if v1 == None: return solve_vro_v2(v2,r2,cos(deg2rad(o2)),None,r1,cos(deg2rad(o1)))
+  if r1 == None: return solve_vro_r2(v2,r2,cos(deg2rad(o2)),v1,None,cos(deg2rad(o1)))
+  if o1 == None: return rad2deg(acos(solve_vro_o2(v2,r2,cos(deg2rad(o2)),v1,r1,None)))
+  if v2 == None: return solve_vro_v2(v1,r1,cos(deg2rad(o1)),None,r2,cos(deg2rad(o2)))
+  if r2 == None: return solve_vro_r2(v1,r1,cos(deg2rad(o1)),v2,None,cos(deg2rad(o2)))
+  if o2 == None: return rad2deg(acos(solve_vro_o2(v1,r1,cos(deg2rad(o1)),v2,r2,None)))
+  return None
 
 def solve_vrsin(v1, r1, o1, v2, r2, o2):
-    if v1 == None: return solve_vro_v2(v2,r2,sin(deg2rad(o2)),None,r1,sin(deg2rad(o1)))
-    if r1 == None: return solve_vro_r2(v2,r2,sin(deg2rad(o2)),v1,None,sin(deg2rad(o1)))
-    if o1 == None: return rad2deg(asin(solve_vro_o2(v2,r2,sin(deg2rad(o2)),v1,r1,None)))
-    if v2 == None: return solve_vro_v2(v1,r1,sin(deg2rad(o1)),None,r2,sin(deg2rad(o2)))
-    if r2 == None: return solve_vro_r2(v1,r1,sin(deg2rad(o1)),v2,None,sin(deg2rad(o2)))
-    if o2 == None: return rad2deg(asin(solve_vro_o2(v1,r1,sin(deg2rad(o1)),v2,r2,None)))
-    return None
+  if v1 == None: return solve_vro_v2(v2,r2,sin(deg2rad(o2)),None,r1,sin(deg2rad(o1)))
+  if r1 == None: return solve_vro_r2(v2,r2,sin(deg2rad(o2)),v1,None,sin(deg2rad(o1)))
+  if o1 == None: return rad2deg(asin(solve_vro_o2(v2,r2,sin(deg2rad(o2)),v1,r1,None)))
+  if v2 == None: return solve_vro_v2(v1,r1,sin(deg2rad(o1)),None,r2,sin(deg2rad(o2)))
+  if r2 == None: return solve_vro_r2(v1,r1,sin(deg2rad(o1)),v2,None,sin(deg2rad(o2)))
+  if o2 == None: return rad2deg(asin(solve_vro_o2(v1,r1,sin(deg2rad(o1)),v2,r2,None)))
+  return None
 
 ################################################################################
 #
@@ -115,188 +115,196 @@ masses = { }
 
 class Mass(object):
 
-    def __init__(self, name = None, GM = 0, radius = 0, rotate = 0, orbit = None):
-        self.name = name
-        self.GM = float(GM)
-        self.radius = radius and float(radius) or None
-        if rotate == "S":
-            self.rotate = orbit.P;
-        else:
-            self.rotate = float(rotate)
-        self.orbit = orbit
+  def __init__(self, name = None, GM = 0, radius = 0, rotate = 0, orbit = None):
+    self.name = name
+    self.GM = float(GM)
+    self.radius = radius and float(radius) or None
+    if rotate == "S":
+      self.rotate = orbit.P;
+    else:
+      self.rotate = float(rotate)
+    self.orbit = orbit
 
-        if name:
-            assert name not in masses, "Mass '%s' already exists." % name
-            masses[name] = self
+    if name:
+      assert name not in masses, "Mass '%s' already exists." % name
+      masses[name] = self
 
-    @staticmethod
-    def fromGM(GM): return Mass(GM = GM)
+    self.hasSatellites = False
 
-    @staticmethod
-    def fromKg(kg): return Mass(GM = kg2GM(kg))
+  @staticmethod
+  def fromGM(GM): return Mass(GM = GM)
 
-    #--------------------------------------------------------------------------
-    #
-    #--------------------------------------------------------------------------
+  @staticmethod
+  def fromKg(kg): return Mass(GM = kg2GM(kg))
 
-    @staticmethod
-    def resolve(mass):
-        if isinstance(mass, str): return masses[mass]
-        return mass
+  #--------------------------------------------------------------------------
+  #
+  #--------------------------------------------------------------------------
 
-    @staticmethod
-    def rFromV(V):
-        return (V / (4/3.0*pi)) ** (1/3.0)
+  @staticmethod
+  def resolve(mass):
+    if isinstance(mass, str): return masses[mass]
+    return mass
 
-    #--------------------------------------------------------------------------
-    # Basic properties
-    #--------------------------------------------------------------------------
+  @staticmethod
+  def rFromV(V):
+    return (V / (4/3.0*pi)) ** (1/3.0)
 
-    @property
-    def diam(self): return self.radius*2
+  #--------------------------------------------------------------------------
+  # Basic properties
+  #--------------------------------------------------------------------------
 
-    @property
-    def kg(self): return GM2kg(self.GM)
+  @property
+  def diam(self): return self.radius*2
 
-    @property
-    def isMassless(self): return self.GM < kg2GM(0.1)
+  @property
+  def kg(self): return GM2kg(self.GM)
 
-    @property
-    def V(self): return 4/3.0*pi*(self.radius ** 3)
+  @property
+  def isMassless(self): return self.GM < kg2GM(0.1)
 
-    @property
-    def density(self): return self.kg / self.V
+  @property
+  def V(self): return 4/3.0*pi*(self.radius ** 3)
 
-    def g(self,r): return self.GM/(r ** 2.0)
+  @property
+  def density(self): return self.kg / self.V
 
-    @property
-    def g_surface(self): return self.g(self.radius)
+  def g(self,r): return self.GM/(r ** 2.0)
 
-    def v_escape(self, r = None):
-        if r == None:
-            return v_escape(self.GM, self.radius)
-        else:
-            return v_escape(self.GM, r)
+  @property
+  def g_surface(self): return self.g(self.radius)
 
-    def v_circular(self, r):
-        return v_circular(self.GM, r)
+  def v_escape(self, r = None):
+    if r == None:
+      return v_escape(self.GM, self.radius)
+    else:
+      return v_escape(self.GM, r)
 
-    def altitude(self, a): return self.radius + float(a)
+  def v_circular(self, r):
+    return v_circular(self.GM, r)
 
-    #--------------------------------------------------------------------------
-    # Orbital parameters
-    #--------------------------------------------------------------------------
+  def altitude(self, a): return self.radius + float(a)
 
-    @property
-    def center(self):
-        if not self.orbit: return None
-        return self.orbit.center
+  #--------------------------------------------------------------------------
+  # Orbital parameters
+  #--------------------------------------------------------------------------
 
-    @property
-    def a(self):
-        return self.orbit and self.orbit.a or None
+  @property
+  def center(self):
+    if not self.orbit: return None
+    return self.orbit.center
 
-    @property
-    def v(self):
-        return self.orbit and self.orbit.v or None
+  @property
+  def a(self):
+    return self.orbit and self.orbit.a or None
 
-    @property
-    def P(self):
-        return self.orbit and self.orbit.P or None
+  @property
+  def v(self):
+    return self.orbit and self.orbit.v or None
 
-    #--------------------------------------------------------------------------
-    # Finding satellites
-    #--------------------------------------------------------------------------
+  @property
+  def P(self):
+    return self.orbit and self.orbit.P or None
 
-    @property
-    def satellites(self):
-        return list(filter(lambda m: m.orbit != None and m.orbit.center == self, masses.values()))
+  #--------------------------------------------------------------------------
+  # Finding satellites
+  #--------------------------------------------------------------------------
 
-    @property
-    def system(self):
-        if not self.orbit: return self
-        return self.orbit.center.system
+  #@property
+  #def hasSatellites(self):
+  #  return any(True for _ in self.satellites)
 
-    #--------------------------------------------------------------------------
-    # Finding system
-    #--------------------------------------------------------------------------
+  @property
+  def satellites(self):
+    return list(filter(lambda m: m.orbit != None and m.orbit.center == self, masses.values()))
 
-    #--------------------------------------------------------------------------
-    # Lagrangian distances (e.g. SOI, Sphere of Influence)
-    #--------------------------------------------------------------------------
+  @property
+  def system(self):
+    if not self.orbit: return self
+    return self.orbit.center.system
 
-    def Lagrangian(self):
-        return self.orbit.a*pow(self.GM/(3*self.center.GM),1/3.0)
+  #--------------------------------------------------------------------------
+  # Finding system
+  #--------------------------------------------------------------------------
 
-    def HillSphere(self):
-        return self.Lagrangian()*(1-self.orbit.e)
+  #--------------------------------------------------------------------------
+  # Lagrangian distances (e.g. SOI, Sphere of Influence)
+  #--------------------------------------------------------------------------
 
-    def SOI(self):
-        return self.orbit.a*pow(self.GM/self.center.GM, 2/5.0)
+  def Lagrangian(self):
+    return self.orbit.a*pow(self.GM/(3*self.center.GM),1/3.0)
 
-    #--------------------------------------------------------------------------
-    # Radiation flux from star
-    #--------------------------------------------------------------------------
+  def HillSphere(self):
+    return self.Lagrangian()*(1-self.orbit.e)
 
-    @property
-    def flux(self):
-        if not self.center: return None
-        if not hasattr(self.center, "fluxAt"): return self.center.flux
-        return self.center.fluxAt(self.orbit.a)
+  def SOI(self):
+    return self.orbit.a*pow(self.GM/self.center.GM, 2/5.0)
 
-    #--------------------------------------------------------------------------
-    # Info dump
-    #--------------------------------------------------------------------------
+  #--------------------------------------------------------------------------
+  # Radiation flux from star
+  #--------------------------------------------------------------------------
 
-    def info(self):
-        print("-------------------")
-        print("Name..............:", self.name)
-        if not self.isMassless:
-            print("Mass..............: %s" % (fmtmass(self.kg)))
-        if self.type == "star":
-            print("Spectral type.....: %s" % self.sptype)
-            print("Temperature.......:", self.T and "%.0f K" % self.T or "N/A")
-            print("Distance..........:", self.dist and "%.2f ly" % m2ly(self.dist) or "N/A")
-            if self.L:
-                print("Luminosity........: %.5f x Sun" % (self.L))
-                HZ = Orbit(self, self.HZ())
-                print("Habitable zone....: ")
-                print("    - Distance....: %.4f AU" % m2AU(HZ.a))
-                print("    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P)))
-        if not self.radius is None:
-            if self.type == "star":
-                print("Radius............: %s (%.4g x R_sun)" % (fmtdist(self.radius), self.radius/r_Sun))
-                print("Volume............: %.4g m3 (%.4g x V_sun)" % (self.V, self.V/V_Sun))
-            else:
-                print("Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth))
-                print("Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth))
-            print("Density...........: %.3f kg/m3" % (self.density))
-            print("Surface gravity...: %.2f g (%.2f m/s^2)" % (self.g_surface/const_g, self.g_surface))
-            print("Escape velocity...: %s" % fmteng(self.v_escape(), "m/s"))
-        print("Rotating period...: %s" % fmttime(self.rotate))
-        if self.orbit:
-            print("Orbits............:", self.center.name)
-            print("   Distance.......:", fmtdist(self.a))
-            print("   Period.........:", fmttime(self.P))
-            print("   Flux...........: %.3f x Earth (%s)" % (
-                self.flux,
-                fmteng(self.flux * const_solar, "W/m2"),
-            ))
-            #print("   L1/L2 distance.:", fmtdist(self.Lagrangian()))
-            #print("   Hill Sphere....:", fmtdist(self.HillSphere()))
-            #print("   SOI............:", fmtdist(self.SOI()))
-        s = self.satellites
-        if len(s):
-            print("Satellites........:")
-            s.sort(key=lambda x: x.orbit.a)
-            for num, satellite in enumerate(s):
-                print("   %2d - %-20s %15s %15s %s" % (
-                    num+1,
-                    satellite.name,
-                    fmtdist(satellite.orbit.altitude()),
-                    fmttime(satellite.orbit.P),
-                    hasattr(self, "L") and ("%7.3f" % satellite.flux) or "",
-                ))
+  @property
+  def flux(self):
+    if not self.center: return None
+    if not hasattr(self.center, "fluxAt"): return self.center.flux
+    return self.center.fluxAt(self.orbit.a)
+
+  #--------------------------------------------------------------------------
+  # Info dump
+  #--------------------------------------------------------------------------
+
+  def info(self):
+    print("-------------------")
+    print("Name..............:", self.name)
+    if not self.isMassless:
+      print("Mass..............: %s" % (fmtmass(self.kg)))
+    if self.type == "star":
+      print("Spectral type.....: %s" % self.sptype)
+      print("Temperature.......:", self.T and "%.0f K" % self.T or "N/A")
+      print("Distance..........:", self.dist and "%.2f ly" % m2ly(self.dist) or "N/A")
+      if self.L:
+        print("Luminosity........: %.5f x Sun" % (self.L))
+        HZ = Orbit(self, self.HZ())
+        print("Habitable zone....: ")
+        print("    - Distance....: %.4f AU" % m2AU(HZ.a))
+        print("    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P)))
+    if not self.radius is None:
+      if self.type == "star":
+        print("Radius............: %s (%.4g x R_sun)" % (fmtdist(self.radius), self.radius/r_Sun))
+        print("Volume............: %.4g m3 (%.4g x V_sun)" % (self.V, self.V/V_Sun))
+      else:
+        print("Radius............: %s (%.4g x R_earth)" % (fmtdist(self.radius), self.radius/r_Earth))
+        print("Volume............: %.4g m3 (%.4g x V_earth)" % (self.V, self.V/V_Earth))
+      print("Density...........: %.3f kg/m3" % (self.density))
+      print("Surface gravity...: %.2f g (%.2f m/s^2)" % (self.g_surface/const_g, self.g_surface))
+      print("Escape velocity...: %s" % fmteng(self.v_escape(), "m/s"))
+    print("Rotating period...: %s" % fmttime(self.rotate))
+    if self.orbit:
+      print("Orbits............:", self.center.name)
+      print("   Distance.......:", fmtdist(self.a))
+      print("   Period.........:", fmttime(self.P))
+      print("   Flux...........: %.3f x Earth (%s)" % (
+          self.flux,
+          fmteng(self.flux * const_solar, "W/m2"),
+      ))
+      #print("   L1/L2 distance.:", fmtdist(self.Lagrangian()))
+      #print("   Hill Sphere....:", fmtdist(self.HillSphere()))
+      #print("   SOI............:", fmtdist(self.SOI()))
+    if self.hasSatellites:
+      s = self.satellites
+      s.sort(key=lambda x: x.orbit.a)
+
+      print("Satellites........:")
+
+      for num, satellite in enumerate(s):
+        print("   %2d - %-20s %15s %15s %s" % (
+          num+1,
+          satellite.name,
+          fmtdist(satellite.orbit.altitude()),
+          fmttime(satellite.orbit.P),
+          hasattr(self, "L") and ("%7.3f" % satellite.flux) or "",
+        ))
 
 ################################################################################
 #
@@ -333,42 +341,42 @@ def P_window(GM, a, b):     return abs(360/w_diff(GM, a, b))
 
 class Vec2d:
 
-    def __init__(self, x = 0, y = 0): self.set(x, y)
+  def __init__(self, x = 0, y = 0): self.set(x, y)
 
-    def set(self, x, y): self.x, self.y = float(x), float(y)
+  def set(self, x, y): self.x, self.y = float(x), float(y)
 
-    def __add__(self, a): return Vec2d(self.x + a.x, self.y + a.y)
-    def __sub__(self, a): return Vec2d(self.x - a.x, self.y - a.y)
-    def __mul__(self, a): return Vec2d(self.x * a, self.y * a)
-    def __div__(self, a): return Vec2d(self.x / a, self.y / a)
+  def __add__(self, a): return Vec2d(self.x + a.x, self.y + a.y)
+  def __sub__(self, a): return Vec2d(self.x - a.x, self.y - a.y)
+  def __mul__(self, a): return Vec2d(self.x * a, self.y * a)
+  def __div__(self, a): return Vec2d(self.x / a, self.y / a)
 
-    def __neg__(self): return Vec2d(-self.x, -self.y)
-    def __abs__(self): return self.length
+  def __neg__(self): return Vec2d(-self.x, -self.y)
+  def __abs__(self): return self.length
 
-    @property
-    def length2(self): return self.x**2 + self.y**2
+  @property
+  def length2(self): return self.x**2 + self.y**2
 
-    @property
-    def length(self):  return sqrt(self.length2)
+  @property
+  def length(self):  return sqrt(self.length2)
 
-    def normalize(self): self /= self.length
-    def normalized(self): return self.__div__(self.length)
+  def normalize(self): self /= self.length
+  def normalized(self): return self.__div__(self.length)
 
-    def __str__(self): return "(%f,%f)" % (self.x, self.y)
+  def __str__(self): return "(%f,%f)" % (self.x, self.y)
 
-    @property
-    def fr(self):
-        return (
-            360 * (atan2( self.y, self.x )/(2*pi) % 1),
-            self.length
-        )
+  @property
+  def fr(self):
+    return (
+        360 * (atan2( self.y, self.x )/(2*pi) % 1),
+        self.length
+    )
 
-    def rotate(self, a):
-        rad = radians(a)
-        return Vec2d(
-            self.x * cos(rad) - self.y * sin(rad),
-            self.x * sin(rad) + self.y * cos(rad)
-        )
+  def rotate(self, a):
+    rad = radians(a)
+    return Vec2d(
+        self.x * cos(rad) - self.y * sin(rad),
+        self.x * sin(rad) + self.y * cos(rad)
+    )
 
 #------------------------------------------------------------------------------
 #
@@ -384,26 +392,26 @@ class Vec2d:
 
 def pos_xy(r1, r2, T):
 
-    if r1 > r2: T = T + 0.5
-    T = T % 1.0
+  if r1 > r2: T = T + 0.5
+  T = T % 1.0
 
-    e  = eccentricity(r1, r2)
-    M  = 2*pi*T
-    E0 = M
-    E  = M + e * sin(E0)
+  e  = eccentricity(r1, r2)
+  M  = 2*pi*T
+  E0 = M
+  E  = M + e * sin(E0)
 
-    while abs(E0-E) > 1e-10:
-        E0 = E
-        E = M + e * sin(E0)
+  while abs(E0-E) > 1e-10:
+    E0 = E
+    E = M + e * sin(E0)
 
-    a = solve_a(r1, r2)
-    b = solve_b(r1, r2)
-    p = Vec2d(
-        a*(cos(E)-e),
-        b*sin(E)
-    )
+  a = solve_a(r1, r2)
+  b = solve_b(r1, r2)
+  p = Vec2d(
+    a*(cos(E)-e),
+    b*sin(E)
+  )
 
-    return (r1 > r2) and -p or p
+  return (r1 > r2) and -p or p
 
 ################################################################################
 #
@@ -413,133 +421,135 @@ def pos_xy(r1, r2, T):
 
 class Orbit(object):
 
-    def __init__(self, center, r1, r2 = None, arg=None):
-        r2 = r2 == None and r1 or r2
-        assert r1 > 0
-        assert r2 > 0
-        center = Mass.resolve(center)
-        assert not center.isMassless, "Cannot orbit massless object"
-        self.center = center
-        self.r1  = float(r1)            # Periapsis
-        self.r2  = float(r2)            # Apoapsis
-        self.arg = arg and arg or 0.0   # Argument of periapsis
+  def __init__(self, center, r1, r2 = None, arg=None):
+    r2 = r2 == None and r1 or r2
+    assert r1 > 0
+    assert r2 > 0
+    center = Mass.resolve(center)
+    assert not center.isMassless, "Cannot orbit massless object"
+    self.center = center
+    self.r1  = float(r1)            # Periapsis
+    self.r2  = float(r2)            # Apoapsis
+    self.arg = arg and arg or 0.0   # Argument of periapsis
 
-    #--------------------------------------------------------------------------
-    # Basic properties
-    #--------------------------------------------------------------------------
+    center.hasSatellites = True
 
-    @property
-    def periapsis(self): return min(self.r1, self.r2)
+  #--------------------------------------------------------------------------
+  # Basic properties
+  #--------------------------------------------------------------------------
 
-    @property
-    def apoapsis(self): return max(self.r1, self.r2)
+  @property
+  def periapsis(self): return min(self.r1, self.r2)
 
-    @property
-    def diam(self): return self.r1 + self.r2
+  @property
+  def apoapsis(self): return max(self.r1, self.r2)
 
-    @property
-    def a(self): return solve_a(self.r1, self.r2)
+  @property
+  def diam(self): return self.r1 + self.r2
 
-    @property
-    def b(self): return solve_b(self.r1, self.r2)
+  @property
+  def a(self): return solve_a(self.r1, self.r2)
 
-    @property
-    def e(self): return eccentricity(self.r1, self.r2)
+  @property
+  def b(self): return solve_b(self.r1, self.r2)
 
-    @property
-    def P(self): return P_orbit(self.center.GM, self.a)
+  @property
+  def e(self): return eccentricity(self.r1, self.r2)
 
-    #--------------------------------------------------------------------------
-    # Synodic period to given orbit
-    #--------------------------------------------------------------------------
+  @property
+  def P(self): return P_orbit(self.center.GM, self.a)
 
-    def P_synodic(self, B):
-        A, B = self.P, B.P
-        return abs((A * B) / float(A - B))
+  #--------------------------------------------------------------------------
+  # Synodic period to given orbit
+  #--------------------------------------------------------------------------
 
-    #--------------------------------------------------------------------------
-    # Position (x,y) or (f,r) at given moment t = [0...1]
-    #--------------------------------------------------------------------------
+  def P_synodic(self, B):
+      A, B = self.P, B.P
+      return abs((A * B) / float(A - B))
 
-    def xy(self, t = 0):
-        return pos_xy(self.r1, self.r2, t).rotate(self.arg)
+  #--------------------------------------------------------------------------
+  # Position (x,y) or (f,r) at given moment t = [0...1]
+  #--------------------------------------------------------------------------
 
-    #--------------------------------------------------------------------------
-    # Orbital distance / angle at given moment t = [0 ... 1]
-    #--------------------------------------------------------------------------
+  def xy(self, t = 0):
+      return pos_xy(self.r1, self.r2, t).rotate(self.arg)
 
-    def fr(self, t = 0): return self.xy(t).fr
+  #--------------------------------------------------------------------------
+  # Orbital distance / angle at given moment t = [0 ... 1]
+  #--------------------------------------------------------------------------
 
-    def r(self, t = 0):
-            f, r = self.fr(t)
-            return r
+  def fr(self, t = 0): return self.xy(t).fr
 
-    def f(self, t = 0):
-            f, r = self.fr(t)
-            return f
+  def r(self, t = 0):
+          f, r = self.fr(t)
+          return r
 
-    def altitude(self, t = 0): return self.r(t) - self.center.radius
+  def f(self, t = 0):
+          f, r = self.fr(t)
+          return f
 
-    #--------------------------------------------------------------------------
-    # Orbital velocity vector at given moment t = [0 ... 1]
-    #--------------------------------------------------------------------------
+  def altitude(self, t = 0): return self.r(t) - self.center.radius
 
-    def v(self, t = 0):
-        h = 1/self.P
-        return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0)
+  #--------------------------------------------------------------------------
+  # Orbital velocity vector at given moment t = [0 ... 1]
+  #--------------------------------------------------------------------------
 
-    def v_escape(self, t = 0):
-        return self.center.v_escape(self.r(t))
+  def v(self, t = 0):
+      h = 1/self.P
+      return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0)
 
-    def v_circular(self, t = 0):
-        return self.center.v_circular(self.r(t))
+  def v_escape(self, t = 0):
+      return self.center.v_escape(self.r(t))
 
-    #--------------------------------------------------------------------------
-    # Energy
-    #--------------------------------------------------------------------------
+  def v_circular(self, t = 0):
+      return self.center.v_circular(self.r(t))
 
-    def Epot(self, t = 0): return -self.center.GM/self.r(t)
+  #--------------------------------------------------------------------------
+  # Energy
+  #--------------------------------------------------------------------------
 
-    def Ekin(self, t = 0): return solve_Emv(None, 1.0, abs(self.v(t)))
+  def Epot(self, t = 0): return -self.center.GM/self.r(t)
 
-    def E(self, t = 0): return self.Ekin(t) + self.Epot(t)
+  def Ekin(self, t = 0): return solve_Emv(None, 1.0, abs(self.v(t)))
 
-    #--------------------------------------------------------------------------
-    # C3, characteristic energy for interplanetary exit & entry trajectories
-    #--------------------------------------------------------------------------
+  def E(self, t = 0): return self.Ekin(t) + self.Epot(t)
 
-    def C3(self, v, t = 0):
-        return solve_rvrv(self.center.GM, self.r(t), None, Inf, v)
+  #--------------------------------------------------------------------------
+  # C3, characteristic energy for interplanetary exit & entry trajectories
+  #--------------------------------------------------------------------------
 
-    #--------------------------------------------------------------------------
-    # Orbit info dump
-    #--------------------------------------------------------------------------
+  def C3(self, v, t = 0):
+      return solve_rvrv(self.center.GM, self.r(t), None, Inf, v)
 
-    def info(self):
+  #--------------------------------------------------------------------------
+  # Orbit info dump
+  #--------------------------------------------------------------------------
 
-        def info_by_t(t, prefix=""):
-            r, v = (self.r(t), abs(self.v(t)))
-            E, Ekin, Epot = (self.E(t), self.Ekin(t), self.Epot(t))
+  def info(self):
 
-            print(prefix + "- r.....:", fmtdist(r), "alt:", fmtdist(r - self.center.radius))
-            print(prefix + "- v.....: %.2f m/s" % v)
-            print(prefix + "- E.....:", fmteng(E, "J"), "(%s %s)" % (fmteng(Ekin, "J"), fmteng(Epot, "J")))
+      def info_by_t(t, prefix=""):
+          r, v = (self.r(t), abs(self.v(t)))
+          E, Ekin, Epot = (self.E(t), self.Ekin(t), self.Epot(t))
 
-        print("Orbit")
+          print(prefix + "- r.....:", fmtdist(r), "alt:", fmtdist(r - self.center.radius))
+          print(prefix + "- v.....: %.2f m/s" % v)
+          print(prefix + "- E.....:", fmteng(E, "J"), "(%s %s)" % (fmteng(Ekin, "J"), fmteng(Epot, "J")))
 
-        print("- Center:", self.center.name)
-        print("- A.....:", fmtdist(self.a))
-        print("- P.....:", fmttime(self.P))
+      print("Orbit")
 
-        # Circular orbits
-        if(self.r1 == self.r2):
-            info_by_t(0.0)
-        # Elliptical orbits
-        else:
-            print("- Periapsis")
-            info_by_t(0.0, "  ")
-            print("- Apoapsis")
-            info_by_t(0.5, "  ")
+      print("- Center:", self.center.name)
+      print("- A.....:", fmtdist(self.a))
+      print("- P.....:", fmttime(self.P))
+
+      # Circular orbits
+      if(self.r1 == self.r2):
+          info_by_t(0.0)
+      # Elliptical orbits
+      else:
+          print("- Periapsis")
+          info_by_t(0.0, "  ")
+          print("- Apoapsis")
+          info_by_t(0.5, "  ")
 
 #------------------------------------------------------------------------------
 # Surface "orbit", to simplify landings & takeoffs

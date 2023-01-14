@@ -10,7 +10,6 @@ sys.path.append(os.path.abspath("."))
 
 from orbtools import *
 from orbtools.systems.solsystem import *
-import orbtools.systems.stars
 from orbtools.systems.exoplanets import *
 
 ###############################################################################
@@ -72,7 +71,7 @@ def y_Mass(plt, ax, data, ticks = None, append=False):
 
     set_yticks(ax, ticks)
 
-    ticks2 = [ Moon, Mars, Earth, Neptune, Jupiter, stars["M9"], Sun]
+    ticks2 = [ Moon, Mars, Earth, Neptune, Jupiter, Star.typical["M9"], Sun]
     ticks2 = filter(lambda m: MtoEarth(m.GM) > ymin and MtoEarth(m.GM) < ymax, ticks2)
     ticks2 = list(ticks2)
 
@@ -97,7 +96,7 @@ def x_Mass(plt, ax, data, ticks, append=False):
     ax.set_xscale('log')
     set_xticks(ax, ticks)
 
-    ticks2 = [ Mars, Earth, Neptune, Jupiter, stars["M9"], Sun]
+    ticks2 = [ Mars, Earth, Neptune, Jupiter, Star.typical["M9"], Sun]
     ticks2 = filter(lambda m: MtoEarth(m.GM) > xmin and MtoEarth(m.GM) < xmax, ticks2)
     ticks2 = list(ticks2)
 
