@@ -199,7 +199,7 @@ def doFixes(quiet = False):
   fix("K2-80", "L", Star.LasLog10(-0.3031848))
 
   #stars["Kepler-108 B"].radius = RasSun()
-  stars["Kepler-108 B"].T = 5584.260
+  fix("Kepler-108 B", "T", 5584.260)
   #stars["Kepler-108 B"].L =
 
   fix("Kepler-411", "radius", RasSun(0.76))

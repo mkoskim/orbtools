@@ -53,6 +53,8 @@ ticks_Mag = [10, 5, 0, -5]
 
 ticks_P = [1, 10, 100, 365, 1000, 10000]
 
+ticks_distance = [0, 1000, 2500, 5000, 10000]
+
 def tick_max(ticks): return max(ticks)
 def tick_min(ticks): return min(ticks)
 def tick_range(ticks): return 0.5*min(ticks), 2*max(ticks)
@@ -235,12 +237,12 @@ def y_Temperature(plt, ax, data, ticks = None, append = False):
     if ticks is None: ticks = ticks_T_stars
     ymin, ymax = min(ticks)*0.5, max(ticks)*2
 
-    ax.set_ylabel("Lämpötila")
+    ax.set_ylabel("Lämpötila (C)")
     #ax.set_yscale('log')
     ax.set_ylim(ymin, ymax)
     set_yticks(ax, ticks)
 
-  return [mass.T for mass in data]
+  return [mass.T-273.4 for mass in data]
 
 #------------------------------------------------------------------------------
 
@@ -277,6 +279,19 @@ def x_Flux(plt, ax, data, ticks = None, append = False):
     plt.axvline(x = flux_lim[3], ls="dashed")
 
   return [planet.flux for planet in data]
+
+def x_Distance(plt, ax, data, ticks = None, append = False):
+  if not append:
+    if not ticks: ticks = ticks_distance
+    xmin, xmax = min(ticks), max(ticks)
+
+    ax.set_xlabel("Distance (ly)")
+    #ax.set_xscale('log')
+
+    ax.set_xlim(xmin, xmax)
+    set_xticks(ax, ticks)
+
+  return [m2ly(planet.system.dist) for planet in data]
 
 #------------------------------------------------------------------------------
 
@@ -395,3 +410,15 @@ def Temperature_Magnitude(plt, ax, data, xticks=None, yticks=None):
     x_Temperature(plt, ax, data, xticks),
     y_Magnitude(plt, ax, data, yticks),
   )
+
+def Distance_Radius(plt, ax, data, xticks=None, yticks=None, N=None, append=None):
+  data = doFilters(data, hasRadius, hasDistance)
+  if not append:
+    if not N: N = len(data)
+    plt.title("N=%d" % N)
+
+  return (
+    x_Distance(plt, ax, data, xticks, append),
+    y_Radius(plt, ax, data, yticks, append),
+  )
+

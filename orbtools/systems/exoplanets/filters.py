@@ -15,6 +15,8 @@ def isStar(mass): return mass.type == "star"
 
 def isPlanet(mass): return mass.type == "planet"
 
+def hasDistance(mass): return not mass.system.dist is None
+
 def hasMass(mass):
   if not mass.GM: return False
   if GM2kg(mass.GM) < 1: return False

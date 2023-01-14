@@ -76,7 +76,12 @@ def Stars():
 
   exit()
 
-Stars()
+  #data_x, data_y = Period_Radius(plt, ax, categories[0], yticks=ticks_r_planets)
+  #data_x, data_y = Period_Radius(plt, ax, categories[1], yticks=ticks_r_planets)
+  #data_x, data_y = Period_Radius(plt, ax, categories[2], yticks=ticks_r_planets)
+  #ax.scatter(data_x, data_y, marker=".")
+
+#Stars()
 
 #------------------------------------------------------------------------------
 # Exoplanet detection method
@@ -90,10 +95,12 @@ def Detection():
     methods[m] = doFilters(data, lambda x: x.detection == m)
   print([(key, len(value)) for key, value in methods.items()])
 
-  #data_x, data_y = Period_Radius(plt, ax, methods["transit"], yticks=ticks_r_planets)
-  data_x, data_y = Period_Mass(plt, ax, methods["RV"], yticks=ticks_m_planets + [1000, 10_000])
-  #data_x, data_y = Period_Mass(plt, ax, methods["microlensing"], yticks=ticks_m_planets)
-  #data_x, data_y = Period_Mass(plt, ax, methods["imaging"], yticks=ticks_m_planets + [1000, 10_000], xticks=ticks_P + [100_000])
+  data_x, data_y = (
+    #Period_Radius(plt, ax, methods["transit"], yticks=ticks_r_planets)
+    Period_Mass(plt, ax, methods["RV"], yticks=ticks_m_planets + [1000, 10_000])
+    #Period_Mass(plt, ax, methods["microlensing"], yticks=ticks_m_planets)
+    #Period_Mass(plt, ax, methods["imaging"], yticks=ticks_m_planets + [1000, 10_000], xticks=ticks_P + [100_000])
+  )
   ax.scatter(data_x, data_y, marker=".")
 
 #Detection()
@@ -104,17 +111,22 @@ def Detection():
 def Exoplanets():
   exoplanets = doFilters(planets.values(), isExoplanet)
 
+  #exoplanets = doFilters(exoplanets, hasMass, lambda x: x.GM < 13*GM_Jupiter)
+  #exoplanets = doFilters(exoplanets, hasMass, lambda x: x.GM < 1*GM_Neptune)
+  #exoplanets = doFilters(exoplanets, hasMass, hasRadius, isRocky)
+
   data_x, data_y = (
+    #Distance_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
     #Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_P + [10_000])
     #Period_Mass(plt, ax, exoplanets, yticks=ticks_m_planets + [5000], xticks=ticks_P + [10_000])
     #Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
     #Flux_Mass(plt, ax, exoplanets, yticks=ticks_m_planets)
-    #Flux_Temperature(plt, ax, exoplanets, yticks = [0, 200, 400, 800, 1600], xticks = ticks_flux + [100.0, 1000.0])
+    Flux_Temperature(plt, ax, exoplanets, yticks = [-250, 0, 250, 500, 1000], xticks = ticks_flux + [100.0, 1000.0])
   )
 
-  ax.scatter(data_x, data_y, marker=".")
+  ax.scatter(data_x, data_y, marker=".", s=1)
 
-#Exoplanets()
+Exoplanets()
 
 #------------------------------------------------------------------------------
 # Giants
