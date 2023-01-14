@@ -50,15 +50,24 @@ def forAll():
 #forAll()
 
 #------------------------------------------------------------------------------
-# Giants
+# Exoplanet detection method
 
-def Giants():
-  giants = doFilters(planets.values(), lambda x: x.GM > MasJupiter(0.2))
-  data_x, data_y = Flux_Radius(plt, ax, giants, yticks=ticks_r_planets + [20.0], xticks = ticks_flux + [20.0, 100.0, 1000.0])
+def Detection():
+  data = doFilters(planets.values(), lambda x: hasattr(x, "detection") and not x.detection is None)
 
+  methods = {}
+  for p in data: methods[p.detection] = True
+  for m in list(methods.keys()):
+    methods[m] = doFilters(data, lambda x: x.detection == m)
+  print([(key, len(value)) for key, value in methods.items()])
+
+  data_x, data_y = Period_Radius(plt, ax, methods["transit"], yticks=ticks_r_planets)
+  #data_x, data_y = Period_Mass(plt, ax, methods["RV"], yticks=ticks_m_planets + [1000, 10_000])
+  #data_x, data_y = Period_Mass(plt, ax, methods["microlensing"], yticks=ticks_m_planets)
+  #data_x, data_y = Period_Mass(plt, ax, methods["imaging"], yticks=ticks_m_planets + [1000, 10_000], xticks=ticks_P + [100_000])
   ax.scatter(data_x, data_y, marker=".")
 
-#Giants()
+#Detection()
 
 #------------------------------------------------------------------------------
 # Exoplanets only
@@ -68,9 +77,10 @@ def Exoplanets():
 
   data_x, data_y = (
     #Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_P + [10_000])
-    Period_Mass(plt, ax, exoplanets, yticks=ticks_m_planets + [5000], xticks=ticks_P + [10_000])
-  #data_x, data_y = Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
-  #data_x, data_y = Flux_Mass(plt, ax, doFilters(exoplanets, hasMass, hasRadius), yticks=ticks_m_planets)
+    #Period_Mass(plt, ax, exoplanets, yticks=ticks_m_planets + [5000], xticks=ticks_P + [10_000])
+    #Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
+    #Flux_Mass(plt, ax, exoplanets, yticks=ticks_m_planets)
+    #Flux_Temperature(plt, ax, exoplanets, yticks = [0, 200, 400, 800, 1600], xticks = ticks_flux + [100.0, 1000.0])
   )
 
   ax.scatter(data_x, data_y, marker=".")
@@ -78,43 +88,44 @@ def Exoplanets():
 #Exoplanets()
 
 #------------------------------------------------------------------------------
-# Planets
+# Giants
 
-#data_x, data_y = Flux_Radius(plt, ax, sol_planets, yticks=[0.05, 0.1] + ticks_r_planets, xticks=ticks_flux)
-#data_x, data_y = Flux_Radius(plt, ax, planets.values(), yticks=ticks_r_planets)
+def Giants():
+  giants = doFilters(planets.values(), lambda x: x.GM > MasJupiter(0.2))
+  data_x, data_y = (
+    #Flux_Radius(plt, ax, giants, yticks=ticks_r_planets + [20.0], xticks = ticks_flux + [100.0, 1000.0])
+    Flux_Mass(plt, ax, giants, yticks=ticks_m_planets + [5000], xticks = ticks_flux + [100.0, 1000.0])
+  )
 
-# Super-Earths
-#data_x, data_y = Flux_Mass(plt, ax, doFilters(planets.values(), isSuperEarth), yticks=[1.0, 2.0, 4.0, 8.0], xticks=ticks_flux+[25.0])
+  ax.scatter(data_x, data_y, marker=".")
 
-# Rocky worlds
-#data_x, data_y = Flux_Mass(plt, ax, doFilters(planets.values(), isRocky, hasMass, hasRadius), yticks=ticks_m_planets)
+#Giants()
 
-# Stars
-#data_x, data_y = Mass_Luminosity(plt, ax, stars.values(), xticks=ticks_m_stars)
-#data_x, data_y = Luminosity_Mass(plt, ax, stars.values(), yticks=ticks_m_stars)
-#data_x, data_y = Temperature_Mass(plt, ax, stars.values(), yticks=ticks_m_stars)
-#data_x, data_y = Temperature_Magnitude(plt, ax, stars.values())
+#------------------------------------------------------------------------------
+# sub-Giants
 
-#ax.scatter(data_x, data_y, marker=".", s = 1.0)
-#ax.scatter(data_x, data_y, marker=".", color="lightgrey")
-#ax.scatter(data_x, data_y, marker="o")
+def subGiants():
 
-# Secondary plot
-#data_x, data_y = Flux_Mass(plt, ax, doFilters(planets.values(), isRocky, isSuperEarth, hasMass, hasRadius), yticks=[1.0, 2.0, 4.0, 8.0], xticks=ticks_flux+[25.0], append=True)
-#ax.scatter(data_x, data_y, marker="+", color="red")
+  ticks_m = [1, 10, 50]
 
-# Tertiary plot
-#data_x, data_y = Flux_Mass(plt, ax, doFilters(planets.values(), isJovian, hasMass, hasRadius), yticks=ticks_m_planets, append=True)
-#ax.scatter(data_x, data_y, marker=".", color="green")
+  data = doFilters(planets.values(), lambda x: x.GM < MasJupiter(0.2))
+  #data = doFilters(data, hasFlux, lambda x: x.flux > 10 and x.flux < 20)
 
-# Planets in HZ (Habitable Zone)
-#data_x, data_y = Mass_Radius(plt, ax, doFilters(planets.values(), isInHZ), xticks=ticks_m_planets, yticks=ticks_r_planets)
-#data2_x, data2_y = Mass_Radius(plt, ax, doFilters(planets.values(), isHot), xticks=ticks_m_planets, yticks=ticks_r_planets)
-#data3_x, data3_y = Mass_Radius(plt, ax, doFilters(planets.values(), isCold), xticks=ticks_m_planets, yticks=ticks_r_planets)
+  def plotMassDensity():
+    for M_lim in [2]: plt.axvline(x = M_lim, ls="dashed")
 
-#ax.scatter(data2_x, data2_y, marker=".", s=1.0, color="red")
-#ax.scatter(data3_x, data3_y, marker=".", color="blue")
-#ax.scatter(data_x, data_y, marker=".")
+    return Mass_Density(plt, ax, data, xticks=ticks_m)
+
+  data_x, data_y = (
+    #Mass_Radius(plt, ax, data, yticks=ticks_r_planets, xticks=ticks_m_planets)
+    Flux_Radius(plt, ax, data, yticks=ticks_r_planets + [20.0], xticks = ticks_flux + [100.0, 1000.0])
+    #Flux_Mass(plt, ax, data, yticks=ticks_m_planets + [5000], xticks = ticks_flux + [100.0, 1000.0])
+    #plotMassDensity()
+  )
+
+  ax.scatter(data_x, data_y, marker=".")
+
+#subGiants()
 
 #------------------------------------------------------------------------------
 # Solar system with hand-picked objects
@@ -142,12 +153,85 @@ def doSolSystem():
 #------------------------------------------------------------------------------
 # Super-Earths
 
-def histSuperearths():
-  superearths = doFilters(planets.values(), isExoplanet, hasRadius, hasMass, hasFlux, isSuperEarth, lambda x: not isUltraDense(x))
-  #superearths = doFilters(superearths, lambda x: x.flux < 10, hasFlux)
+def Superearths():
 
-  data1 = doFilters(superearths, lambda x: x.flux < 60, hasFlux)
-  data2 = doFilters(superearths, lambda x: x.flux > 60, hasFlux)
+  def doSplit(data, fSplit):
+    set1 = doFilters(data, fSplit)
+    set2 = doFilters(data, lambda x: not fSplit(x))
+    return set1, set2
+
+  def histogram2(data1, data2, bins):
+    ax.hist(data2, bins=bins)
+    ax.hist(data1, bins=bins, rwidth=0.5)
+
+  def MassRadius2(data1, data2):
+    xticks = [1, 2, 3, 4, 8]
+    yticks = [1, 1.5, 2]
+    data_x, data_y = Mass_Radius(plt, ax, data1, xticks = xticks, yticks=yticks, N = len(data1) + len(data2))
+    ax.scatter(data_x, data_y, marker=".")
+
+    data_x, data_y = Mass_Radius(plt, ax, data2, append = True)
+    ax.scatter(data_x, data_y, marker="+")
+
+  def RadiusMass2(data1, data2):
+    yticks = [1, 2, 3, 4, 8]
+    xticks = [1, 1.5, 2, 4]
+
+    data_x, data_y = Radius_Mass(plt, ax, data1, xticks = xticks, yticks=yticks, N = len(data1) + len(data2))
+    ax.scatter(data_x, data_y, marker=".")
+
+    data_x, data_y = Radius_Mass(plt, ax, data2, append = True)
+    ax.scatter(data_x, data_y, marker="+")
+
+  def FluxRadius2(data1, data2):
+    xticks = ticks_flux + [100, 1000]
+    yticks = [1, 1.5, 2, 4]
+    data_x, data_y = Flux_Radius(plt, ax, data1, xticks = xticks, yticks=yticks, N = len(data1) + len(data2))
+    ax.scatter(data_x, data_y, marker=".")
+
+    data_x, data_y = Flux_Radius(plt, ax, data2, append = True)
+    ax.scatter(data_x, data_y, marker="+")
+
+  def FluxMass2(data1, data2):
+    xticks = ticks_flux + [100, 1000]
+    yticks = [1, 2, 3, 4, 8]
+    data_x, data_y = Flux_Mass(plt, ax, data1, xticks = xticks, yticks=yticks, N = len(data1) + len(data2))
+    ax.scatter(data_x, data_y, marker=".")
+
+    data_x, data_y = Flux_Mass(plt, ax, data2, append = True)
+    ax.scatter(data_x, data_y, marker="+")
+
+
+  superearths = doFilters(planets.values(), isExoplanet, isSuperEarth)
+
+  superearths = doFilters(superearths, hasRadius)
+  superearths = doFilters(superearths, hasMass, lambda x: not isUltraDense(x))
+  superearths = doFilters(superearths, hasFlux)
+  #superearths = doFilters(superearths, hasFlux, lambda x: x.flux < 10)
+  #superearths = doFilters(superearths, lambda x: MtoEarth(x.GM) > 3)
+
+  plt.title("N=%d" % (len(superearths)))
+
+  r_bins = [(x-0.5)/4 for x in range(16)]
+  m_bins = [(x-0.5) for x in range(15)]
+
+  #data1, data2 = doFilters(superearths, isRocky), superearths
+  data1, data2 = doSplit(superearths, isRocky)
+  #data1, data2 = doSplit(superearths, lambda x: x.flux > 100)
+
+  #MassRadius2(data2, data1)
+  #RadiusMass2(data2, data1)
+  #FluxRadius2(data2, data1)
+  FluxMass2(data2, data1)
+
+  #histogram2([RtoEarth(x.radius) for x in data1], [RtoEarth(x.radius) for x in data2], bins)
+  #histogram2([MtoEarth(x.GM) for x in data1], [MtoEarth(x.GM) for x in data2], m_bins)
+  #ax.set_xlabel("Halkaisija (x Maa)")
+
+  #def Mx3(x): return MtoEarth(x.GM) < 3 and 1 or 2
+  #histogram2([Mx3(x) for x in data1], [Mx3(x) for x in data2], [1, 2])
+
+   # doFilters(superearths, lambda x: x.flux < 60, hasFlux)
 
   #data1 = [MtoEarth(x.GM) for x in data1]
   #data2 = [MtoEarth(x.GM) for x in data2]
@@ -155,16 +239,10 @@ def histSuperearths():
   #ax.set_xlabel("Massa (x Maa)")
 
   #data1 = [RtoEarth(x.radius) for x in doFilters(data1, lambda x: not isRocky(x))]
-  data1 = [RtoEarth(x.radius) for x in data1]
-  data2 = [RtoEarth(x.radius) for x in data2]
-  bins = [(x-0.5)/4 for x in range(16)]
 
-  # We can set the number of bins with the *bins* keyword argument.
-  ax.hist(data1, bins=bins)
-  ax.hist(data2, bins=bins, rwidth=0.5)
-  plt.title("N=%d" % (len(data1) + len(data2)))
+  #data2 = doFilters(superearths, lambda x: x.flux > 60, hasFlux)
 
-#histSuperearths()
+Superearths()
 
 #------------------------------------------------------------------------------
 # Planet distribution
@@ -192,14 +270,15 @@ def histExoplanets():
 
   print("Points:", len(data))
 
-small = doFilters(planets.values(), isExoplanet, hasMass, lambda x: x.GM < 1.25 * GM_Earth)
-small.sort(key=lambda x: x.GM)
-for p in small:
-  print("%-20s %5.2f - %7.2f" % (p.name, MtoEarth(p.GM), m2ly(p.system.dist)))
+#small = doFilters(planets.values(), isExoplanet, hasMass, lambda x: x.GM < 1.25 * GM_Earth)
+#small.sort(key=lambda x: x.GM)
+#for p in small:
+#  print("%-20s %5.2f - %7.2f" % (p.name, MtoEarth(p.GM), m2ly(p.system.dist)))
 
-exit()
+#exit()
 
-histExoplanets()
+#histExoplanets()
+
 
 plt.grid()
 plt.show()

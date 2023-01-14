@@ -17,8 +17,9 @@ def doPlanet(planet, star):
   if name in masses: return
 
   mass = planet.findtext("mass")
-
   radius = planet.findtext("radius") or None
+  T = planet.findtext("temperature") or None
+  detection = planet.findtext("discoverymethod") or None
 
   P = planet.findtext("period")
   A = planet.findtext("semimajoraxis")
@@ -38,6 +39,8 @@ def doPlanet(planet, star):
   p = Planet(name, GM = mass and MasJupiter(mass) or 0, radius = radius and RasJupiter(radius), orbit = orbit)
 
   p.elem = planet
+  p.T = T and float(T) or None
+  p.detection = detection or None
 
 #------------------------------------------------------------------------------
 
@@ -51,15 +54,21 @@ def doStar(star, dist):
   mass = star.findtext("mass") or None
   radius = star.findtext("radius") or None
   T = star.findtext("temperature") or None
-  magV = star.findtext("magV") or None
+
+  #if dist:
+  #  mag = star.findtext("magV")
+  #  if mag: mag = Star.magVtoAbs(float(mag), dist)
+  #else:
+  #  mag = None
 
   #if not radius or not T: print("Star:", name, sptype, mass, radius, T)
 
   if not mass: return
+
   #if sptype is None: return
   #if sptype[0] not in ["F", "G", "K", "M"]: return
 
-  s = Star(name, MxSun = mass, RxSun = radius, sptype = sptype, T = T, magV = magV, dist = dist)
+  s = Star(name, MxSun = mass, RxSun = radius, sptype = sptype, T = T, dist = dist)
 
   s.elem = star
 
@@ -70,7 +79,8 @@ def doStar(star, dist):
 
 def doSystem(system):
   dist = system.findtext("distance")
-  if dist: dist = parsec2m(dist)
+  if dist:
+    dist = parsec2m(dist)
 
   for star in system.findall(".//star"):
     doStar(star, dist)
@@ -86,6 +96,59 @@ oec = ET.fromstring(open("./orbtools/systems/exoplanets/oec/systems.xml").read()
 
 for system in oec: doSystem(system)
 
+#------------------------------------------------------------------------------
+
 from orbtools.systems.exoplanets.oec.fixes import doFixes
 doFixes(quiet = True)
+
+#------------------------------------------------------------------------------
+
+from orbtools.systems.exoplanets.filters import *
+from scipy.interpolate import LinearNDInterpolator
+#import numpy as np
+
+#------------------------------------------------------------------------------
+# Use Radius-Temperature formula to compute missing Luminosities
+
+def doRTtoL():
+
+  #----------------------------------------------------------------------------
+  # Compute L for stars with radius and T
+
+  starsRT = doFilters(stars.values(), hasRadius, hasTemperature)
+
+  for star in starsRT: star.L = Star.RT2L(star.radius, star.T)
+
+#------------------------------------------------------------------------------
+# Use stars with mass, temperature and luminosity to interpolate luminosities
+# to stars without radius. Sadly, this is not as effective as it sounds. We
+# need to wait scientists to fill up masses and temperatures for stars with
+# planets.
+
+def doInterpolateL():
+
+  #----------------------------------------------------------------------------
+  # Make 2D interpolation from computed L
+
+  starsL = doFilters(stars.values(), hasLuminosity)
+
+  points = [(MtoSun(star.GM), star.T) for star in starsL]
+  values = [star.L for star in starsL]
+
+  interp = LinearNDInterpolator(points, values)
+
+  #----------------------------------------------------------------------------
+  # Stars with T but without L yet
+
+  starsMT = doFilters(stars.values(), hasTemperature, lambda x: not hasLuminosity(x))
+  print("MT:", len(starsMT))
+
+  #for star in starsMT:
+  #  print(star.name)
+
+  for star in starsMT: star.L = interp(MtoSun(star.GM), star.T)
+
+doRTtoL()
+#doInterpolateL()
+
 #exit()

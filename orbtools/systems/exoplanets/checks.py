@@ -12,6 +12,49 @@ from orbtools import *
 from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
+# Testing absolute magnitude calculation.
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Testing Luminosity calculation: we have certain set of stars with manually
+# added Luminosity, and we can compare the results of calculations
+#------------------------------------------------------------------------------
+
+def testLuminosityCalc():
+  data = doFilters(stars.values(), hasLuminosity)
+  data.sort(key=lambda x: x.GM, reverse=True)
+
+  for star in data:
+    if star.radius:
+      star.L1 = Star.RT2L(star.radius, star.T)
+    else:
+      star.L1 = None
+
+    #if star.mag:
+    #  star.L2 = Star.mag2L(star.mag)
+    #else:
+    #  star.L2 = None
+    star.L2 = Star.MLR(star.GM / GM_Sun)
+
+    print("%-15s" % (star.name),
+      "M=%5s" % (star.GM and "%.2f" % MtoSun(star.GM)),
+      "R=%5s" % (star.radius and "%.2f" % RtoSun(star.radius)),
+      "T=%s" % (star.T and "%.0f" % float(star.T)),
+      "mag=%6s" % (star.mag and "%.2f" % float(star.mag)),
+      "L=%7s" % (star.L and "%.4f" % float(star.L)),
+      "L1=%7s" % (star.L1 and "%.4f" % float(star.L1)),
+      "L2=%7s" % (star.L2 and "%.4f" % float(star.L2)),
+    )
+
+#testLuminosityCalc()
+
+#print(Star.magVtoAbs(0.12, ly2m(860))) # Rigel
+#print(Star.magVtoAbs(0.12, ly2m(860))) # 61 Cygni A
+#print(stars["HD 158259"].elem.findtext("distance"))
+#stars["EPIC 211089792"].info()
+
+#------------------------------------------------------------------------------
 # Reporting
 #------------------------------------------------------------------------------
 
@@ -32,7 +75,7 @@ def showPlanets(data):
   for planet in data:
     try:
       print("%-20s M=%7.2f R=%7.2f" % (planet.name, MtoEarth(planet.GM or 0), RtoEarth(planet.radius or 0)),
-        "D=%5.0f" % planet.density,
+        #"D=%5.0f" % planet.density,
         #"P=%7.2f" % TtoDays(planet.orbit.P),
         #planet.flux and "F=%7.2f" % planet.flux or None,
         #planet.system.name,
@@ -62,7 +105,7 @@ def showMissing(star):
 #showMissing(masses["EPIC 228813918"])
 #exit()
 
-# Some systems are (ATM) unfixable, parameters are not yet available
+# Some systems are (ATM) unfixable, planet parameters (M & R) are not yet available
 def isFixable(star):
   unfixables = [
     "HD 10180",     # Radii not known
@@ -97,6 +140,8 @@ def isFixable(star):
     "K2-187",       # Mass
     "K2-72",        # Mass
     "Kepler-107",   # Mass uncertainty
+
+    "PSR 1257+12",  # Pulsar
   ]
 
   return not star.name in unfixables
@@ -104,11 +149,14 @@ def isFixable(star):
 #------------------------------------------------------------------------------
 
 def topStarsToFix():
+  print("Top stars to fix")
   top = doFilters(stars.values(), lambda x: not hasLuminosity(x), isFixable)
   top.sort(key = lambda x: len(x.satellites), reverse=True)
   showStars(top[:10])
 
 #topStarsToFix()
+
+#stars["Kepler-82"].info()
 
 #------------------------------------------------------------------------------
 # Search systems with incomplete star/planets resulting highest gain
@@ -142,12 +190,13 @@ def planetsMissingFlux():
 
   print("Planets missing flux:")
 
-  fluxless = doFilters(planets.values(), hasMass, hasRadius, isFluxless)
+  fluxless = doFilters(planets.values(), isFluxless)
+  #fluxless = doFilters(planets.values(), hasMass, hasRadius, isFluxless)
   fluxless.sort(key=lambda x: x.GM)
 
   showPlanets(fluxless)
 
-#planetsMissingFlux()
+planetsMissingFlux()
 
 #------------------------------------------------------------------------------
 # Planets which density > 10 000 kg/m3 (possible error in either mass or radius)
@@ -162,96 +211,4 @@ def ultradensePlanets():
 
   showPlanets(ultradense)
 
-ultradensePlanets()
-
-#------------------------------------------------------------------------------
-
-#data = doFilters(planets.values(), hasMass, hasRadius, isInHZ, lambda x: x.GM > 0.01 * GM_Earth)
-#data = doFilters(planets.values(), isRocky, hasFlux, lambda x: x.GM < MasJupiter(0.2), hasMass, hasRadius)
-#data = sorted(data, key=lambda x: x.flux)
-#showPlanets(data)
-
-#data = doFilters(stars.values(), isStar, hasTemperature, lambda x: isSpectralClass(x, "B"))
-#data = sorted(data, key=lambda x: x.T)
-#showStars(data)
-
-#data = reversed(sorted(stars.values(), key=lambda x: x.GM))
-#showStars(list(data)[:30])
-
-#print(Sun.fluxAt(AU2m(2.7)))
-#print(MtoEarth(GM_Sun))
-#print(MtoEarth(MasJupiter(0.2)))
-#print(MtoEarth(MasJupiter(78)))
-#exit()
-
-#Jupiter.info()
-#Saturn.info()
-#exit()
-
-###############################################################################
-#
-# Database utils
-#
-###############################################################################
-
-#------------------------------------------------------------------------------
-# Database info: show missing values
-#
-# Many database objects are incomplete. Examples:
-#
-# - Many planets miss either radius or mass
-# - Many stars miss either radius or mass
-# - Many Kepler stars miss spectral type
-#
-# This needs to be taken into account when making plots.
-#
-#------------------------------------------------------------------------------
-
-def checkMissing():
-
-  def isIncompleteStar(star):
-    if not len(star.satellites): return False
-    if not star.radius: return True
-    if not star.L: return True
-    return False
-
-  def isIncompletePlanet(planet):
-    if not planet.GM: return True
-    if not planet.radius: return True
-    return False
-
-  incomplete_stars = list(sorted(filter(isIncompleteStar, stars.values()), key=lambda x: x.name))
-  incomplete_planets = list(sorted(filter(isIncompletePlanet, planets.values()), key=lambda x: x.name))
-
-  print("Incomplete stars...:", len(incomplete_stars))
-  print("Incomplete planets.:", len(incomplete_planets))
-
-  print("Checking stars...")
-  for star in incomplete_stars:
-    print("    ", star.name, ": SP=", star.sptype, "R=", star.radius and RtoSun(star.radius), "L=", star.L, "(planets: %d)" % len(star.satellites))
-
-  print("Checking planets...")
-  for planet in incomplete_planets:
-    print("    ", planet.name, "M=", MtoEarth(planet.GM), "R=", planet.radius and RtoEarth(planet.radius))
-
-#stars["Kepler-22"].info()
-#stars["Kepler-62"].info()
-#stars["Kepler-186"].info()
-#stars["Kepler-442"].info()
-#stars["Kepler-452"].info()
-#stars["TRAPPIST-1"].info()
-
-#stars["Proxima Centauri"].info()
-#stars["Alpha Centauri A"].info()
-#stars["Alpha Centauri B"].info()
-
-#stars["Sirius A"].info()
-#stars["61 Cygni A"].info()
-#stars["61 Cygni B"].info()
-
-#stars["Procyon"].info()
-
-#stars["Tau Ceti"].info()
-
-#checkMissing()
-#exit()
+#ultradensePlanets()

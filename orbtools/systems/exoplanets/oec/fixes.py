@@ -26,6 +26,7 @@ def doFixes(quiet = False):
     elif(param == "radius"):  mass.radius = verbose(mass.radius)
     elif(param == "T"):       mass.T = verbose(mass.T)
     elif(param == "L"):       mass.L = verbose(mass.L)
+    elif(param == "mag"):     mass.mag = verbose(mass.mag)
     elif(param == "sptype"):  mass.sptype = verbose(mass.sptype)
     else:
       print("%s[%s]: Invalid param" % (name, param))
@@ -137,8 +138,8 @@ def doFixes(quiet = False):
   fix("HD 158259", "L", 1.6)
 
   fix("HD 159868", "radius", RasSun(1.97))
-  fix("HD 158259", "T", 5558)
-  fix("HD 158259", "L", 3.59)
+  fix("HD 159868", "T", 5558)
+  fix("HD 159868", "L", 3.59)
 
   #fix("HD 163296", "radius", RasSun(???))
   #fix("HD 163296", "T", ???)
@@ -155,6 +156,8 @@ def doFixes(quiet = False):
   fix("HD 20794", "radius", RasSun(0.92))
   fix("HD 20794", "T", 5401)
   fix("HD 20794", "L", 0.74)
+
+  fix("HD 27894", "T", 4920)
 
   fix("HD 40307", "radius", RasSun(0.716))
   fix("HD 40307", "T", 4977)
@@ -183,9 +186,9 @@ def doFixes(quiet = False):
   fix("K2-219", "T", 5712.000)
   fix("K2-219", "L", Star.LasLog10(0.17994742))
 
-  fix("K2-32", "radius", RasSun(0.233767))
-  fix("K2-32", "T", 3190.0)
-  fix("K2-32", "L", Star.LasLog10(-2.2926))
+  fix("K2-32", "radius", RasSun(0.845))
+  fix("K2-32", "T", 5271)
+  fix("K2-32", "L", Star.LasLog10(-0.2960749))
 
   fix("K2-58", "radius", RasSun(0.8364240))
   fix("K2-58", "T", 5020.000)
@@ -195,9 +198,9 @@ def doFixes(quiet = False):
   fix("K2-80", "T", 5203.000)
   fix("K2-80", "L", Star.LasLog10(-0.3031848))
 
-  #stars["Kepler-108 B"].radius = RasSun(0.955127)
-  #stars["Kepler-108 B"].T = 5309.190
-  #stars["Kepler-108 B"].L = Star.LasLog10(-0.1850697)
+  #stars["Kepler-108 B"].radius = RasSun()
+  stars["Kepler-108 B"].T = 5584.260
+  #stars["Kepler-108 B"].L =
 
   fix("Kepler-411", "radius", RasSun(0.76))
   fix("Kepler-411", "T", 4773)
@@ -225,6 +228,10 @@ def doFixes(quiet = False):
 
   fix("KOI-1599", "T", 5833.0)
   fix("KOI-1599", "L", Star.LasLog10(0.1619642))
+
+  fix("V1298 Tau", "radius", RasSun(1.33))
+  fix("V1298 Tau", "T", 4970)
+  fix("V1298 Tau", "L", 0.934)
 
   #------------------------------------------------------------------------------
 

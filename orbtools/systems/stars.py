@@ -8,26 +8,6 @@ from orbtools import *
 
 ################################################################################
 #
-# Real stars
-#
-################################################################################
-
-"""
-Star("Proxima Centauri", 1.100, sptype = "M5",  L = 0.0017, dist = ly2m(4.244))
-Star("Alpha Centauri A", 1.100, sptype = "G2", L = 1.5190, dist = ly2m(4.370))
-Star("Alpha Centauri B", 0.907, sptype = "K1", L = 0.5002, dist = ly2m(4.370))
-
-Star("Sirius A",         2.063, sptype = "A1", L = 25.40, dist = ly2m(8.60))
-Star("61 Cygni A",       0.700, sptype = "K5", L = 0.153, dist = ly2m(11.41))
-Star("61 Cygni B",       0.630, sptype = "K7", L = 0.085, dist = ly2m(11.41))
-
-Star("Procyon",          1.499, sptype = "F5",  L = 6.93, dist = ly2m(11.46))
-
-Star("Tau Ceti",         0.783, sptype = "G8", L = 0.520, dist = ly2m(11.905))
-"""
-
-################################################################################
-#
 # Stars by spectral type
 #
 ################################################################################

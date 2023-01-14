@@ -39,7 +39,7 @@ ticks_r = [1.0, 10.0, 100.0, 1000.0]
 ticks_r_planets = [1.0, 5.0, 10.0]
 
 ticks_m = [0.1, 1.0, 10.0, 100.0, 1000.0, 10_000.0, 100_000, 1_000_000]
-ticks_m_planets = [0.1, 1.0, 10.0, 100.0, 500.0]
+ticks_m_planets = [0.1, 1, 10, 100, 500]
 ticks_m_stars = [10_000.0, 100_000, 1_000_000]
 
 ticks_density = [1_000, 2_500, 5_000, 10_000]
@@ -52,7 +52,7 @@ ticks_T_stars = [3_000, 5_000, 10_000]
 
 ticks_Mag = [10, 5, 0, -5]
 
-ticks_P = [1, 10, 100, 365, 1000]
+ticks_P = [1, 10, 100, 365, 1000, 10000]
 
 def tick_max(ticks): return max(ticks)
 def tick_min(ticks): return min(ticks)
@@ -78,7 +78,7 @@ def y_Mass(plt, ax, data, ticks = None, append=False):
 
     if len(ticks2):
       ax2 = ax.twinx()
-      ax2.set_yscale('log')
+      ax2.set_yscale(ax.get_yscale())
       ax2.set_ylim(ax.get_ylim())
       set_yticks(ax2,
         [MtoEarth(x.GM) for x in ticks2],
@@ -87,73 +87,68 @@ def y_Mass(plt, ax, data, ticks = None, append=False):
 
   return [MtoEarth(planet.GM) for planet in data]
 
-def x_Mass(plt, ax, data, ticks):
-  if not ticks: ticks = ticks_m
-  xmin, xmax = tick_range(ticks)
+def x_Mass(plt, ax, data, ticks, append=False):
+  if not append:
+    if not ticks: ticks = ticks_m
+    xmin, xmax = tick_range(ticks)
 
-  ax.set_xlabel("Massa (x Maa)")
-  ax.set_xlim(xmin, xmax)
-  ax.set_xscale('log')
-  set_xticks(ax, ticks)
+    ax.set_xlabel("Massa (x Maa)")
+    ax.set_xlim(xmin, xmax)
+    ax.set_xscale('log')
+    set_xticks(ax, ticks)
 
-  ticks2 = [ Mars, Earth, Neptune, Jupiter, stars["M9"], Sun]
-  ticks2 = filter(lambda m: MtoEarth(m.GM) > xmin and MtoEarth(m.GM) < xmax, ticks2)
-  ticks2 = list(ticks2)
+    ticks2 = [ Mars, Earth, Neptune, Jupiter, stars["M9"], Sun]
+    ticks2 = filter(lambda m: MtoEarth(m.GM) > xmin and MtoEarth(m.GM) < xmax, ticks2)
+    ticks2 = list(ticks2)
 
-  if len(ticks2):
-    ax2 = ax.twiny()
-    ax2.set_xscale('log')
-    ax2.set_xlim(ax.get_xlim())
-    set_xticks(ax2,
-      [MtoEarth(x.GM) for x in ticks2],
-      [x.name for x in ticks2]
-    )
+    if len(ticks2):
+      ax2 = ax.twiny()
+      ax2.set_xscale('log')
+      ax2.set_xlim(ax.get_xlim())
+      set_xticks(ax2,
+        [MtoEarth(x.GM) for x in ticks2],
+        [x.name for x in ticks2]
+      )
 
   return [MtoEarth(planet.GM) for planet in data]
 
 #------------------------------------------------------------------------------
 
-def y_Radius(plt, ax, data, ticks):
-  if not ticks: ticks = ticks_r
-  ymin, ymax = tick_range(ticks)
+def y_Radius(plt, ax, data, ticks, append = False):
+  if not append:
+    if not ticks: ticks = ticks_r
+    ymin, ymax = tick_range(ticks)
 
-  ax.set_ylabel("Halkaisija (x Maa)")
-  ax.set_ylim(ymin, ymax)
-  ax.set_yscale('log')
+    ax.set_ylabel("Halkaisija (x Maa)")
+    ax.set_ylim(ymin, ymax)
+    ax.set_yscale('log')
 
-  set_yticks(ax, ticks)
+    set_yticks(ax, ticks)
 
-  ticks2 = [ Moon, Mars, Earth, Neptune, Jupiter, Sun]
-  ticks2 = filter(lambda m: RtoEarth(m.radius) > ymin and RtoEarth(m.radius) < ymax, ticks2)
-  ticks2 = list(ticks2)
+    ticks2 = [ Moon, Mars, Earth, Neptune, Jupiter, Sun]
+    ticks2 = filter(lambda m: RtoEarth(m.radius) > ymin and RtoEarth(m.radius) < ymax, ticks2)
+    ticks2 = list(ticks2)
 
-  if len(ticks2):
-    ax2 = ax.twinx()
-    ax2.set_yscale('log')
-    ax2.set_ylim(ax.get_ylim())
-    set_yticks(ax2,
-      [RtoEarth(x.radius) for x in ticks2],
-      [x.name for x in ticks2]
-    )
+    if len(ticks2):
+      ax2 = ax.twinx()
+      ax2.set_yscale('log')
+      ax2.set_ylim(ax.get_ylim())
+      set_yticks(ax2,
+        [RtoEarth(x.radius) for x in ticks2],
+        [x.name for x in ticks2]
+      )
 
   return [RtoEarth(planet.radius) for planet in data]
 
-def x_Radius(plt, ax, data, ticks):
-  if not ticks: ticks = ticks_r
-  xmin, xmax = min(ticks)*0.5, max(ticks)*2
+def x_Radius(plt, ax, data, ticks, append = False):
+  if not append:
+    if not ticks: ticks = ticks_r
+    xmin, xmax = min(ticks)*0.5, max(ticks)*2
 
-  ax.set_xlabel("Säde (x Maa)")
-  ax.set_xlim(xmin, xmax)
-  set_xticks(ax, ticks)
-  ax.set_xscale('log')
-
-  #ax2 = ax.twiny()
-  #ax2.set_xscale('log')
-  #ax2.set_xlim(ax.get_xlim())
-  #set_xticks(ax,
-  #  [1.0, MtoEarth(GM_Neptune), MtoEarth(GM_Jupiter), MtoEarth(GM_Jupiter)*80, MtoEarth(GM_Sun)],
-  #  ["Earth", "Neptunus", "Jupiter", "Star", "Sun"]
-  #)
+    ax.set_xlabel("Halkaisija (x Maa)")
+    ax.set_xlim(xmin, xmax)
+    ax.set_xscale('log')
+    set_xticks(ax, ticks)
 
   return [RtoEarth(planet.radius) for planet in data]
 
@@ -222,17 +217,31 @@ def y_Magnitude(plt, ax, data, ticks = None):
 
 #------------------------------------------------------------------------------
 
-def x_Temperature(plt, ax, data, ticks = None):
-  if ticks is None: ticks = ticks_T_stars
-  xmin, xmax = min(ticks)*0.5, max(ticks)*2
+def x_Temperature(plt, ax, data, ticks = None, append = False):
 
-  ax.set_xlabel("Lämpötila")
-  ax.set_xscale('log')
-  ax.set_xlim(xmin, xmax)
-  set_xticks(ax, ticks)
-  ax.invert_xaxis()
+  if not append:
+    if ticks is None: ticks = ticks_T_stars
+    xmin, xmax = min(ticks)*0.5, max(ticks)*2
 
-  return [star.T for star in data]
+    ax.set_xlabel("Lämpötila")
+    ax.set_xscale('log')
+    ax.set_xlim(xmin, xmax)
+    set_xticks(ax, ticks)
+
+  return [mass.T for mass in data]
+
+def y_Temperature(plt, ax, data, ticks = None, append = False):
+
+  if not append:
+    if ticks is None: ticks = ticks_T_stars
+    ymin, ymax = min(ticks)*0.5, max(ticks)*2
+
+    ax.set_ylabel("Lämpötila")
+    #ax.set_yscale('log')
+    ax.set_ylim(ymin, ymax)
+    set_yticks(ax, ticks)
+
+  return [mass.T for mass in data]
 
 #------------------------------------------------------------------------------
 
@@ -272,22 +281,35 @@ def x_Flux(plt, ax, data, ticks = None, append = False):
 
 #------------------------------------------------------------------------------
 
-def Flux_Radius(plt, ax, data, xticks=None, yticks=None):
-  data = list(doFilters(data, hasRadius, hasFlux))
-  plt.title("N=%d" % len(data))
+def Flux_Radius(plt, ax, data, xticks=None, yticks=None, append = False, N = None):
+  data = doFilters(data, hasRadius, hasFlux)
+  if not append:
+    if not N: N = len(data)
+    plt.title("N=%d" % N)
 
   return (
-    x_Flux(plt, ax, data, xticks),
-    y_Radius(plt, ax, data, yticks)
+    x_Flux(plt, ax, data, xticks, append),
+    y_Radius(plt, ax, data, yticks, append)
   )
 
-def Flux_Mass(plt, ax, data, xticks=None, yticks=None, append=False):
-  data = list(doFilters(data, hasMass, hasFlux))
-  print("Points.:", len(data))
+def Flux_Mass(plt, ax, data, xticks=None, yticks=None, append=False, N = None):
+  data = doFilters(data, hasMass, hasFlux)
+  if not append:
+    if not N: N = len(data)
+    plt.title("N=%d" % N)
 
   return (
     x_Flux(plt, ax, data, xticks, append),
     y_Mass(plt, ax, data, yticks, append)
+  )
+
+def Flux_Temperature(plt, ax, data, xticks=None, yticks=None, append=False):
+  data = doFilters(data, hasFlux, hasTemperature)
+  plt.title("N=%d" % len(data))
+
+  return (
+    x_Flux(plt, ax, data, xticks, append),
+    y_Temperature(plt, ax, data, yticks, append)
   )
 
 def Period_Radius(plt, ax, data, xticks=None, yticks=None):
@@ -308,18 +330,31 @@ def Period_Mass(plt, ax, data, xticks=None, yticks=None):
     y_Mass(plt, ax, data, yticks) # Planets
   )
 
-def Mass_Radius(plt, ax, data, xticks=None, yticks=None):
+def Mass_Radius(plt, ax, data, xticks=None, yticks=None, append=False, N=None):
   data = doFilters(data, hasRadius, hasMass)
-  plt.title("N=%d" % len(data))
+  if not append:
+    if not N: N = len(data)
+    plt.title("N=%d" % N)
 
   return (
-    x_Mass(plt, ax, data, xticks),
-    y_Radius(plt, ax, data, yticks)
+    x_Mass(plt, ax, data, xticks, append),
+    y_Radius(plt, ax, data, yticks, append)
+  )
+
+def Radius_Mass(plt, ax, data, xticks=None, yticks=None, append=False, N=None):
+  data = doFilters(data, hasRadius, hasMass)
+  if not append:
+    if not N: N = len(data)
+    plt.title("N=%d" % N)
+
+  return (
+    x_Radius(plt, ax, data, xticks, append),
+    y_Mass(plt, ax, data, yticks, append)
   )
 
 def Mass_Density(plt, ax, data, xticks=None, yticks=None):
   data = list(doFilters(data, hasRadius, hasMass))
-  print("Points.:", len(data))
+  plt.title("N=%d" % len(data))
 
   return (
     x_Mass(plt, ax, data, xticks),

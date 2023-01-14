@@ -40,7 +40,7 @@ class Planet(Mass):
 
 class Star(Mass):
 
-    def __init__(self, name, MxSun, RxSun = None, sptype = None, L = None, magV = None, mag = None, T = None, BV = None, rotate = 0, dist = None, orbit = None):
+    def __init__(self, name, MxSun, RxSun = None, sptype = None, L = None, mag = None, T = None, BV = None, rotate = 0, dist = None, orbit = None):
 
         self.type = "star"
 
@@ -55,26 +55,8 @@ class Star(Mass):
             orbit  = orbit
         )
 
-        def getMagnitude():
-            if not mag is None: return mag
-            try:
-                return Star.magVtoAbs(float(magV), dist)
-            except: pass
-            return None
-
-        def getLuminosity():
-            if L: return L
-            #print(name, RxSun, T, magV)
-            try: return Star.RT2L(self.radius, float(T))
-            except: pass
-            #try: return Star.mag2L(self.mag)
-            #except: pass
-            #return Star.MLR(float(MxSun))
-            return None
-
-        self.magV = (not magV is None) and float(magV) or None
-        self.mag = getMagnitude()
-        self.L = getLuminosity()
+        self.mag = mag and float(mag) or None
+        self.L = L and float(L) or None
 
         self.T    = T and float(T) or None
         self.BV   = BV
@@ -109,7 +91,7 @@ class Star(Mass):
 
     @staticmethod
     def magVtoAbs(mag, dist):
-        return mag - 5*(log10(m2parsec(dist)) - 1)
+        return mag - 5*(log10(m2parsec(dist/10)))
 
     #-------------------------------------------------------------------------------
     # Radius (m) and Temperature (K) to luminosity (x Sun)
@@ -135,8 +117,6 @@ class Star(Mass):
     @staticmethod
     def LasLog10(L):
         return 10 ** L
-        #return 10 ** ((4.85 - mag) / 2.5)
-        #return 10 ** (0.4*(4.85 - mag))
 
     #---------------------------------------------------------------------------
     # MLR, Mass-Luminosity Relation.

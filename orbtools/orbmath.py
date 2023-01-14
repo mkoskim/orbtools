@@ -255,15 +255,14 @@ class Mass(object):
             print("Mass..............: %s" % (fmtmass(self.kg)))
         if self.type == "star":
             print("Spectral type.....: %s" % self.sptype)
-            print("Temperature.......: %.0f K" % self.T)
-            print("Magnitude (visual): %.2f" % self.magV)
-            print("Magnitude (abs)...: %.2f" % self.mag)
-            print("Distance..........: %.2f ly" % m2ly(self.dist))
-            print("Luminosity........: %.5f x Sun" % (self.L))
-            HZ = Orbit(self, self.HZ())
-            print("Habitable zone....: ")
-            print("    - Distance....: %.4f AU" % m2AU(HZ.a))
-            print("    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P)))
+            print("Temperature.......:", self.T and "%.0f K" % self.T or "N/A")
+            print("Distance..........:", self.dist and "%.2f ly" % m2ly(self.dist) or "N/A")
+            if self.L:
+                print("Luminosity........: %.5f x Sun" % (self.L))
+                HZ = Orbit(self, self.HZ())
+                print("Habitable zone....: ")
+                print("    - Distance....: %.4f AU" % m2AU(HZ.a))
+                print("    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P)))
         if not self.radius is None:
             if self.type == "star":
                 print("Radius............: %s (%.4g x R_sun)" % (fmtdist(self.radius), self.radius/r_Sun))

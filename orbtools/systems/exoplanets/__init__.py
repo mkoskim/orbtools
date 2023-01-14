@@ -15,3 +15,4 @@ print("- Only M.........:", len(doFilters(planets.values(), isExoplanet, lambda 
 print("- Only R.........:", len(doFilters(planets.values(), isExoplanet, lambda x: not hasMass(x) and hasRadius(x))))
 print("- Both M & R.....:", len(doFilters(planets.values(), isExoplanet, lambda x: hasMass(x) and hasRadius(x))))
 print("- With M + R + L.:", len(doFilters(planets.values(), isExoplanet, hasMass, hasRadius, hasFlux)))
+print("- Without L......:", len(doFilters(planets.values(), isExoplanet, isFluxless)))
