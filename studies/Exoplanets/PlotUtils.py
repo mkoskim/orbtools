@@ -334,147 +334,170 @@ def x_Distance(plt, ax, data, ticks = None, append = False):
 
 #------------------------------------------------------------------------------
 
-def Flux_Radius(plt, ax, data, xticks=None, yticks=None, append = False, N = None):
+def Flux_Radius(plt, ax, data, xticks=None, yticks=None, append = False, N = None, marker="."):
   data = doFilters(data, hasRadius, hasFlux)
   if not append:
     if not N: N = len(data)
     plt.title("N=%d" % N)
 
-  return (
+  ax.scatter(
     x_Flux(plt, ax, data, xticks, append),
-    y_Radius(plt, ax, data, yticks, append)
+    y_Radius(plt, ax, data, yticks, append),
+    marker=marker
   )
 
-def Flux_Mass(plt, ax, data, xticks=None, yticks=None, append=False, N = None):
+def Flux_Mass(plt, ax, data, xticks=None, yticks=None, append=False, N = None, marker="."):
   data = doFilters(data, hasMass, hasFlux)
   if not append:
     if not N: N = len(data)
     plt.title("N=%d" % N)
 
-  return (
+  ax.scatter(
     x_Flux(plt, ax, data, xticks, append),
-    y_Mass(plt, ax, data, yticks, append)
+    y_Mass(plt, ax, data, yticks, append),
+    marker=marker
   )
 
-def Flux_Temperature(plt, ax, data, xticks=None, yticks=None, append=False):
+def Flux_Temperature(plt, ax, data, xticks=None, yticks=None, append=False, marker="."):
   data = doFilters(data, hasFlux, hasTemperature)
   plt.title("N=%d" % len(data))
 
-  return (
+  ax.scatter(
     x_Flux(plt, ax, data, xticks, append),
-    y_Temperature(plt, ax, data, yticks, append)
+    y_Temperature(plt, ax, data, yticks, append),
+    marker=marker
   )
 
-def Period_Radius(plt, ax, data, xticks=None, yticks=None):
+def Period_Radius(plt, ax, data, xticks=None, yticks=None, marker="."):
   data = list(doFilters(data, hasRadius, hasPeriod))
   plt.title("N=%d" % len(data))
 
-  return (
+  ax.scatter(
     x_Period(plt, ax, data, xticks),
-    y_Radius(plt, ax, data, yticks) # Planets
+    y_Radius(plt, ax, data, yticks),
+    marker=marker
   )
 
-def Period_Mass(plt, ax, data, xticks=None, yticks=None):
+def Period_Mass(plt, ax, data, xticks=None, yticks=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasPeriod))
   plt.title("N=%d" % len(data))
 
-  return (
+  ax.scatter(
     x_Period(plt, ax, data, xticks),
-    y_Mass(plt, ax, data, yticks) # Planets
+    y_Mass(plt, ax, data, yticks),
+    marker=marker,
+    **kw
   )
 
-def Mass_Radius(plt, ax, data, xticks=None, yticks=None, append=False, N=None):
+def Mass_Radius(plt, ax, data, xticks=None, yticks=None, append=False, N=None, marker=".", **kw):
   data = doFilters(data, hasRadius, hasMass)
   if not append:
     if not N: N = len(data)
     plt.title("N=%d" % N)
 
-  return (
+  ax.scatter(
     x_Mass(plt, ax, data, xticks, append),
-    y_Radius(plt, ax, data, yticks, append)
+    y_Radius(plt, ax, data, yticks, append),
+    marker=marker,
+    **kw
   )
 
-def Radius_Mass(plt, ax, data, xticks=None, yticks=None, append=False, N=None):
+def Radius_Mass(plt, ax, data, xticks=None, yticks=None, append=False, N=None, marker=".", **kw):
   data = doFilters(data, hasRadius, hasMass)
   if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Radius(plt, ax, data, xticks, append),
-    y_Mass(plt, ax, data, yticks, append)
+    y_Mass(plt, ax, data, yticks, append),
+    marker=marker,
+    **kw
   )
 
-def Mass_Density(plt, ax, data, xticks=None, yticks=None, N=None, append=None):
+def Mass_Density(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
   data = list(doFilters(data, hasRadius, hasMass))
   if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Mass(plt, ax, data, xticks, append),
-    y_Density(plt, ax, data, yticks, append)
+    y_Density(plt, ax, data, yticks, append),
+    marker=marker,
+    **kw
   )
 
-def Mass_Luminosity(plt, ax, data, xticks=None, yticks=None):
+def Mass_Luminosity(plt, ax, data, xticks=None, yticks=None, N=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasLuminosity))
-  print("Points.:", len(data))
+  if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Mass(plt, ax, data, xticks),
-    y_Luminosity(plt, ax, data, yticks)
+    y_Luminosity(plt, ax, data, yticks),
+    marker=marker,
+    **kw
   )
 
-def Luminosity_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars):
+def Luminosity_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars, N=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasLuminosity))
-  print("Points.:", len(data))
+  if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Luminosity(plt, ax, data, xticks),
     y_Mass(plt, ax, data, yticks),
+    marker=".",
+    **kw
   )
 
-def Temperature_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars):
+def Temperature_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars, N=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasTemperature))
-  print("Points.:", len(data))
+  if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Temperature(plt, ax, data, xticks),
     y_Mass(plt, ax, data, yticks),
+    marker=".",
+    **kw
   )
 
-def Temperature_Magnitude(plt, ax, data, xticks=None, yticks=None):
+def Temperature_Magnitude(plt, ax, data, xticks=None, yticks=None, N=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasMagnitude))
-  print("Points.:", len(data))
+  if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Temperature(plt, ax, data, xticks),
     y_Magnitude(plt, ax, data, yticks),
+    marker=marker,
+    **kw
   )
 
-def Distance_Radius(plt, ax, data, xticks=None, yticks=None, N=None, append=None):
+def Distance_Radius(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
   data = doFilters(data, hasRadius, hasDistance)
-  if not append:
-    plt.title("N=%d" % (N or len(data)))
+  if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Distance(plt, ax, data, xticks, append),
     y_Radius(plt, ax, data, yticks, append),
+    marker=marker,
+    **kw
   )
 
-def Distance_Mass(plt, ax, data, xticks=None, yticks=None, N=None, append=None):
+def Distance_Mass(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
   data = doFilters(data, hasMass, hasDistance)
-  if not append:
-    plt.title("N=%d" % (N or len(data)))
+  if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Distance(plt, ax, data, xticks, append),
     y_Mass(plt, ax, data, yticks, append),
+    marker=marker,
+    **kw
   )
 
-def Distance_Period(plt, ax, data, xticks=None, yticks=None, N=None, append=None):
+def Distance_Period(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
   data = doFilters(data, hasPeriod, hasDistance)
-  if not append:
-    plt.title("N=%d" % (N or len(data)))
+  if not append: plt.title("N=%d" % (N or len(data)))
 
-  return (
+  ax.scatter(
     x_Distance(plt, ax, data, xticks, append),
     y_Period(plt, ax, data, yticks, append),
+    marker=marker,
+    **kw
   )
 

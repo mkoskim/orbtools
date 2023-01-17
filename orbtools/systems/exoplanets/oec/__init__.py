@@ -100,6 +100,7 @@ for system in oec: doSystem(system)
 
 from orbtools.systems.exoplanets.oec.fixes import doFixes
 doFixes(quiet = True)
+#doFixes(quiet = False)
 #exit()
 
 #------------------------------------------------------------------------------
