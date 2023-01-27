@@ -311,14 +311,14 @@ def Superearths():
   superearths = doFilters(superearths, hasRadius)
   superearths = doFilters(superearths, hasMass, lambda x: not isUltraDense(x))
 
-  #FluxRadius(superearths)
-  FluxMass(superearths)
-
   superearths = doFilters(superearths, hasFlux)
 
   hot, cool = doSplit(superearths, lambda x: x.flux > 100)
   rocky, nonrocky = doSplit(superearths, isRocky)
   #iron, rock = doSplit(rocky, lambda x: x.density > 5000)
+
+  #FluxRadius(superearths)
+  #FluxMass(superearths)
 
   #MassRadius2(nonrocky, rocky)
   #MassRadius2(cool, hot)
@@ -333,6 +333,42 @@ def Superearths():
 
   #MassRadius(rocky)
   #FluxRadius(rocky)
+
+  m_bins = [x+1 for x in range(15)]
+  def closest(bins, value):
+    return min(bins, key=lambda x: abs(x-value))
+
+  def classify(bins, data, extract):
+    classified = [(closest(bins, extract(x)), x) for x in data]
+    return [
+      [p[1] for p in list(filter(lambda p: p[0] == x, classified))] for x in bins
+    ]
+
+  def Bars(data):
+    binied = classify(m_bins, data, lambda x: MtoEarth(x.GM))
+
+    total  = [len(x) for x in binied]
+    rocky  = [len(list(filter(lambda p: p.density > 3500, x))) for x in binied]
+    iron   = [len(list(filter(lambda p: p.density > 5000, x))) for x in binied]
+
+    #print(totals)
+    #print(rocky)
+    #print(list(zip(rocky, total)))
+    #ax.plot(m_bins, totals)
+
+    #ax.plot(m_bins, total)
+    #ax.plot(m_bins, rocky)
+    #ax.plot(m_bins, iron)
+
+    ax.bar(m_bins, total)
+    ax.bar(m_bins, rocky, width=0.4, color="khaki")
+    ax.bar(m_bins, iron, width=0.4, color="tab:orange")
+
+    #ax.bar(m_bins, [100.0*x[0]/x[1] for x in zip(rocky, total)], color="khaki")
+    #ax.bar(m_bins, [100.0*x[0]/x[1] for x in zip(iron, total)], color="tab:orange")
+
+  #Bars(cool)
+  #Bars(hot)
 
   r_bins = [(x-0.5)/4 for x in range(16)]
   m_bins = [(x-0.5) for x in range(15)]
@@ -380,7 +416,7 @@ def Superearths():
   #histRadius(hot, doFilters(hot, isRocky), N = len(hot))
 
   #histMass(cool, hot)
-  #histMassClass(cool)
+  histMassClass(cool)
   #histMassClass(hot)
   #histMass(hot, doFilters(hot, isRocky), N = len(hot))
   #histMass(rocky, nonrocky)
