@@ -55,6 +55,12 @@ def forAll():
 
 def Stars():
 
+  Mass_Luminosity(plt, ax, Star.typical.values())
+
+  #Mass_Luminosity(plt, ax, stars.values())
+
+  return
+
   lim_small = (Star.typical["K5"].GM + Star.typical["K6"].GM) / 2
   lim_large = (Star.typical["F5"].GM + Star.typical["F6"].GM) / 2
 
@@ -82,7 +88,7 @@ def Stars():
   #data_x, data_y = Period_Radius(plt, ax, categories[2], yticks=ticks_r_planets)
   #ax.scatter(data_x, data_y, marker=".")
 
-#Stars()
+Stars()
 
 #------------------------------------------------------------------------------
 # Exoplanet detection method
@@ -127,9 +133,9 @@ def Exoplanets():
 
   #Distance_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
   #Distance_Period(plt, ax, exoplanets)
-  #Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
+  Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
   #Period_Mass(plt, ax, exoplanets, yticks=ticks_m_planets + [10_000])
-  Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_flux + [100, 1000])
+  #Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_flux + [100, 1000])
   #Flux_Mass(plt, ax, exoplanets, yticks=ticks_m_planets, xticks=ticks_flux + [100, 1000])
   #Flux_Temperature(plt, ax, exoplanets, yticks = [-250, 0, 250, 500, 1000], xticks = ticks_flux + [100.0, 1000.0])
   #Mass_Density(plt, ax, exoplanets)
@@ -236,6 +242,10 @@ def Superearths():
     set2 = doFilters(data, lambda x: not fSplit(x))
     return set1, set2
 
+  #----------------------------------------------------------------------------
+  # XY plots
+  #----------------------------------------------------------------------------
+
   def MassRadius(data):
     xticks = ticks_m_super
     yticks = ticks_r_super
@@ -306,19 +316,20 @@ def Superearths():
 
     Flux_Mass(plt, ax, data, yticks=yticks, xticks=xticks)
 
-  superearths = doFilters(planets.values(), isExoplanet, isSuperEarth)
-
+  superearths = planets.values()
+  superearths = doFilters(superearths, isExoplanet, isSuperEarth)
+  superearths = doFilters(superearths, hasFlux)
   superearths = doFilters(superearths, hasRadius)
   superearths = doFilters(superearths, hasMass, lambda x: not isUltraDense(x))
 
-  superearths = doFilters(superearths, hasFlux)
-
-  hot, cool = doSplit(superearths, lambda x: x.flux > 100)
-  rocky, nonrocky = doSplit(superearths, isRocky)
   #iron, rock = doSplit(rocky, lambda x: x.density > 5000)
 
   #FluxRadius(superearths)
   #FluxMass(superearths)
+  #MassRadius(superearths)
+
+  hot, cool = doSplit(superearths, lambda x: x.flux > 100)
+  rocky, nonrocky = doSplit(superearths, isRocky)
 
   #MassRadius2(nonrocky, rocky)
   #MassRadius2(cool, hot)
@@ -333,6 +344,10 @@ def Superearths():
 
   #MassRadius(rocky)
   #FluxRadius(rocky)
+
+  #----------------------------------------------------------------------------
+  # Histograms
+  #----------------------------------------------------------------------------
 
   m_bins = [x+1 for x in range(15)]
   def closest(bins, value):
@@ -416,19 +431,37 @@ def Superearths():
   #histRadius(hot, doFilters(hot, isRocky), N = len(hot))
 
   #histMass(cool, hot)
-  histMassClass(cool)
+  #histMassClass(cool)
   #histMassClass(hot)
   #histMass(hot, doFilters(hot, isRocky), N = len(hot))
   #histMass(rocky, nonrocky)
 
+  #----------------------------------------------------------------------------
+  # Flux slices
+  #----------------------------------------------------------------------------
+
+  def histSlice(slice):
+    rocky, nonrocky = doSplit(slice, isRocky)
+    #histMass(nonrocky, rocky, N=len(slice))
+    #histMass(slice, rocky, N=len(slice))
+    #MassRadius2(nonrocky, rocky)
+    #MassDensity(slice)
+
+  hotslice  = doFilters(superearths, lambda x: x.flux > 100 and x.flux < 500)
+  coolslice = doFilters(superearths, lambda x: x.flux > 1 and x.flux < 30)
+  #histSlice(hotslice)
+  #histSlice(coolslice)
+  MassDensity2(coolslice, hotslice)
+
   #def Mx3(x): return MtoEarth(x.GM) < 3 and 1 or 2
   #histogram2([Mx3(x) for x in data1], [Mx3(x) for x in data2], [1, 2])
 
-Superearths()
+#Superearths()
 
 #------------------------------------------------------------------------------
 
 ax.minorticks_off()
 #plt.grid()
-ax.grid(b=True, which='major', linestyle='-')
+#ax.grid(b=True, which='major', linestyle='-')
+ax.grid(which='major', linestyle='-')
 plt.show()

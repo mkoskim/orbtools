@@ -76,6 +76,7 @@ ticks_r_planets = [0.5, 1.0, 5.0, 10.0, 20.0]
 ticks_m = [0.1, 1.0, 10.0, 100.0, 1000.0, 10_000.0, 100_000, 1_000_000]
 ticks_m_planets = [0.1, 1, 10, 100, 1000]
 ticks_m_stars = [10_000.0, 100_000, 1_000_000]
+ticks_m_sol = [0.1, 0.5, 1.0, 2.0]
 
 ticks_density = [0, 1000, 2500, 5000, 7500, 10000]
 
@@ -138,6 +139,24 @@ def x_Mass(plt, ax, data, ticks, append=False):
     set_xticks2(ax, [MtoEarth(x.GM) for x in ticks2], [x.name for x in ticks2])
 
   return [MtoEarth(planet.GM) for planet in data]
+
+def x_MassStar(plt, ax, data, ticks, append=False):
+  if not append:
+    if not ticks: ticks = ticks_m_sol
+    xmin, xmax = tick_range(ticks)
+
+    ax.set_xlabel("Massa (x Aurinko)")
+    ax.set_xscale('log')
+    ax.set_xlim(xmin, xmax)
+    set_xticks(ax, ticks)
+
+    ticks2 = [ Star.typical["M9"], Star.typical["K9"], Star.typical["G9"], Star.typical["F9"], Star.typical["F0"]]
+
+    set_xticks2(ax, [MtoSun(x.GM) for x in ticks2], [x.name for x in ticks2])
+    for startype in ticks2: plt.axvline(x = MtoSun(startype.GM), ls="dashed")
+
+  return [MtoSun(star.GM) for star in data]
+
 
 #------------------------------------------------------------------------------
 
@@ -206,7 +225,7 @@ def y_Luminosity(plt, ax, data, ticks = None):
   if ticks is None: ticks = ticks_L
   ymin, ymax = min(ticks)*0.5, max(ticks)*2
 
-  ax.set_ylabel("Säteilyteho")
+  ax.set_ylabel("Säteilyteho (x Aurinko)")
   ax.set_yscale('log')
   ax.set_ylim(ymin, ymax)
   set_yticks(ax, ticks)
@@ -424,18 +443,18 @@ def Mass_Density(plt, ax, data, xticks=None, yticks=None, N=None, append=None, m
     **kw
   )
 
-def Mass_Luminosity(plt, ax, data, xticks=None, yticks=None, N=None, marker=".", **kw):
+def Mass_Luminosity(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasLuminosity))
   if not append: plt.title("N=%d" % (N or len(data)))
 
   ax.scatter(
-    x_Mass(plt, ax, data, xticks),
+    x_MassStar(plt, ax, data, xticks),
     y_Luminosity(plt, ax, data, yticks),
     marker=marker,
     **kw
   )
 
-def Luminosity_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars, N=None, marker=".", **kw):
+def Luminosity_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars, N=None, append=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasLuminosity))
   if not append: plt.title("N=%d" % (N or len(data)))
 

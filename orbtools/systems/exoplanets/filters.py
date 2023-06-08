@@ -62,7 +62,7 @@ def isSuperEarth(planet):
 def isRocky(planet):
   # Densities over 10000 kg/m3 on small planets are probably incertainties in
   # physical parameters
-  return planet.density > 5000 and planet.density < 10000
+  return planet.density > 4500 and planet.density < 10000
 
 def isHot(planet):
   if not planet.flux: return False

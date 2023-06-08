@@ -60,7 +60,10 @@ class Star(Mass):
         self.dist = dist
         self.sptype = sptype
 
-        if name: stars[name] = self
+        if name:
+            stars[name] = self
+        else:
+            self.name = sptype
 
     #--------------------------------------------------------------------------
     # Radiation at given distance, relative to flux received by Earth:
