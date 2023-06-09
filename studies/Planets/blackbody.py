@@ -13,11 +13,11 @@ from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
 
-for name in ["F5", "Sun", "K2"]:
-    o = stars[name].orbitByFlux()
+for name in ["F5", "G2", "K2"]:
+    o = Star.typical[name].orbitByFlux()
     print("%s: r=%.2f AU, P=%.2f d" % (name, m2AU(o.a), TtoDays(o.P)))
 
-sys.exit()
+#sys.exit()
 
 #------------------------------------------------------------------------------
 
@@ -42,9 +42,9 @@ data = zip(
     #makebb("Sun", 5777, 1367),
     #makebb("4000K", 4000, 1367),
     #makebb("3000K", 3000, 1367),
-    makebb("K2", stars["K2"].T, 1367),
-    makebb("G2", stars["G2"].T, 1367),
-    makebb("F5", stars["F5"].T, 1367),
+    makebb("K2", Star.typical["K2"].T, 1367),
+    makebb("G2", Star.typical["G2"].T, 1367),
+    makebb("F5", Star.typical["F5"].T, 1367),
 )
 
 #for p in G2: print(p)

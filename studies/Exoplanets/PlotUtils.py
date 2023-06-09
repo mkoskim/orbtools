@@ -76,7 +76,7 @@ ticks_r_planets = [0.5, 1.0, 5.0, 10.0, 20.0]
 ticks_m = [0.1, 1.0, 10.0, 100.0, 1000.0, 10_000.0, 100_000, 1_000_000]
 ticks_m_planets = [0.1, 1, 10, 100, 1000]
 ticks_m_stars = [10_000.0, 100_000, 1_000_000]
-ticks_m_sol = [0.1, 0.5, 1.0, 2.0]
+ticks_m_sol = [0.1, 0.25, 0.5, 1.0, 2.0]
 
 ticks_density = [0, 1000, 2500, 5000, 7500, 10000]
 
@@ -84,7 +84,7 @@ ticks_flux = [0.001, 0.01, 0.1, 1.0, 10.0]
 
 ticks_L = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
 
-ticks_T_stars = [3_000, 5_000, 10_000]
+ticks_T_stars = [2_500, 5_000, 7_500, 10_000]
 
 ticks_Mag = [10, 5, 0, -5]
 
@@ -96,6 +96,8 @@ def tick_max(ticks): return max(ticks)
 def tick_min(ticks): return min(ticks)
 def tick_range(ticks, extend=1.5): return min(ticks)/extend, max(ticks)*extend
 
+#------------------------------------------------------------------------------
+# Axis: Mass
 #------------------------------------------------------------------------------
 
 def y_Mass(plt, ax, data, ticks = None, append=False):
@@ -150,14 +152,28 @@ def x_MassStar(plt, ax, data, ticks, append=False):
     ax.set_xlim(xmin, xmax)
     set_xticks(ax, ticks)
 
-    ticks2 = [ Star.typical["M9"], Star.typical["K9"], Star.typical["G9"], Star.typical["F9"], Star.typical["F0"]]
+    ticks2 = [ Star.typical["M9"], Star.typical["M0"], Star.typical["K0"], Star.typical["G0"], Star.typical["F0"]]
 
     set_xticks2(ax, [MtoSun(x.GM) for x in ticks2], [x.name for x in ticks2])
     for startype in ticks2: plt.axvline(x = MtoSun(startype.GM), ls="dashed")
 
   return [MtoSun(star.GM) for star in data]
 
+def y_StarMass(plt, ax, data, ticks, append=False):
+  if not append:
+    if not ticks: ticks = ticks_m_sol
 
+    ymin, ymax = tick_range(ticks)
+
+    ax.set_ylabel("Massa (x Aurinko)")
+    ax.set_yscale('log')
+    ax.set_ylim(ymin, ymax)
+    set_yticks(ax, ticks)
+
+  return [MtoSun(star.GM) for star in data]
+
+#------------------------------------------------------------------------------
+# Axis: Radius
 #------------------------------------------------------------------------------
 
 def y_Radius(plt, ax, data, ticks, append = False):
@@ -187,6 +203,8 @@ def x_Radius(plt, ax, data, ticks, append = False):
 
   return [RtoEarth(planet.radius) for planet in data]
 
+#------------------------------------------------------------------------------
+# Axis: Density
 #------------------------------------------------------------------------------
 
 def y_Density(plt, ax, data, ticks = None, append=False):
@@ -220,6 +238,8 @@ def x_Density(plt, ax, data, ticks = None, append=False):
   return [planet.density for planet in data]
 
 #------------------------------------------------------------------------------
+# Axis: Luminosity
+#------------------------------------------------------------------------------
 
 def y_Luminosity(plt, ax, data, ticks = None):
   if ticks is None: ticks = ticks_L
@@ -244,6 +264,8 @@ def x_Luminosity(plt, ax, data, ticks = None):
   return [star.L for star in data]
 
 #------------------------------------------------------------------------------
+# Axis: Magnitude
+#------------------------------------------------------------------------------
 
 def y_Magnitude(plt, ax, data, ticks = None):
   #if ticks is None: ticks = ticks_Mag
@@ -258,17 +280,28 @@ def y_Magnitude(plt, ax, data, ticks = None):
   return [star.mag for star in data]
 
 #------------------------------------------------------------------------------
+# Axis: Temperature
+#------------------------------------------------------------------------------
 
 def x_Temperature(plt, ax, data, ticks = None, append = False):
 
   if not append:
-    if ticks is None: ticks = ticks_T_stars
-    xmin, xmax = min(ticks)*0.5, max(ticks)*2
+    if ticks is None:
+      ticks = ticks_T_stars
+      ticks2 = [ Star.typical["M9"], Star.typical["M0"], Star.typical["K0"], Star.typical["G0"], Star.typical["F0"]]
+    else:
+      ticks2 = None
 
-    ax.set_xlabel("Lämpötila")
-    ax.set_xscale('log')
+    xmin, xmax = min(ticks)*0.9, max(ticks)*1.1
+
+    ax.set_xlabel("Lämpötila (°C)")
+    #ax.set_xscale('log')
     ax.set_xlim(xmin, xmax)
     set_xticks(ax, ticks)
+
+    if ticks2:
+      set_xticks2(ax, [x.T for x in ticks2], [x.name for x in ticks2])
+      for startype in ticks2: plt.axvline(x = startype.T, ls="dashed")
 
   return [mass.T for mass in data]
 
@@ -276,15 +309,17 @@ def y_Temperature(plt, ax, data, ticks = None, append = False):
 
   if not append:
     if ticks is None: ticks = ticks_T_stars
-    ymin, ymax = min(ticks)*0.5, max(ticks)*2
+    ymin, ymax = min(ticks)*0.9, max(ticks)*1.1
 
-    ax.set_ylabel("Lämpötila (C)")
+    ax.set_ylabel("Lämpötila (°C)")
     #ax.set_yscale('log')
     ax.set_ylim(ymin, ymax)
     set_yticks(ax, ticks)
 
   return [mass.T-273.4 for mass in data]
 
+#------------------------------------------------------------------------------
+# Axis: Orbital period
 #------------------------------------------------------------------------------
 
 def x_Period(plt, ax, data, ticks, append=False):
@@ -316,6 +351,8 @@ def y_Period(plt, ax, data, ticks, append=False):
   return [TtoDays(planet.orbit.P) for planet in data]
 
 #------------------------------------------------------------------------------
+# Axis: Flux
+#------------------------------------------------------------------------------
 
 def x_Flux(plt, ax, data, ticks = None, append = False):
   if not append:
@@ -338,6 +375,10 @@ def x_Flux(plt, ax, data, ticks = None, append = False):
 
   return [planet.flux for planet in data]
 
+#------------------------------------------------------------------------------
+# Axis: Distance to Earth
+#------------------------------------------------------------------------------
+
 def x_Distance(plt, ax, data, ticks = None, append = False):
   if not append:
     if not ticks: ticks = ticks_distance
@@ -351,7 +392,11 @@ def x_Distance(plt, ax, data, ticks = None, append = False):
 
   return [m2ly(planet.system.dist) for planet in data]
 
-#------------------------------------------------------------------------------
+###############################################################################
+#
+# Plots
+#
+###############################################################################
 
 def Flux_Radius(plt, ax, data, xticks=None, yticks=None, append = False, N = None, marker="."):
   data = doFilters(data, hasRadius, hasFlux)
@@ -465,13 +510,24 @@ def Luminosity_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars, N=None, ap
     **kw
   )
 
-def Temperature_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars, N=None, marker=".", **kw):
+def Mass_Temperature(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
+  data = list(doFilters(data, hasMass, hasLuminosity))
+  if not append: plt.title("N=%d" % (N or len(data)))
+
+  ax.scatter(
+    x_MassStar(plt, ax, data, xticks),
+    y_Temperature(plt, ax, data, yticks),
+    marker=marker,
+    **kw
+  )
+
+def Temperature_Mass(plt, ax, data, xticks=None, yticks=ticks_m_sol, append=None, N=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasTemperature))
   if not append: plt.title("N=%d" % (N or len(data)))
 
   ax.scatter(
     x_Temperature(plt, ax, data, xticks),
-    y_Mass(plt, ax, data, yticks),
+    y_StarMass(plt, ax, data, yticks),
     marker=".",
     **kw
   )
@@ -484,6 +540,17 @@ def Temperature_Magnitude(plt, ax, data, xticks=None, yticks=None, N=None, marke
     x_Temperature(plt, ax, data, xticks),
     y_Magnitude(plt, ax, data, yticks),
     marker=marker,
+    **kw
+  )
+
+def Temperature_Luminosity(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
+  data = list(doFilters(data, hasTemperature, hasLuminosity))
+  if not append: plt.title("N=%d" % (N or len(data)))
+
+  ax.scatter(
+    x_Temperature(plt, ax, data, xticks),
+    y_Luminosity(plt, ax, data, yticks),
+    marker=".",
     **kw
   )
 

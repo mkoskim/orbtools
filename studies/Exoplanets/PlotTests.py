@@ -55,9 +55,14 @@ def forAll():
 
 def Stars():
 
-  Mass_Luminosity(plt, ax, Star.typical.values())
-
   #Mass_Luminosity(plt, ax, stars.values())
+  #Mass_Luminosity(plt, ax, Star.typical.values(), append=True, marker='o')
+
+  Temperature_Mass(plt, ax, stars.values())
+  #Mass_Temperature(plt, ax, stars.values())
+
+  #Temperature_Luminosity(plt, ax, stars.values())
+  #Temperature_Luminosity(plt, ax, Star.typical.values(), append=True)
 
   return
 
