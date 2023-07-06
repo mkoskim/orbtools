@@ -93,7 +93,7 @@ def Stars():
   #data_x, data_y = Period_Radius(plt, ax, categories[2], yticks=ticks_r_planets)
   #ax.scatter(data_x, data_y, marker=".")
 
-Stars()
+#Stars()
 
 #------------------------------------------------------------------------------
 # Exoplanet detection method
@@ -145,13 +145,15 @@ def Exoplanets():
   #Flux_Temperature(plt, ax, exoplanets, yticks = [-250, 0, 250, 500, 1000], xticks = ticks_flux + [100.0, 1000.0])
   #Mass_Density(plt, ax, exoplanets)
 
-#Exoplanets()
+Exoplanets()
 
 #------------------------------------------------------------------------------
 # Planet distribution
 
 def histExoplanets():
   exoplanets = doFilters(planets.values(), lambda x: isExoplanet)
+
+  ultrahot = doFilters(exoplanets, hasFlux, lambda x: x.flux > 500)
 
   def categoryR(planet):
     r = RtoEarth(planet.radius)
@@ -161,7 +163,7 @@ def histExoplanets():
     if r < 15.00: return 4
     return 5
 
-  data = [categoryR(x) for x in doFilters(exoplanets, hasRadius)]
+  data = [categoryR(x) for x in doFilters(ultrahot, hasRadius)]
   bins = 6
 
   #data = [RtoEarth(x.radius) for x in doFilters(exoplanets, hasRadius)]
@@ -456,7 +458,7 @@ def Superearths():
   coolslice = doFilters(superearths, lambda x: x.flux > 1 and x.flux < 30)
   #histSlice(hotslice)
   #histSlice(coolslice)
-  MassDensity2(coolslice, hotslice)
+  #MassDensity2(coolslice, hotslice)
 
   #def Mx3(x): return MtoEarth(x.GM) < 3 and 1 or 2
   #histogram2([Mx3(x) for x in data1], [Mx3(x) for x in data2], [1, 2])

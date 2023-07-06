@@ -432,14 +432,15 @@ def Flux_Temperature(plt, ax, data, xticks=None, yticks=None, append=False, mark
     marker=marker
   )
 
-def Period_Radius(plt, ax, data, xticks=None, yticks=None, marker="."):
+def Period_Radius(plt, ax, data, xticks=None, yticks=None, marker=".", s=None):
   data = list(doFilters(data, hasRadius, hasPeriod))
   plt.title("N=%d" % len(data))
 
   ax.scatter(
     x_Period(plt, ax, data, xticks),
     y_Radius(plt, ax, data, yticks),
-    marker=marker
+    marker=marker,
+    s=s,
   )
 
 def Period_Mass(plt, ax, data, xticks=None, yticks=None, marker=".", **kw):
