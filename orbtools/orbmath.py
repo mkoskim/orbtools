@@ -609,11 +609,12 @@ def byAltitude(center, r1, r2 = None, arg=None):
 def byPeriod(center, P, r1 = None):
     center = Mass.resolve(center)
 
-    a = a_from_P(center.GM,P)
+    a = a_from_P(center.GM, P)
     if r1 == None:
         r1 = r2 = a
     else:
         r2 = 2*a - r1
+
     return Orbit(center, r1, r2)
 
 #------------------------------------------------------------------------------

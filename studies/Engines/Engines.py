@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ###############################################################################
 #
 # Engine studies
@@ -7,10 +8,29 @@
 import os, sys
 sys.path.append(os.path.abspath("."))
 
-from sol import *
+from orbtools import *
 
 #------------------------------------------------------------------------------
 
+SSE2 = Engine(engines["HiPEP"].ve, P=1000*1e6)
+
+def showInfo(engine):
+
+    print(engine.name)
+    print("- Pout=", engine.P * 1e-6)
+    print("- F=", engine.F * 1e-3)
+    print("- dm=", engine.flow)
+    print("- ve=", engine.ve)
+    print("- Esp=", engine.E() * 1e-6)
+
+showInfo(engines["Merlin 1D"])
+showInfo(engines["NERVA"])
+showInfo(engines["NSTAR"])
+showInfo(engines["HiPEP"])
+showInfo(SSE2)
+
+#------------------------------------------------------------------------------
+"""
 def fuel_info(fuel):
     ve60 = fuel.ve(1.0, 0.60)
     print "%s: %s %s %s : %s %s %s %s" % (
@@ -92,3 +112,4 @@ nuclear_fuel(fuels["D-He3"],    5.0)
 
 nuclear_fuel(fuels["!H"],       0.1)
 
+"""

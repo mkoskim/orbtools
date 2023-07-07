@@ -30,6 +30,36 @@ C = Orbit(Earth, A.a, B.a)
 
 #------------------------------------------------------------------------------
 
+def plot():
+
+    D = Orbit(Earth, C.r1 - 2000e3, C.r2 - 2000e3)
+    E = Orbit(Earth, C.r1 - 4000e3, C.r2 - 4000e3)
+
+    def speedmark(orbit, t, color):
+        plotter.mark(orbit, t, color=color)
+        plotter.speed(orbit, t, scale = 500, color=color)
+
+    plotter.orbit(C)
+    plotter.orbit(D)
+    plotter.orbit(E)
+
+    #plotter.event(C, 0.0, "Periapsis", offset = (-20, 15))
+    #plotter.event(C, 0.5, "Apoapsis", offset=(-20, -15))
+    #plotter.travel(C,  0.00, 0.25, color="green")
+    speedmark(C, 0.00, color="green")
+    speedmark(C, 0.25, color="green")
+    speedmark(C, 0.50, color="green")
+    speedmark(C, 0.85, color="green")
+
+    speedmark(D, 0.00, color="green")
+    speedmark(E, 0.00, color="green")
+
+    #plotter.travel(C,  0.50, 0.75, color="green")
+
+#plot()
+
+#------------------------------------------------------------------------------
+
 def plot(orbit):
 
     #plotter.orbit(S, style="solid")
@@ -62,6 +92,8 @@ def plot(orbit):
 #plot(C)
 
 #------------------------------------------------------------------------------
+# Hohmann
+#------------------------------------------------------------------------------
 
 def plot(A, B, C):
     plotter.orbit(A)
@@ -90,37 +122,67 @@ def plot(A, B, C):
 
     #plotter.travel(C, 0.50, 0.75, color="grey")
 
-plot(A, B, C)
+#plot(A, B, C)
 
+#------------------------------------------------------------------------------
+# Fast trajectories
 #------------------------------------------------------------------------------
 
 def plot():
 
-    D = Orbit(Earth, C.r1 - 2000e3, C.r2 - 2000e3)
-    E = Orbit(Earth, C.r1 - 4000e3, C.r2 - 4000e3)
+    A = Earth.orbit
+    B = Mars.orbit
+    C = Orbit(Sun, A.a, B.a)
+    D = masses["Ceres"].orbit
+    E = Orbit(Sun, A.a, D.a)
 
-    def speedmark(orbit, t, color):
-        plotter.mark(orbit, t, color=color)
-        plotter.speed(orbit, t, scale = 500, color=color)
+    F = Venus.orbit
+    G = Orbit(Earth, F.a, D.a, arg = -75)
 
-    plotter.orbit(C)
-    plotter.orbit(D)
+    plotter.orbit(A)
+    plotter.orbit(B)
+    #plotter.orbit(C)
+    #plotter.orbit(D)
     plotter.orbit(E)
+    #plotter.orbit(F)
+    plotter.orbit(G)
 
-    #plotter.event(C, 0.0, "Periapsis", offset = (-20, 15))
-    #plotter.event(C, 0.5, "Apoapsis", offset=(-20, -15))
-    #plotter.travel(C,  0.00, 0.25, color="green")
-    speedmark(C, 0.00, color="green")
-    speedmark(C, 0.25, color="green")
-    speedmark(C, 0.50, color="green")
-    speedmark(C, 0.85, color="green")
+    plotter.pos(C, 0.00, color="red")
+    plotter.pos(C, 0.50, color="green")
 
-    speedmark(D, 0.00, color="green")
-    speedmark(E, 0.00, color="green")
-
-    #plotter.travel(C,  0.50, 0.75, color="green")
+    plotter.travel(C, 0.00, 0.50, color="green")
+    plotter.travel(E, 0.00, 0.120, color="orange")
+    plotter.travel(G, 0.06, 0.120, color="red")
 
 #plot()
+
+#------------------------------------------------------------------------------
+# Moving in orbit
+#------------------------------------------------------------------------------
+
+def plot():
+
+    A = Earth.orbit
+
+    #ratio = (360 - 60)/360
+    ratio = (360 + 60)/360
+
+    P1 = A.P * ratio
+
+    B = byPeriod(Sun, P1, r1 = A.a)
+    plotter.orbit(A)
+    plotter.orbit(B)
+
+    plotter.travel(A, 0, ratio)
+    plotter.travel(B, 0, 1)
+    #plotter.pos(C, 0.00, color="red")
+    #plotter.pos(C, 0.50, color="green")
+
+    #plotter.travel(C, 0.00, 0.50, color="green")
+    #plotter.travel(E, 0.00, 0.120, color="orange")
+    #plotter.travel(G, 0.06, 0.120, color="red")
+
+plot()
 
 #------------------------------------------------------------------------------
 
