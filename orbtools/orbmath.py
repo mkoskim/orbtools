@@ -359,8 +359,8 @@ class Vec2d:
   @property
   def length(self):  return sqrt(self.length2)
 
-  def normalize(self): self /= self.length
-  def normalized(self): return self.__div__(self.length)
+  def normalize(self, l = 1.0): self *= l / self.length
+  def normalized(self, l = 1.0): return self.__mul__(l / self.length)
 
   def __str__(self): return "(%f,%f)" % (self.x, self.y)
 
@@ -495,8 +495,10 @@ class Orbit(object):
   #--------------------------------------------------------------------------
 
   def v(self, t = 0):
-      h = 1/self.P
-      return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0)
+    l = v_elliptical(self.center.GM, self.a, self.r(t))
+    h = 1e-6
+    #return Vec2d.__div__(self.xy(t+h) - self.xy(t-h), 2.0 * (h * self.P))
+    return (self.xy(t+h) - self.xy(t-h)).normalized(l)
 
   def v_escape(self, t = 0):
       return self.center.v_escape(self.r(t))
@@ -629,13 +631,20 @@ def byEccentricity(center, a, e):
 #------------------------------------------------------------------------------
 
 def byRV(center, r, v):
-    center = Mass.resolve(center)
+  center = Mass.resolve(center)
+  GM = center.GM
 
-    assert v < center.v_escape(r), "Apoapsis = infinite"
+  #print(r, v)
 
-    vc = v_circular(center.GM,r)
-    a = center.GM/(2*pow(vc,2) - pow(v,2))
-    return Orbit(center, r, 2*a - r)
+  vesc = v_escape(GM, r)
+  vc = v_circular(GM, r)
+  #print(vc, vesc)
+
+  assert v < vesc, "Apoapsis = infinite"
+
+  a = GM*r / (2*GM - r*(v**2))
+
+  return Orbit(center, r, 2*a - r)
 
 
 ################################################################################
