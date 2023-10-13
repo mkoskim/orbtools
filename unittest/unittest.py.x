@@ -8,7 +8,7 @@
 import os, sys
 sys.path.append(os.path.abspath(".."))
 
-from sol import *
+#from sol import *
 from testlib import *
 
 ################################################################################
@@ -50,7 +50,7 @@ def Kaukoranta_EarthMars():
 
 	Earth2Mars.exit ("TMI", Mars.orbit)
 	Earth2Mars.enter("MOI", LMO.orbit)
-	
+
 	expect(Earth2Mars.burns[1].dv, 3590, 5)
 	expect(Earth2Mars.burns[2].dv, 2028, 5)
 

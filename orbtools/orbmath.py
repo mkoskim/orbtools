@@ -15,6 +15,10 @@ from orbtools import *
 def arcsec(dist, diam):
   return atan(diam / dist)/(2*pi)*360*60*60
 
+def A_circle(r): return pi * r**2
+def A_sphere(r): return 4 * pi * r**2
+def V_sphere(r): return 4/3 * pi * r**3
+
 ###############################################################################
 #
 # Solving Kepler's equation:
@@ -30,10 +34,10 @@ def arcsec(dist, diam):
 def solve_aPaP(a1, P1, a2, P2):
 
   def solve_a_aPaP(a1, p1, _, p2):
-      return ((a1 ** 3.0) * (p2 ** 2.0) / (p1 ** 2.0)) ** (1/3.0)
+      return (a1 ** 3.0) * (p2 ** 2.0) / (p1 ** (2.0/3.0))
 
   def solve_P_aPaP(a1, p1, a2, _):
-      return ((p1 ** 2.0) * (a2 ** 3.0) / (a1 ** 3.0)) ** 0.5
+      return (p1 ** 2.0) * (a2 ** 3.0) / (a1 ** (3.0/2.0))
 
   if a1 == None: return solve_a_aPaP(a2, P2, None, P1)
   if a2 == None: return solve_a_aPaP(a1, P1, None, P2)
@@ -200,7 +204,7 @@ class Mass(object):
 
   @property
   def v(self):
-    return self.orbit and self.orbit.v or None
+    return self.orbit and self.orbit.v(0) or None
 
   @property
   def P(self):
@@ -218,14 +222,14 @@ class Mass(object):
   def satellites(self):
     return list(filter(lambda m: m.orbit != None and m.orbit.center == self, masses.values()))
 
+  #--------------------------------------------------------------------------
+  # Finding system
+  #--------------------------------------------------------------------------
+
   @property
   def system(self):
     if not self.orbit: return self
     return self.orbit.center.system
-
-  #--------------------------------------------------------------------------
-  # Finding system
-  #--------------------------------------------------------------------------
 
   #--------------------------------------------------------------------------
   # Lagrangian distances (e.g. SOI, Sphere of Influence)
@@ -241,7 +245,7 @@ class Mass(object):
     return self.orbit.a*pow(self.GM/self.center.GM, 2/5.0)
 
   #--------------------------------------------------------------------------
-  # Radiation flux from star
+  # Radiation flux (x Earth) from star
   #--------------------------------------------------------------------------
 
   @property
@@ -507,7 +511,7 @@ class Orbit(object):
       return self.center.v_circular(self.r(t))
 
   #--------------------------------------------------------------------------
-  # Energy
+  # Orbital energy: E = Ekin - Epot
   #--------------------------------------------------------------------------
 
   def Epot(self, t = 0): return -self.center.GM/self.r(t)
