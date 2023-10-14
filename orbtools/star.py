@@ -53,7 +53,7 @@ class Star(Mass):
             orbit  = orbit
         )
 
-        self.L, self.T = self.solve_LT(float(L), float(T))
+        self.L, self.T = self.solve_LT(L and float(L) or L, T and float(T) or T)
 
         self.mag = mag and float(mag) or None
         self.dist = dist
@@ -69,17 +69,18 @@ class Star(Mass):
     #--------------------------------------------------------------------------
 
     def solve_LT(self, L, T):
+        if not self.radius: return L, T
         if not L and not T: return None, None
         return (
-            (L and float(L) or self.TtoL(T, self.radius)),
-            (T and float(T) or self.LtoT(L, self.radius))
+            (L and L or self.TtoL(T, self.radius)),
+            (T and T or self.LtoT(L, self.radius))
         )
 
     #--------------------------------------------------------------------------
     # Stefan-Boltzmann law: the relation between radiation power per area unit
     # and temperature.
     #
-    # L = Luminosity, total amount of energy emitted per second
+    # L = Luminosity (x Sun), total amount of energy emitted per second
     # T = Temperature (K)
     # r = distance
     #
@@ -92,6 +93,11 @@ class Star(Mass):
     @staticmethod
     def TtoL(T, r):
         return const_sb * (T**4) * A_sphere(r) / const_Lsol
+
+    @staticmethod
+    def RT2L(r, T):
+        return Star.TtoL(T, r)
+        #return 5.670374419e-8 * (4 * pi * r ** 2) * (T ** 4) / L_Sun
 
     #--------------------------------------------------------------------------
     # Radiation at given distance, relative to flux received by Earth:
@@ -128,14 +134,6 @@ class Star(Mass):
     @staticmethod
     def magVtoAbs(mag, dist):
         return mag - 5*(log10(m2parsec(dist/10)))
-
-    #-------------------------------------------------------------------------------
-    # Radius (m) and Temperature (K) to luminosity (x Sun)
-    #-------------------------------------------------------------------------------
-
-    @staticmethod
-    def RT2L(r, T):
-        return 5.670374419e-8 * (4 * pi * r ** 2) * (T ** 4) / L_Sun
 
     #-------------------------------------------------------------------------------
     # Absolute magnitude to luminosity (x Sun) conversion (Do not work)

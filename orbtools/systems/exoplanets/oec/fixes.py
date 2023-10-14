@@ -17,7 +17,7 @@ def doFixes(quiet = False):
   def fix(name, param, value):
 
     def verbose(current):
-      if not quiet: print("Fix: %-20s %s = %s --> %s" % (name, param, current, value))
+      if not quiet and current: print("Fix: %-20s %s = %s --> %s" % (name, param, current, value))
       return value
 
     mass = masses[name]
@@ -73,7 +73,7 @@ def doFixes(quiet = False):
   fix("GJ 229", "L", 0.0430)
 
   fix("GJ 27.1", "radius", RasSun(0.5188870))
-  fix("GJ 27.1", "T", 3687.0)
+  #fix("GJ 27.1", "T", 3687.0)
   fix("GJ 27.1", "L", Star.LasLog10(-1.34847))
 
   fix("GJ 3082", "radius", RasSun(0.4652160))
@@ -99,7 +99,7 @@ def doFixes(quiet = False):
   fix("GJ 9066", "L", Star.LasLog10(-2.60))
 
   fix("GJ 96", "radius", RasSun(0.5806120))
-  fix("GJ 96", "T", 3782.0)
+  #fix("GJ 96", "T", 3782.0)
   fix("GJ 96", "L", Star.LasLog10(-1.20665))
 
   fix("Gliese 1002", "radius", RasSun(0.137))
@@ -110,24 +110,20 @@ def doFixes(quiet = False):
   Planet("Gliese 1002 b", MasEarth(1.36), orbit = Orbit("Gliese 1002", AU2m(0.0738)))
 
   fix("Gliese 221", "radius", RasSun(0.613))
-  fix("Gliese 221", "T", 4324)
+  #fix("Gliese 221", "T", 4324)
   fix("Gliese 221", "L", 0.001406)
 
   #fix("Gliese 328", "radius", RasSun(???))
-  fix("Gliese 328", "T", 3989)
+  #fix("Gliese 328", "T", 3989)
   fix("Gliese 328", "L", 0.10)
 
   fix("Gliese 649", "radius", RasSun(0.531))
-  fix("Gliese 649", "T", 3621)
+  #fix("Gliese 649", "T", 3621)
   fix("Gliese 649", "L", 0.04373)
 
   fix("Gliese 674", "radius", RasSun(0.361))
-  fix("Gliese 674", "T", 3404)
+  #fix("Gliese 674", "T", 3404)
   fix("Gliese 674", "L", 0.01575)
-
-  fix("Gliese 676 A", "radius", RasSun(0.617))
-  fix("Gliese 676 A", "T", 4014)
-  fix("Gliese 676 A", "L", 0.08892)
 
   fix("Gliese 676 A", "radius", RasSun(0.617))
   fix("Gliese 676 A", "T", 4014)
@@ -138,7 +134,7 @@ def doFixes(quiet = False):
   fix("HD 158259", "L", 1.6)
 
   fix("HD 159868", "radius", RasSun(1.97))
-  fix("HD 159868", "T", 5558)
+  #fix("HD 159868", "T", 5558)
   fix("HD 159868", "L", 3.59)
 
   #fix("HD 163296", "radius", RasSun(???))
@@ -146,21 +142,21 @@ def doFixes(quiet = False):
   #fix("HD 163296", "L", ???)
 
   fix("HD 181433", "radius", RasSun(0.8108410))
-  fix("HD 181433", "T", 4929.630)
+  #fix("HD 181433", "T", 4929.630)
   fix("HD 181433", "L", Star.LasLog10(-0.4561762))
 
   fix("HD 204313", "radius", RasSun(1.08))
-  fix("HD 204313", "T", 5783)
+  #fix("HD 204313", "T", 5783)
   fix("HD 204313", "L", 1.18)
 
   fix("HD 20794", "radius", RasSun(0.92))
-  fix("HD 20794", "T", 5401)
+  #fix("HD 20794", "T", 5401)
   fix("HD 20794", "L", 0.74)
 
   fix("HD 27894", "T", 4920)
 
   fix("HD 40307", "radius", RasSun(0.716))
-  fix("HD 40307", "T", 4977)
+  #fix("HD 40307", "T", 4977)
   fix("HD 40307", "L", 0.23)
 
   fix("HD 80653", "T", 5910.000)
@@ -170,31 +166,31 @@ def doFixes(quiet = False):
   fix("K2-16", "T", 4627.07)
   fix("K2-16", "L", Star.LasLog10(-0.689946))
 
-  fix("K2-165", "radius", RasSun(0.8376060))
+  #fix("K2-165", "radius", RasSun(0.8376060))
   fix("K2-165", "T", 5141.6700)
   fix("K2-165", "L", Star.LasLog10(-0.3548089))
 
-  fix("K2-183", "radius", RasSun(0.87))
+  #fix("K2-183", "radius", RasSun(0.87))
   fix("K2-183", "T", 5482)
   fix("K2-183", "L", Star.LasLog10(-0.1317863))
 
-  fix("K2-187", "radius", RasSun(0.894913))
+  #fix("K2-187", "radius", RasSun(0.894913))
   fix("K2-187", "T", 5477)
   fix("K2-187", "L", Star.LasLog10(-0.1960678))
 
-  fix("K2-219", "radius", RasSun(1.2561700))
+  #fix("K2-219", "radius", RasSun(1.2561700))
   fix("K2-219", "T", 5712.000)
   fix("K2-219", "L", Star.LasLog10(0.17994742))
 
-  fix("K2-32", "radius", RasSun(0.845))
+  #fix("K2-32", "radius", RasSun(0.845))
   fix("K2-32", "T", 5271)
   fix("K2-32", "L", Star.LasLog10(-0.2960749))
 
-  fix("K2-58", "radius", RasSun(0.8364240))
+  #fix("K2-58", "radius", RasSun(0.8364240))
   fix("K2-58", "T", 5020.000)
   fix("K2-58", "L", Star.LasLog10(-0.3976375))
 
-  fix("K2-80", "radius", RasSun(0.8680660))
+  #fix("K2-80", "radius", RasSun(0.8680660))
   fix("K2-80", "T", 5203.000)
   fix("K2-80", "L", Star.LasLog10(-0.3031848))
 
@@ -202,34 +198,34 @@ def doFixes(quiet = False):
   fix("Kepler-108 B", "T", 5584.260)
   #stars["Kepler-108 B"].L =
 
-  fix("Kepler-411", "radius", RasSun(0.76))
+  #fix("Kepler-411", "radius", RasSun(0.76))
   fix("Kepler-411", "T", 4773)
   fix("Kepler-411", "L", 0.27)
 
-  fix("Kepler-42", "radius", RasSun(0.175))
+  #fix("Kepler-42", "radius", RasSun(0.175))
   fix("Kepler-42", "T", 3269)
   fix("Kepler-42", "L", 3.08e-3)
 
-  fix("Kepler-450 A", "radius", RasSun(1.600))
+  #fix("Kepler-450 A", "radius", RasSun(1.600))
   fix("Kepler-450 A", "T", 6298)
   fix("Kepler-450 A", "L", Star.LasLog10(0.53147524))
 
-  fix("Kepler-595", "radius", RasSun(1.600))
+  #fix("Kepler-595", "radius", RasSun(1.600))
   fix("Kepler-595", "T", 5138.50)
   fix("Kepler-595", "L", Star.LasLog10(-0.3476832))
 
-  fix("Kepler-82", "radius", RasSun(0.955127))
+  #fix("Kepler-82", "radius", RasSun(0.955127))
   fix("Kepler-82", "T", 5309.190)
   fix("Kepler-82", "L", Star.LasLog10(-0.1850697))
 
-  fix("KOI-1860", "radius", RasSun(1.08916))
+  #fix("KOI-1860", "radius", RasSun(1.08916))
   fix("KOI-1860", "T", 5620.270)
   fix("KOI-1860", "L", Star.LasLog10(0.02790548))
 
   fix("KOI-1599", "T", 5833.0)
   fix("KOI-1599", "L", Star.LasLog10(0.1619642))
 
-  fix("V1298 Tau", "radius", RasSun(1.33))
+  #fix("V1298 Tau", "radius", RasSun(1.33))
   fix("V1298 Tau", "T", 4970)
   fix("V1298 Tau", "L", 0.934)
 
