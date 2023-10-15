@@ -40,15 +40,28 @@ print("- Computed....:", Sun.L * L_Sun / A_sphere(Earth.orbit.a) / const_solar)
 
 print("Earth temperatures:")
 Earth_T    = Star.fluxToT(Earth.flux)
-Earth_Teff = Star.fluxToT(Earth.flux * 0.25 * (1 - 0.309))
+Earth_Teff = Star.fluxToT(Earth.flux * 0.25 * (1 - 0.306))
 print("- Flux --> T......: %.2f K" % Earth_T)
 print("- Flux --> T......: %+.2f C" % T_KtoC(Earth_T))
 print("- Flux --> T(eff).: %.2f K" % Earth_Teff)
 print("- Flux --> T(eff).: %+.2f C" % T_KtoC(Earth_Teff))
 
 print("Moon temperatures:")
-Moon_Teff  = Star.fluxToT(Moon.flux * (1 - 0.120))
+Moon_Teff  = Star.fluxToT(Moon.flux * (1 - 0.136))
 print("- Flux --> T......: %+.2f C" % T_KtoC(Moon_Teff))
+#print("Moon:", T_KtoC(Star.LtoT(Sun.L * (1-0.12), Earth.orbit.a)))
+
+print()
+
+#------------------------------------------------------------------------------
+
+print("Mercury temperatures:")
+
+Mercury_T     = Star.fluxToT(Mercury.flux)
+Mercury_Teff  = Star.fluxToT(Mercury.flux * (1 - 0.088) * 0.25)
+
+print("- Flux --> T......: %+.2f C" % T_KtoC(Mercury_T))
+print("- Flux --> Teff...: %+.2f C" % T_KtoC(Mercury_Teff))
 #print("Moon:", T_KtoC(Star.LtoT(Sun.L * (1-0.12), Earth.orbit.a)))
 
 print()

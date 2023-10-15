@@ -79,6 +79,8 @@ def isInHZ(planet):
   if isCold(planet): return False
   return True
 
+def hasSpectralType(star): return star.sptype
+
 def isSpectralClass(star, *sptypes): return star.sptype and star.sptype[:1] in sptypes
 def isSpectralType(star, sptype): return star.sptype and star.sptype[:len(sptype)] == sptype
 

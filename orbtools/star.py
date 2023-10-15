@@ -128,7 +128,6 @@ class Star(Mass):
     def fluxAt(self, distance = AU2m(1.0)):
         if not self.L: return None
         return Star.L2flux(self.L, distance)
-        #return self.L / (m2AU(distance) ** 2)
 
     def fluxToR(self, flux = 1.0):
         return AU2m(sqrt(self.L / flux))
@@ -136,6 +135,7 @@ class Star(Mass):
     def orbitByFlux(self, flux = 1.0):
         return Orbit(self, self.fluxToR(flux))
 
+    @property
     def EarthEquivalence(self):
         return self.orbitByFlux(1.0)
 

@@ -163,7 +163,7 @@ def x_MassStar(plt, ax, data, ticks, append=False):
 
   return [MtoSun(star.GM) for star in data]
 
-def y_StarMass(plt, ax, data, ticks, append=False):
+def y_MassStar(plt, ax, data, ticks, append=False):
   if not append:
     if not ticks: ticks = ticks_m_sol
 
@@ -321,6 +321,56 @@ def y_Temperature(plt, ax, data, ticks = None, append = False):
     set_yticks(ax, ticks)
 
   return [mass.T-273.4 for mass in data]
+
+#------------------------------------------------------------------------------
+# Axis: Earth Equivalence (period of an orbit with flux equals Earth)
+#------------------------------------------------------------------------------
+
+def x_EE(plt, ax, data, ticks = None, append = False):
+
+  if not append:
+    if ticks is None:
+      ticks = [ 10, 50, 100, 500, 1000, 2500, 5000 ]
+      ticks2 = [365]
+    else:
+      ticks2 = None
+
+    xmin, xmax = min(ticks)*0.9, max(ticks)*1.1
+
+    ax.set_xlabel("Maa-ekvivalenssi (d)")
+    ax.set_xscale('log')
+    ax.set_xlim(xmin, xmax)
+    set_xticks(ax, ticks)
+
+    if ticks2:
+      set_xticks2(ax, [x for x in ticks2])
+      for P in ticks2: plt.axvline(x = P, ls="dashed")
+    #  set_xticks2(ax, [x.T for x in ticks2], [x.name for x in ticks2])
+    #  for startype in ticks2: plt.axvline(x = startype.T, ls="dashed")
+
+  return [TtoDays(mass.EarthEquivalence.P) for mass in data]
+
+def y_EE(plt, ax, data, ticks = None, append = False):
+
+  if not append:
+    if ticks is None:
+      ticks = [ 10, 100, 500, 1000, 2500 ]
+      ticks2 = [ 365 ]
+    else:
+      ticks2 = None
+
+    ymin, ymax = min(ticks)*0.9, max(ticks)*1.1
+
+    ax.set_ylabel("Maa-ekvivalenssi (d)")
+    ax.set_yscale('log')
+    ax.set_ylim(ymin, ymax)
+    set_yticks(ax, ticks)
+
+    if ticks2:
+      set_yticks2(ax, [x for x in ticks2])
+      for P in ticks2: plt.axhline(y = P, ls="dashed")
+
+  return [TtoDays(mass.EarthEquivalence.P) for mass in data]
 
 #------------------------------------------------------------------------------
 # Axis: Orbital period
@@ -514,6 +564,29 @@ def Luminosity_Mass(plt, ax, data, xticks=None, yticks=ticks_m_stars, N=None, ap
     marker=".",
     **kw
   )
+
+def Mass_EE(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
+  data = list(doFilters(data, hasMass, hasLuminosity))
+  if not append: plt.title("N=%d" % (N or len(data)))
+
+  ax.scatter(
+    x_MassStar(plt, ax, data, xticks),
+    y_EE(plt, ax, data, yticks),
+    marker=marker,
+    **kw
+  )
+
+def EE_Mass(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
+  data = list(doFilters(data, hasMass, hasLuminosity))
+  if not append: plt.title("N=%d" % (N or len(data)))
+
+  ax.scatter(
+    x_EE(plt, ax, data, xticks),
+    y_MassStar(plt, ax, data, yticks),
+    marker=marker,
+    **kw
+  )
+
 
 def Mass_Temperature(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
   data = list(doFilters(data, hasMass, hasLuminosity))
