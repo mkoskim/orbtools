@@ -70,6 +70,10 @@ def set_xticks2(ax, ticks, labels = None):
 
 #------------------------------------------------------------------------------
 
+# Solar flux at Frost Line (Sol 2.7AU)
+
+flux_FrostLine = 0.1371742112482853
+
 ticks_r = [1.0, 10.0, 100.0, 1000.0]
 ticks_r_planets = [0.5, 1.0, 5.0, 10.0, 20.0]
 

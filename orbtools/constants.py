@@ -15,8 +15,7 @@ const_day   = 24*3600.0                 # Day in seconds
 const_year  = 365.25*const_day          # Year in seconds
 const_AU    = 149.597870691e9           # Astronomical Unit
 const_ly    = const_c*const_year        # Light year
-const_solar = 1.361e3                   # Solar constant
-const_Lsol  = 3.828e26                  # Solar luminosity
+const_solar = 1361.1664655723546        # Solar constant (from L(Sun) and AU)
 const_h     = 6.62607015e-34		        # Planc constant (Js)
 const_kb    = 1.38064852e-23            # Boltzmann constant (J/K)
 const_sb    = 5.670374419e-8            # Stefan-Boltzmann constant (W/(m2 K2)
@@ -53,7 +52,3 @@ V_Sun       = 4/3.0*pi*(r_Sun ** 3)
 
 L_Mag0 = 3.0128e28
 L_Sun  = 3.828e26
-
-# Solar flux at Frost Line (Sol 2.7AU)
-
-flux_FrostLine = 0.1371742112482853

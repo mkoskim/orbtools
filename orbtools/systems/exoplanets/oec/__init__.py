@@ -8,7 +8,11 @@
 
 from orbtools import *
 
-#------------------------------------------------------------------------------
+################################################################################
+#
+# Filling in data from XML file
+#
+################################################################################
 
 def doPlanet(planet, star):
   name = planet.findtext("name")
@@ -31,12 +35,10 @@ def doPlanet(planet, star):
   else:
     return None
 
-  #if not radius or not orbit: print("Planet:", name, mass, radius, P, A)
+  GM     = mass and MasJupiter(mass) or 0
+  radius = radius and RasJupiter(radius) or None
 
-  # Allow massless planets
-  # if not mass: return
-
-  p = Planet(name, GM = mass and MasJupiter(mass) or 0, radius = radius and RasJupiter(radius), orbit = orbit)
+  p = Planet(name, GM = GM, radius = radius, orbit = orbit)
 
   p.elem = planet
   p.T = T and float(T) or None
@@ -96,30 +98,35 @@ oec = ET.fromstring(open("./orbtools/systems/exoplanets/oec/systems.xml").read()
 
 for system in oec: doSystem(system)
 
-#------------------------------------------------------------------------------
+################################################################################
+#
+# Running fixes (fix some missing / incorrect data)
+#
+################################################################################
 
 from orbtools.systems.exoplanets.oec.fixes import doFixes
 doFixes(quiet = True)
 #doFixes(quiet = False)
 #exit()
 
-#------------------------------------------------------------------------------
+################################################################################
+#
+# Adding data from equations (not used atm) - after fixes!
+#
+################################################################################
 
 from orbtools.systems.exoplanets.filters import *
 from scipy.interpolate import LinearNDInterpolator
 #import numpy as np
 
 #------------------------------------------------------------------------------
-# Use Radius-Temperature formula to compute missing Luminosities
+# Fill in luminosity from temperature and radius
 
 def doRTtoL():
+  starsWOL = doFilters(stars.values(), lambda x: not hasLuminosity(x), hasRadius, hasTemperature)
 
-  #----------------------------------------------------------------------------
-  # Compute L for stars with radius and T
-
-  starsRT = doFilters(stars.values(), hasRadius, hasTemperature)
-
-  for star in starsRT: star.L = Star.RT2L(star.radius, star.T)
+  for star in starsWOL:
+    star.L = Star.TtoL(star.T, star.radius)
 
 #------------------------------------------------------------------------------
 # Use stars with mass, temperature and luminosity to interpolate luminosities

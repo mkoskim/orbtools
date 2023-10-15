@@ -33,9 +33,10 @@ class Planet(Mass):
 #-------------------------------------------------------------------------------
 #
 # Stars:
-# GM = mass
-# L  = Luminosity (Sun = 1.0)
-# T  = Surface temperature
+#
+#   GM = mass
+#   L  = Luminosity (Sun = 1.0)
+#   T  = Surface temperature
 #
 #-------------------------------------------------------------------------------
 
@@ -53,10 +54,11 @@ class Star(Mass):
             orbit  = orbit
         )
 
-        self.L, self.T = self.solve_LT(L and float(L) or L, T and float(T) or T)
+        self.L = L and float(L) or None
+        self.T = T and float(T) or None
 
         self.mag = mag and float(mag) or None
-        self.dist = dist
+        self.dist = dist and float(dist) or None
         self.sptype = sptype
 
         if name:
@@ -65,39 +67,59 @@ class Star(Mass):
             self.name = sptype
 
     #--------------------------------------------------------------------------
-    # Solve luminosity and surface temperature
-    #--------------------------------------------------------------------------
-
-    def solve_LT(self, L, T):
-        if not self.radius: return L, T
-        if not L and not T: return None, None
-        return (
-            (L and L or self.TtoL(T, self.radius)),
-            (T and T or self.LtoT(L, self.radius))
-        )
-
-    #--------------------------------------------------------------------------
-    # Stefan-Boltzmann law: the relation between radiation power per area unit
-    # and temperature.
+    # Stefan-Boltzmann law: the relation between radiation power (W) per
+    # area unit and temperature.
     #
-    # L = Luminosity (x Sun), total amount of energy emitted per second
-    # T = Temperature (K)
-    # r = distance
+    #   L = Luminosity (x Sun), total amount of energy emitted per second
+    #   T = Temperature (K)
+    #   r = distance
+    #   flux = W/m2 (x Earth)
     #
     #--------------------------------------------------------------------------
+
+    @staticmethod
+    def L2flux(L, r):
+        r2 = m2AU(r) ** 2
+        return L / r2
+        #return L * L_Sun / A_sphere(r)
+
+    @staticmethod
+    def flux2L(flux, r):
+        r2 = m2AU(r) ** 2
+        return flux * r2
+        #return flux * (A_sphere(r) / L_Sun)
 
     @staticmethod
     def LtoT(L, r):
-        return (L * const_Lsol / A_sphere(r) / const_sb) ** (1/4)
+        flux = Star.L2flux(L, r)
+        return solve_fluxT(flux, None)
+        #return solve_StefanBoltzmann(flux * const_solar, None)
 
     @staticmethod
     def TtoL(T, r):
-        return const_sb * (T**4) * A_sphere(r) / const_Lsol
+        #flux = solve_StefanBoltzmann(None, T) / const_solar
+        flux = solve_fluxT(None, T)
+        return Star.flux2L(flux, r)
 
     @staticmethod
-    def RT2L(r, T):
-        return Star.TtoL(T, r)
-        #return 5.670374419e-8 * (4 * pi * r ** 2) * (T ** 4) / L_Sun
+    def fluxToT(flux = 1.0):
+        return solve_fluxT(flux, None)
+        #return solve_StefanBoltzmann(flux * const_solar, None)
+
+    @staticmethod
+    def TtoFlux(T):
+        return solve_fluxT(None, T)
+
+    @staticmethod
+    def fluxToTeff(flux = 1.0, albedo = 0.0):
+        return Star.fluxToT(0.25 * (1 - albedo) * flux)
+
+    #--------------------------------------------------------------------------
+    # Effective temperature at given distance
+    #--------------------------------------------------------------------------
+
+    def T_eff(self, r, albedo = 0.0):
+        return Star.LtoT(0.25 * (1-albedo) * self.L, r)
 
     #--------------------------------------------------------------------------
     # Radiation at given distance, relative to flux received by Earth:
@@ -105,24 +127,14 @@ class Star(Mass):
 
     def fluxAt(self, distance = AU2m(1.0)):
         if not self.L: return None
-        return self.L / (m2AU(distance) ** 2)
+        return Star.L2flux(self.L, distance)
+        #return self.L / (m2AU(distance) ** 2)
 
-    #--------------------------------------------------------------------------
-    # Effective temperature at given distance
-    #--------------------------------------------------------------------------
-
-    def T_eff(self, r, albedo = 0.0):
-        return ((1 - albedo) * self.L * const_Lsol / (r**2 * 16*pi*const_sb)) ** (1/4)
-
-    #--------------------------------------------------------------------------
-    # Habitable Zone distance: in fact, distance at given flux.
-    #--------------------------------------------------------------------------
-
-    def HZ(self, flux = 1.0):
+    def fluxToR(self, flux = 1.0):
         return AU2m(sqrt(self.L / flux))
 
     def orbitByFlux(self, flux = 1.0):
-        return Orbit(self, self.HZ(flux))
+        return Orbit(self, self.fluxToR(flux))
 
     def EarthEquivalence(self):
         return self.orbitByFlux(1.0)

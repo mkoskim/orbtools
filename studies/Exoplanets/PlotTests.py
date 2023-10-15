@@ -138,9 +138,9 @@ def Exoplanets():
 
   #Distance_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
   #Distance_Period(plt, ax, exoplanets)
-  Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
+  #Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
   #Period_Mass(plt, ax, exoplanets, yticks=ticks_m_planets + [10_000])
-  #Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_flux + [100, 1000])
+  Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_flux + [100, 1000])
   #Flux_Mass(plt, ax, exoplanets, yticks=ticks_m_planets, xticks=ticks_flux + [100, 1000])
   #Flux_Temperature(plt, ax, exoplanets, yticks = [-250, 0, 250, 500, 1000], xticks = ticks_flux + [100.0, 1000.0])
   #Mass_Density(plt, ax, exoplanets)

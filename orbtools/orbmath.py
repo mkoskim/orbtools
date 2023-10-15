@@ -8,19 +8,6 @@ from orbtools import *
 
 ###############################################################################
 #
-# Simple calculations
-#
-###############################################################################
-
-def arcsec(dist, diam):
-  return atan(diam / dist)/(2*pi)*360*60*60
-
-def A_circle(r): return pi * r**2
-def A_sphere(r): return 4 * pi * r**2
-def V_sphere(r): return 4/3 * pi * r**3
-
-###############################################################################
-#
 # Solving Kepler's equation:
 #
 #    a1^3 * P1^2  =  a2^3 * P2^2
@@ -168,7 +155,8 @@ class Mass(object):
   def isMassless(self): return self.GM < kg2GM(0.1)
 
   @property
-  def V(self): return 4/3.0*pi*(self.radius ** 3)
+  def V(self): return V_sphere(self.radius)
+  #def V(self): return 4/3.0*pi*(self.radius ** 3)
 
   @property
   def density(self): return self.kg / self.V
@@ -253,6 +241,15 @@ class Mass(object):
     if not self.center: return None
     if not hasattr(self.center, "fluxAt"): return self.center.flux
     return self.center.fluxAt(self.orbit.a)
+
+  #@property
+  #def fluxToT(self):
+  #  if not self.flux: return None
+  #  return Star.fluxToT(self.flux)
+
+  #def fluxToTeff(self, albedo):
+  #  if not self.flux: return None
+  #  return Star.fluxToTeff(self.flux, albedo)
 
   #--------------------------------------------------------------------------
   # Info dump

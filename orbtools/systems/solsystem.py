@@ -12,7 +12,7 @@ from orbtools import *
 #
 ################################################################################
 
-Sun = Star("Sun", 1.0, 1.0, sptype = "G2", L=1, mag = 4.83, T=5772, rotate = TasDays(24.6), dist = 0.00)
+Sun = Star("Sun", 1.0, 1.0, sptype = "G2", L=1, mag = 4.83, T=5773, rotate = TasDays(24.6), dist = 0.00)
 
 Mercury = Planet("Mercury",   GM_Mercury,	    2440e3,     TasDays(58.6),          Orbit("Sun",	  57910e6))
 Venus   = Planet("Venus",     GM_Venus,	    6052e3,     TasDays(-243),          Orbit("Sun",	 108200e6))

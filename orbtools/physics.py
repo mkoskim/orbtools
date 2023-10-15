@@ -9,6 +9,17 @@ from math import *
 from constants import *
 
 #-------------------------------------------------------------------------------
+# Geometry
+#-------------------------------------------------------------------------------
+
+def arcsec(dist, diam):
+  return atan(diam / dist)/(2*pi)*360*60*60
+
+def A_circle(r): return pi * r**2
+def A_sphere(r): return 4 * pi * r**2
+def V_sphere(r): return 4/3 * pi * r**3
+
+#-------------------------------------------------------------------------------
 # Solve quadratic equations
 #-------------------------------------------------------------------------------
 
@@ -65,3 +76,21 @@ def solve_Emv(E, m, v = None):
 def solve_Emc(E, m):
     if m == None: return E/(const_c**2)
     return m*(const_c**2)
+
+#-------------------------------------------------------------------------------
+# Energy and temperature:
+#-------------------------------------------------------------------------------
+
+def solve_StefanBoltzmann(flux, T):
+    if(T): return const_sb * (T ** 4)
+    return (flux / const_sb) ** (1/4)
+
+#-------------------------------------------------------------------------------
+# Solve temperature (K) from flux (x Earth): simplifies calculations with
+# stars, where units are based on Sun and Earth.
+#-------------------------------------------------------------------------------
+
+def solve_fluxT(flux, T):
+    C = const_solar / const_sb
+    if(T): return (T ** 4) / C
+    return (flux * C) ** (1/4)
