@@ -44,7 +44,7 @@ def forAll():
   #Mass_Density(plt, ax, data, s=1)
   #Mass_Density(plt, ax, doFilters(data, lambda x: not(x.GM > MtoEarth(100) and x.orbit and x.orbit.P < TasDays(10))))
 
-  for M_lim in planet_M_lim: plt.axvline(x = M_lim, ls="dashed")
+  #for M_lim in planet_M_lim: plt.axvline(x = M_lim, ls="dashed")
 
   #ax.scatter(data_x, data_y, marker=".", s=1.0)
 
@@ -75,13 +75,13 @@ def Stars():
   #G_stars = doFilters(stars.values(), hasSpectralType, lambda star: star.sptype[:2] in ["G8", "G9"])
 
   #MassLuminosity2(K_stars, G_stars)
-  #MassLuminosity2(stars.values(), Star.typical.values())
+  MassLuminosity2(stars.values(), Star.typical.values())
 
   #Temperature_Mass(plt, ax, stars.values())
   #MassTemperature2(stars.values(), Star.typical.values())
 
   #MassEE2(stars.values(), Star.typical.values())
-  EEMass2(stars.values(), Star.typical.values())
+  #EEMass2(stars.values(), Star.typical.values())
 
   #Temperature_Luminosity(plt, ax, stars.values())
   #Temperature_Luminosity(plt, ax, Star.typical.values(), append=True)
@@ -115,7 +115,7 @@ def Stars():
   #data_x, data_y = Period_Radius(plt, ax, categories[2], yticks=ticks_r_planets)
   #ax.scatter(data_x, data_y, marker=".")
 
-Stars()
+#Stars()
 
 #------------------------------------------------------------------------------
 # Exoplanet detection method
@@ -166,8 +166,9 @@ def Exoplanets():
   #Flux_Mass(plt, ax, exoplanets, yticks=ticks_m_planets, xticks=ticks_flux + [100, 1000])
   #Flux_Temperature(plt, ax, exoplanets, yticks = [-250, 0, 250, 500, 1000], xticks = ticks_flux + [100.0, 1000.0])
   #Mass_Density(plt, ax, exoplanets)
+  #Mass_Radius(plt, ax, exoplanets, xticks = ticks_m_planets, yticks=ticks_r_planets)
 
-#Exoplanets()
+Exoplanets()
 
 #------------------------------------------------------------------------------
 # Planet distribution

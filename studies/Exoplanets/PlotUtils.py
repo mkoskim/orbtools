@@ -35,6 +35,7 @@ def set_xticks(ax, ticks, labels = None):
 #------------------------------------------------------------------------------
 
 def set_yticks2(ax, ticks, labels = None):
+  if not ticks: return
   if not labels: labels = ticks
 
   pairs = zip(ticks, labels)
@@ -52,6 +53,7 @@ def set_yticks2(ax, ticks, labels = None):
   ax2.minorticks_off()
 
 def set_xticks2(ax, ticks, labels = None):
+  if not ticks: return
   if not labels: labels = ticks
 
   pairs = zip(ticks, labels)
@@ -70,15 +72,13 @@ def set_xticks2(ax, ticks, labels = None):
 
 #------------------------------------------------------------------------------
 
-# Solar flux at Frost Line (Sol 2.7AU)
-
 flux_FrostLine = 0.1371742112482853
 
 ticks_r = [1.0, 10.0, 100.0, 1000.0]
 ticks_r_planets = [0.5, 1.0, 5.0, 10.0, 20.0]
 
 ticks_m = [0.1, 1.0, 10.0, 100.0, 1000.0, 10_000.0, 100_000, 1_000_000]
-ticks_m_planets = [0.1, 1, 10, 100, 1000]
+ticks_m_planets = [0.1, 1, 10, 100, 1000, 10_000]
 ticks_m_stars = [10_000.0, 100_000, 1_000_000]
 ticks_m_sol = [0.1, 0.25, 0.5, 1.0, 2.0]
 
@@ -101,109 +101,102 @@ def tick_min(ticks): return min(ticks)
 def tick_range(ticks, extend=1.5): return min(ticks)/extend, max(ticks)*extend
 
 #------------------------------------------------------------------------------
-# Axis: Mass
+# Setting axis
 #------------------------------------------------------------------------------
 
-def y_Mass(plt, ax, data, ticks = None, append=False):
-  if not append:
-    if not ticks: ticks = ticks_m
+def set_xaxis(plt, ax, label, scale, ticks, defticks):
 
-    ymin, ymax = tick_range(ticks)
+  if label: ax.set_xlabel(label)
+  if scale: ax.set_xscale('log')
+  if not ticks: ticks = defticks
 
-    ax.set_ylabel("Massa (x Maa)")
-    ax.set_yscale('log')
-    ax.set_ylim(ymin, ymax)
-    set_yticks(ax, ticks)
+  xmin, xmax = tick_range(ticks)
+  ax.set_xlim(xmin, xmax)
+  set_xticks(ax, ticks)
 
-    ticks2 = [ Moon, Mars, Earth, Neptune, Saturn, Jupiter, Star.typical["M9"], Sun]
-    ticks2 = filter(lambda m: MtoEarth(m.GM) > ymin and MtoEarth(m.GM) < ymax, ticks2)
-    ticks2 = list(ticks2)
+def set_yaxis(plt, ax, label, scale, ticks, defticks):
+  if label: ax.set_ylabel(label)
+  if scale: ax.set_yscale('log')
+  if not ticks: ticks = defticks
 
-    if len(ticks2):
-      ax2 = ax.twinx()
-      ax2.set_yscale(ax.get_yscale())
-      ax2.set_ylim(ax.get_ylim())
-      set_yticks(ax2,
-        [MtoEarth(x.GM) for x in ticks2],
-        [x.name for x in ticks2]
-      )
+  ymin, ymax = tick_range(ticks)
+  ax.set_ylim(ymin, ymax)
+  set_yticks(ax, ticks)
 
-  return [MtoEarth(planet.GM) for planet in data]
+def set_xaxis2(plt, ax, ticks, labels):
+  if labels: set_xticks2(ax, ticks, labels)
+  for x in ticks: plt.axvline(x = x, ls="dashed", lw=1)
 
-def x_Mass(plt, ax, data, ticks, append=False):
-  if not append:
-    if not ticks: ticks = ticks_m
-    xmin, xmax = tick_range(ticks)
+def set_yaxis2(plt, ax, ticks, labels):
+  if labels: set_yticks2(ax, ticks, labels)
+  for y in ticks: plt.axhline(y = y, ls="dashed", lw=1)
 
-    ax.set_xlabel("Massa (x Maa)")
-    ax.set_xscale('log')
-    ax.set_xlim(xmin, xmax)
-    set_xticks(ax, ticks)
-
-    ticks2 = [ Mars, Earth, Neptune, Jupiter, Star.typical["M9"], Sun]
-
-    set_xticks2(ax, [MtoEarth(x.GM) for x in ticks2], [x.name for x in ticks2])
-
-  return [MtoEarth(planet.GM) for planet in data]
+#------------------------------------------------------------------------------
+# Axis: Mass (x Sun)
+#------------------------------------------------------------------------------
 
 def x_MassStar(plt, ax, data, ticks, append=False):
   if not append:
-    if not ticks: ticks = ticks_m_sol
-    xmin, xmax = tick_range(ticks)
+    ticks2 = [ Star.typical[x] for x in ["M9", "M0", "K0", "G0", "F0"]]
 
-    ax.set_xlabel("Massa (x Aurinko)")
-    ax.set_xscale('log')
-    ax.set_xlim(xmin, xmax)
-    set_xticks(ax, ticks)
-
-    ticks2 = [ Star.typical["M9"], Star.typical["M0"], Star.typical["K0"], Star.typical["G0"], Star.typical["F0"]]
-
-    set_xticks2(ax, [MtoSun(x.GM) for x in ticks2], [x.name for x in ticks2])
-    for startype in ticks2: plt.axvline(x = MtoSun(startype.GM), ls="dashed")
+    set_xaxis(plt, ax, "Massa (x Aurinko)", "log", ticks, ticks_m_sol)
+    set_xaxis2(plt, ax, [MtoSun(x.GM) for x in ticks2], [x.name for x in ticks2])
 
   return [MtoSun(star.GM) for star in data]
 
 def y_MassStar(plt, ax, data, ticks, append=False):
   if not append:
-    if not ticks: ticks = ticks_m_sol
+    ticks2 = [ Star.typical[x] for x in ["M9", "M0", "K0", "G0", "F0"]]
 
-    ymin, ymax = tick_range(ticks)
-
-    ax.set_ylabel("Massa (x Aurinko)")
-    ax.set_yscale('log')
-    ax.set_ylim(ymin, ymax)
-    set_yticks(ax, ticks)
+    set_yaxis(plt, ax, "Massa (x Aurinko)", "log", ticks, ticks_m_sol)
+    set_yaxis2(plt, ax, [MtoSun(x.GM) for x in ticks2], [x.name for x in ticks2])
 
   return [MtoSun(star.GM) for star in data]
+
+#------------------------------------------------------------------------------
+# Axis: Mass (x Earth)
+#------------------------------------------------------------------------------
+
+def x_Mass(plt, ax, data, ticks, append=False):
+  if not append:
+    ticks2 = [ Mars, Earth, Neptune, Jupiter, Star.typical["M9"], Sun]
+
+    set_xaxis(plt, ax, "Massa (x Maa)", "log", ticks, ticks_m)
+    set_xaxis2(plt, ax, [MtoEarth(x.GM) for x in ticks2], [x.name for x in ticks2])
+
+  return [MtoEarth(planet.GM) for planet in data]
+
+def y_Mass(plt, ax, data, ticks = None, append=False):
+  if not append:
+
+    ticks2 = [ Mars, Earth, Neptune, Jupiter, Star.typical["M9"], Sun]
+
+    set_yaxis(plt, ax, "Massa (x Maa)", "log", ticks, ticks_m)
+    set_yaxis2(plt, ax, [MtoEarth(x.GM) for x in ticks2], [x.name for x in ticks2])
+
+  return [MtoEarth(planet.GM) for planet in data]
 
 #------------------------------------------------------------------------------
 # Axis: Radius
 #------------------------------------------------------------------------------
 
-def y_Radius(plt, ax, data, ticks, append = False):
+def x_Radius(plt, ax, data, ticks, append = False):
   if not append:
-    if not ticks: ticks = ticks_r
-    ymin, ymax = tick_range(ticks)
 
-    ax.set_ylabel("Halkaisija (x Maa)")
-    ax.set_yscale('log')
-    set_yticks(ax, ticks)
-    ax.set_ylim(ymin, ymax)
+    ticks2 = [ Mars, Earth, Neptune, Jupiter, Sun]
 
-    ticks2 = [ Moon, Mars, Earth, Neptune, Jupiter, Sun]
-    set_yticks2(ax, [RtoEarth(x.radius) for x in ticks2], [x.name for x in ticks2])
+    set_xaxis(plt, ax, "Halkaisija (x Maa)", "log", ticks, ticks_r)
+    set_xaxis2(plt, ax, [RtoEarth(x.radius) for x in ticks2], [x.name for x in ticks2])
 
   return [RtoEarth(planet.radius) for planet in data]
 
-def x_Radius(plt, ax, data, ticks, append = False):
+def y_Radius(plt, ax, data, ticks, append = False):
   if not append:
-    if not ticks: ticks = ticks_r
-    xmin, xmax = min(ticks)*0.5, max(ticks)*2
 
-    ax.set_xlabel("Halkaisija (x Maa)")
-    ax.set_xlim(xmin, xmax)
-    ax.set_xscale('log')
-    set_xticks(ax, ticks)
+    ticks2 = [ Mars, Earth, Neptune, Jupiter, Sun]
+
+    set_yaxis(plt, ax, "Halkaisija (x Maa)", "log", ticks, ticks_r)
+    set_yaxis2(plt, ax, [RtoEarth(x.radius) for x in ticks2], [x.name for x in ticks2])
 
   return [RtoEarth(planet.radius) for planet in data]
 
@@ -378,29 +371,15 @@ def y_EE(plt, ax, data, ticks = None, append = False):
 
 def x_Period(plt, ax, data, ticks, append=False):
   if not append:
-    if not ticks: ticks = ticks_P
-    xmin, xmax = min(ticks)*0.5, max(ticks)*2
-
-    ax.set_xlabel("Kiertoaika (d)")
-    ax.set_xlim(xmin, xmax)
-    ax.set_xscale('log')
-    set_xticks(ax, ticks)
-
-    plt.axvline(x = 365, ls="dashed")
+    set_xaxis(plt, ax, "Kiertoaika (d)", "log", ticks, ticks_P)
+    set_xaxis2(plt, ax, [365], ["Earth"])
 
   return [TtoDays(planet.orbit.P) for planet in data]
 
 def y_Period(plt, ax, data, ticks, append=False):
   if not append:
-    if not ticks: ticks = ticks_P
-    xmin, xmax = tick_range(ticks)
-
-    ax.set_ylabel("Kiertoaika (d)")
-    ax.set_ylim(xmin, xmax)
-    ax.set_yscale('log')
-    set_yticks(ax, ticks)
-
-    plt.axhline(y = 365, ls="dashed")
+    set_yaxis(plt, ax, "Kiertoaika (d)", "log", ticks, ticks_P)
+    set_yaxis2(plt, ax, [365], ["Earth"])
 
   return [TtoDays(planet.orbit.P) for planet in data]
 
@@ -410,22 +389,15 @@ def y_Period(plt, ax, data, ticks, append=False):
 
 def x_Flux(plt, ax, data, ticks = None, append = False):
   if not append:
-    if not ticks: ticks = ticks_flux
-    xmin, xmax = min(ticks)*0.5, max(ticks)*2
-
-    ax.set_xlabel("Flux (x Earth)")
-    ax.set_xscale('log')
-
-    ax.set_xlim(xmin, xmax)
-    set_xticks(ax, ticks)
-
-    ax.invert_xaxis()
+    set_xaxis(plt, ax, "Flux (x Maa)", "log", ticks, ticks_flux)
 
     flux_lim = [2.0, 1.0, 0.396, flux_FrostLine]
-    plt.axvline(x = flux_lim[0], color="red")
-    plt.axvline(x = flux_lim[1], color="green")
-    plt.axvline(x = flux_lim[2], color="blue")
-    plt.axvline(x = flux_lim[3], ls="dashed")
+    plt.axvline(x = flux_lim[0], lw=1, color="red")
+    plt.axvline(x = flux_lim[1], lw=1, color="green")
+    plt.axvline(x = flux_lim[2], lw=1, color="blue")
+    plt.axvline(x = flux_lim[3], lw=1, ls="dashed")
+
+    ax.invert_xaxis()
 
   return [planet.flux for planet in data]
 
