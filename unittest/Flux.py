@@ -17,6 +17,16 @@ from testlib import *
 print("Solar constant")
 print("- Solar constant:", const_solar)
 print("- Computed......:", Sun.L * L_Sun / A_sphere(Earth.orbit.a))
+print()
+
+#------------------------------------------------------------------------------
+
+print("Stars:")
+K0 = Star.typical["K0"]
+print("- T(K0)...........:", K0.T)
+print("- T(K0) calculated:", Star.LtoT(K0.L, K0.radius))
+print("- T(K0) calculated:", Star.fluxToT(Star.L2flux(K0.L, K0.radius)))
+print()
 
 #------------------------------------------------------------------------------
 

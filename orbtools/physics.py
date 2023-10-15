@@ -78,7 +78,7 @@ def solve_Emc(E, m):
     return m*(const_c**2)
 
 #-------------------------------------------------------------------------------
-# Energy and temperature:
+# Energy flow and temperature:
 #-------------------------------------------------------------------------------
 
 def solve_StefanBoltzmann(flux, T):

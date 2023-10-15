@@ -115,13 +115,6 @@ class Star(Mass):
         return Star.fluxToT(0.25 * (1 - albedo) * flux)
 
     #--------------------------------------------------------------------------
-    # Effective temperature at given distance
-    #--------------------------------------------------------------------------
-
-    def T_eff(self, r, albedo = 0.0):
-        return Star.LtoT(0.25 * (1-albedo) * self.L, r)
-
-    #--------------------------------------------------------------------------
     # Radiation at given distance, relative to flux received by Earth:
     #--------------------------------------------------------------------------
 
@@ -138,6 +131,10 @@ class Star(Mass):
     @property
     def EarthEquivalence(self):
         return self.orbitByFlux(1.0)
+
+    def T_eff(self, r, albedo = 0.0):
+        flux = self.fluxAt(r)
+        return Star.fluxToTeff(flux, albedo)
 
     #-------------------------------------------------------------------------------
     # Visual magnitude to absolute
