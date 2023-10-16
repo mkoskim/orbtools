@@ -75,7 +75,7 @@ def Stars():
   #G_stars = doFilters(stars.values(), hasSpectralType, lambda star: star.sptype[:2] in ["G8", "G9"])
 
   #MassLuminosity2(K_stars, G_stars)
-  MassLuminosity2(stars.values(), Star.typical.values())
+  #MassLuminosity2(stars.values(), Star.typical.values())
 
   #Temperature_Mass(plt, ax, stars.values())
   #MassTemperature2(stars.values(), Star.typical.values())
@@ -83,8 +83,8 @@ def Stars():
   #MassEE2(stars.values(), Star.typical.values())
   #EEMass2(stars.values(), Star.typical.values())
 
-  #Temperature_Luminosity(plt, ax, stars.values())
-  #Temperature_Luminosity(plt, ax, Star.typical.values(), append=True)
+  Temperature_Luminosity(plt, ax, stars.values())
+  Temperature_Luminosity(plt, ax, Star.typical.values(), append=True)
 
   return
 

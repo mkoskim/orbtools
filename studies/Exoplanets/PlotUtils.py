@@ -22,35 +22,17 @@ from orbtools.systems.exoplanets import *
 # Setting data to axes
 #------------------------------------------------------------------------------
 
-def set_yticks(ax, ticks, labels = None):
-  if ticks and not labels: labels = ticks
-  if ticks: ax.set_yticks(ticks)
-  if labels: ax.set_yticklabels(labels)
-
 def set_xticks(ax, ticks, labels = None):
   if ticks and not labels: labels = ticks
   if ticks: ax.set_xticks(ticks)
   if labels: ax.set_xticklabels(labels)
 
+def set_yticks(ax, ticks, labels = None):
+  if ticks and not labels: labels = ticks
+  if ticks: ax.set_yticks(ticks)
+  if labels: ax.set_yticklabels(labels)
+
 #------------------------------------------------------------------------------
-
-def set_yticks2(ax, ticks, labels = None):
-  if not ticks: return
-  if not labels: labels = ticks
-
-  pairs = zip(ticks, labels)
-  ymin, ymax = ax.get_ylim()
-  pairs = list(filter(lambda x: x[0] > ymin and x[0] < ymax, pairs))
-  if not len(pairs): return
-
-  ticks = [x[0] for x in pairs]
-  labels = [x[1] for x in pairs]
-
-  ax2 = ax.twinx()
-  ax2.set_yscale(ax.get_yscale())
-  ax2.set_ylim(ax.get_ylim())
-  set_yticks(ax2, ticks, labels)
-  ax2.minorticks_off()
 
 def set_xticks2(ax, ticks, labels = None):
   if not ticks: return
@@ -68,6 +50,24 @@ def set_xticks2(ax, ticks, labels = None):
   ax2.set_xscale(ax.get_xscale())
   ax2.set_xlim(ax.get_xlim())
   set_xticks(ax2, ticks, labels)
+  ax2.minorticks_off()
+
+def set_yticks2(ax, ticks, labels = None):
+  if not ticks: return
+  if not labels: labels = ticks
+
+  pairs = zip(ticks, labels)
+  ymin, ymax = ax.get_ylim()
+  pairs = list(filter(lambda x: x[0] > ymin and x[0] < ymax, pairs))
+  if not len(pairs): return
+
+  ticks = [x[0] for x in pairs]
+  labels = [x[1] for x in pairs]
+
+  ax2 = ax.twinx()
+  ax2.set_yscale(ax.get_yscale())
+  ax2.set_ylim(ax.get_ylim())
+  set_yticks(ax2, ticks, labels)
   ax2.minorticks_off()
 
 #------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ ticks_flux = [0.001, 0.01, 0.1, 1.0, 10.0]
 
 ticks_L = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
 
-ticks_T_stars = [2_500, 5_000, 7_500, 10_000]
+ticks_T_stars = [2_500, 5_000, 7_500]
 
 ticks_Mag = [10, 5, 0, -5]
 
@@ -104,7 +104,7 @@ def tick_range(ticks, extend=1.5): return min(ticks)/extend, max(ticks)*extend
 # Setting axis
 #------------------------------------------------------------------------------
 
-def set_xaxis(plt, ax, label, scale, ticks, defticks):
+def set_xaxis(plt, ax, label, scale, ticks, defticks, invert=False):
 
   if label: ax.set_xlabel(label)
   if scale: ax.set_xscale('log')
@@ -113,6 +113,7 @@ def set_xaxis(plt, ax, label, scale, ticks, defticks):
   xmin, xmax = tick_range(ticks)
   ax.set_xlim(xmin, xmax)
   set_xticks(ax, ticks)
+  if invert: ax.invert_xaxis()
 
 def set_yaxis(plt, ax, label, scale, ticks, defticks):
   if label: ax.set_ylabel(label)
@@ -280,25 +281,13 @@ def y_Magnitude(plt, ax, data, ticks = None):
 # Axis: Temperature
 #------------------------------------------------------------------------------
 
-def x_Temperature(plt, ax, data, ticks = None, append = False):
+def x_Temperature(plt, ax, data, ticks = None, append = False, invert = False):
 
   if not append:
-    if ticks is None:
-      ticks = ticks_T_stars
-      ticks2 = [ Star.typical["M9"], Star.typical["M0"], Star.typical["K0"], Star.typical["G0"], Star.typical["F0"]]
-    else:
-      ticks2 = None
+    ticks2 = [ Star.typical[x] for x in ["M9", "M0", "K0", "G0", "F0"]]
 
-    xmin, xmax = min(ticks)*0.9, max(ticks)*1.1
-
-    ax.set_xlabel("Lämpötila (°C)")
-    #ax.set_xscale('log')
-    ax.set_xlim(xmin, xmax)
-    set_xticks(ax, ticks)
-
-    if ticks2:
-      set_xticks2(ax, [x.T for x in ticks2], [x.name for x in ticks2])
-      for startype in ticks2: plt.axvline(x = startype.T, ls="dashed")
+    set_xaxis(plt, ax, "Lämpötila (°C)", "log", ticks, ticks_T_stars, invert=invert)
+    set_xaxis2(plt, ax, [x.T for x in ticks2], [x.name for x in ticks2])
 
   return [mass.T for mass in data]
 
@@ -595,12 +584,13 @@ def Temperature_Magnitude(plt, ax, data, xticks=None, yticks=None, N=None, marke
 
 def Temperature_Luminosity(plt, ax, data, xticks=None, yticks=None, N=None, append=None, marker=".", **kw):
   data = list(doFilters(data, hasTemperature, hasLuminosity))
-  if not append: plt.title("N=%d" % (N or len(data)))
+  if not append:
+    plt.title("N=%d" % (N or len(data)))
 
   ax.scatter(
-    x_Temperature(plt, ax, data, xticks),
+    x_Temperature(plt, ax, data, xticks, invert = True),
     y_Luminosity(plt, ax, data, yticks),
-    marker=".",
+    marker=marker,
     **kw
   )
 
