@@ -7,6 +7,31 @@
 ################################################################################
 
 from orbtools import *
+from orbtools.systems.exoplanets.oec.fixes import fixes
+
+#-------------------------------------------------------------------------------
+# Use fixes table to do data fixes
+#-------------------------------------------------------------------------------
+
+verbose = False      # True/false if you want reports when reading catalogue
+verbosefix = False   # True/false if you want to see what values are changed
+
+def doFix(data):
+
+  name = data["name"]
+
+  def fix(field, value, current):
+    if verbosefix:
+      if current:
+        print("- Fix: %-20s %s = %s --> %s" % (name, field, current, value))
+      else:
+        print("- Add: %-20s %s = %s" % (name, field, value))
+    return value
+
+  if name not in fixes: return
+
+  for field, value in fixes[name].items():
+    data[field] = fix(field, value, data[field])
 
 ################################################################################
 #
@@ -15,24 +40,43 @@ from orbtools import *
 ################################################################################
 
 def doPlanet(planet, star):
-  name = planet.findtext("name")
+
+  data = {
+    "name": planet.findtext("name"),
+    "detection_type": planet.findtext("discoverymethod"),
+    #"discovered": row[5],
+    "orbital_period": planet.findtext("period"),
+    "semi_major_axis": planet.findtext("semimajoraxis"),
+    "radius": planet.findtext("radius"),
+    "mass": planet.findtext("mass"),
+    "T": planet.findtext("temperature"),
+    "status": "Confirmed",
+  }
+
+  name = data["name"]
 
   if not name: return
   if name in masses: return
 
-  mass = planet.findtext("mass")
-  radius = planet.findtext("radius") or None
-  T = planet.findtext("temperature") or None
-  detection = planet.findtext("discoverymethod") or None
+  incomplete = name in fixes and fixes[name] is None
 
-  P = planet.findtext("period")
-  A = planet.findtext("semimajoraxis")
+  mass = data["mass"]
+  radius =  data["radius"]
+  T =  data["T"]
+  detection = data["detection_type"]
+
+  # Make orbit: We prefer period, as it is commonly more reliable than
+  # semi-major axis.
+
+  P = data["orbital_period"]
+  A = data["semi_major_axis"]
 
   if P:
     orbit = byPeriod(star, float(TasDays(P)))
   elif A:
     orbit = Orbit(star, float(AU2m(A)))
   else:
+    if verbose and not incomplete: print(name, "No orbit")
     return None
 
   GM     = mass and MasJupiter(mass) or 0
@@ -40,41 +84,69 @@ def doPlanet(planet, star):
 
   p = Planet(name, GM = GM, radius = radius, orbit = orbit)
 
-  p.elem = planet
   p.T = T and float(T) or None
   p.detection = detection or None
 
 #------------------------------------------------------------------------------
 
 def doStar(star, dist):
-  name = star.findtext("name")
+
+  data = {
+    "name": star.findtext("name"),
+    "sp_type": star.findtext("spectraltype"),
+    "T": star.findtext("temperature"),
+    "radius": star.findtext("radius"),
+    "mass": star.findtext("mass"),
+    "L": "",
+    "distance": dist
+  }
+
+  name = data["name"]
   if not name: return
   if name in masses: return
-  if name == "Sun": return
 
-  sptype = star.findtext("spectraltype") or None
-  mass = star.findtext("mass") or None
-  radius = star.findtext("radius") or None
-  T = star.findtext("temperature") or None
+  incomplete = name in fixes and fixes[name] is None
 
-  #if dist:
-  #  mag = star.findtext("magV")
-  #  if mag: mag = Star.magVtoAbs(float(mag), dist)
-  #else:
-  #  mag = None
+  if not incomplete: doFix(data)
 
-  #if not radius or not T: print("Star:", name, sptype, mass, radius, T)
+  sptype = data["sp_type"]
+  mass = data["mass"]
+  radius = data["radius"]
 
-  if not mass: return
+  planets = star.findall(".//planet")
 
-  #if sptype is None: return
-  #if sptype[0] not in ["F", "G", "K", "M"]: return
+  # Stars without mass are excluded: it is not possible to make orbits
+  # around them.
 
-  s = Star(name, MxSun = mass, RxSun = radius, sptype = sptype, T = T, dist = dist)
+  if not mass:
+    if verbose and not incomplete and len(planets): print(name, "# Massless, planets", len(planets))
+    return
 
-  s.elem = star
+  def doStarL(L, T, RxSun):
+    if(L): return float(L)
+    if(RxSun and T): return Star.TtoL(float(T), RasSun(RxSun))
+    return None
 
-  for planet in star.findall(".//planet"):
+  T = data["T"]
+  L = doStarL(data["L"], T, radius)
+
+  # Warn if star has planets, but its luminosity can't be determined; add star
+  # and planets anyways.
+
+  if (not L):
+    if verbose and not incomplete and len(planets): print(name, "# Fluxless, planets:", len(planets))
+
+  s = Star(
+    name,
+    sptype = sptype,
+    MxSun = mass,
+    RxSun = radius,
+    T = T,
+    L = L,
+    dist = dist
+  )
+
+  for planet in planets:
     doPlanet(planet, s)
 
 #------------------------------------------------------------------------------
@@ -97,67 +169,3 @@ import xml.etree.ElementTree as ET, gzip
 oec = ET.fromstring(open("./orbtools/systems/exoplanets/oec/systems.xml").read())
 
 for system in oec: doSystem(system)
-
-################################################################################
-#
-# Running fixes (fix some missing / incorrect data)
-#
-################################################################################
-
-from orbtools.systems.exoplanets.oec.fixes import doFixes
-doFixes(quiet = True)
-#doFixes(quiet = False)
-#exit()
-
-################################################################################
-#
-# Adding data from equations (not used atm) - after fixes!
-#
-################################################################################
-
-from orbtools.systems.exoplanets.filters import *
-from scipy.interpolate import LinearNDInterpolator
-#import numpy as np
-
-#------------------------------------------------------------------------------
-# Fill in luminosity from temperature and radius
-
-def doRTtoL():
-  starsWOL = doFilters(stars.values(), lambda x: not hasLuminosity(x), hasRadius, hasTemperature)
-
-  for star in starsWOL:
-    star.L = Star.TtoL(star.T, star.radius)
-
-#------------------------------------------------------------------------------
-# Use stars with mass, temperature and luminosity to interpolate luminosities
-# to stars without radius. Sadly, this is not as effective as it sounds. We
-# need to wait scientists to fill up masses and temperatures for stars with
-# planets.
-
-def doInterpolateL():
-
-  #----------------------------------------------------------------------------
-  # Make 2D interpolation from computed L
-
-  starsL = doFilters(stars.values(), hasLuminosity)
-
-  points = [(MtoSun(star.GM), star.T) for star in starsL]
-  values = [star.L for star in starsL]
-
-  interp = LinearNDInterpolator(points, values)
-
-  #----------------------------------------------------------------------------
-  # Stars with T but without L yet
-
-  starsMT = doFilters(stars.values(), hasTemperature, lambda x: not hasLuminosity(x))
-  print("MT:", len(starsMT))
-
-  #for star in starsMT:
-  #  print(star.name)
-
-  for star in starsMT: star.L = interp(MtoSun(star.GM), star.T)
-
-doRTtoL()
-#doInterpolateL()
-
-#exit()

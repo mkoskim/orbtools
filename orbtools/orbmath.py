@@ -266,7 +266,7 @@ class Mass(object):
       print("Distance..........:", self.dist and "%.2f ly" % m2ly(self.dist) or "N/A")
       if self.L:
         print("Luminosity........: %.5f x Sun" % (self.L))
-        HZ = Orbit(self, self.HZ())
+        HZ = self.EarthEquivalence
         print("Habitable zone....: ")
         print("    - Distance....: %.4f AU" % m2AU(HZ.a))
         print("    - Period......: %.0f d (%.1f a)" % (TtoDays(HZ.P), TtoYears(HZ.P)))

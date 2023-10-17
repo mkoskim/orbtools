@@ -12,9 +12,9 @@ from orbtools import *
 from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
-# Testing absolute magnitude calculation.
-#------------------------------------------------------------------------------
 
+#masses["K2-16"].info()
+#exit()
 
 #------------------------------------------------------------------------------
 # Testing Luminosity calculation: we have certain set of stars with manually
@@ -105,7 +105,11 @@ def showMissing(star):
 #showMissing(masses["EPIC 228813918"])
 #exit()
 
-# Some systems are (ATM) unfixable, planet parameters (M & R) are not yet available
+#------------------------------------------------------------------------------
+# These systems are (ATM) unfixable, planet parameters (M & R) are not yet
+# available in any source (Wikipedia, NASA catalogue etc).
+#------------------------------------------------------------------------------
+
 def isFixable(star):
   unfixables = [
     "HD 10180",     # Radii not known
@@ -166,7 +170,7 @@ def topSystemsToFix():
 
   print("Top systems to fix:")
 
-  incompletePlanets = doFilters(planets.values(), lambda x: not hasMass(x) or not hasRadius(x) or not hasFlux(x))
+  incompletePlanets = doFilters(planets.values(), isFixable, lambda x: not hasMass(x) or not hasRadius(x) or not hasFlux(x))
 
   def numIncompleteSatellites(star):
     incomplete = doFilters(incompletePlanets, lambda x: x.system == star)
@@ -180,7 +184,7 @@ def topSystemsToFix():
   print("Top pick:")
   showPlanets(top[0].satellites)
 
-#topSystemsToFix()
+topSystemsToFix()
 
 #------------------------------------------------------------------------------
 # Planets, which main star misses luminosity
@@ -196,7 +200,7 @@ def planetsMissingFlux():
 
   showPlanets(fluxless)
 
-planetsMissingFlux()
+#planetsMissingFlux()
 
 #------------------------------------------------------------------------------
 # Planets which density > 10 000 kg/m3 (possible error in either mass or radius)

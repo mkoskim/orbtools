@@ -114,6 +114,10 @@ class Star(Mass):
     def fluxToTeff(flux = 1.0, albedo = 0.0):
         return Star.fluxToT(0.25 * (1 - albedo) * flux)
 
+    @staticmethod
+    def LTtoR(L, T):
+        return AU2m(sqrt(L / Star.TtoFlux(T)))
+
     #--------------------------------------------------------------------------
     # Radiation at given distance, relative to flux received by Earth:
     #--------------------------------------------------------------------------

@@ -34,9 +34,9 @@ def fmteng(val, unit):
 #------------------------------------------------------------------------------
 
 def fmtGM(GM):
-    if GM / GM_Sun > 0.01:
+    if GM / GM_Jupiter > 70:
         return "%.2f x Sun" % (GM/GM_Sun)
-    if GM / GM_Jupiter > 0.01:
+    if GM / GM_Earth > 20:
         return "%.2f x Jupiter" % (GM/GM_Jupiter)
     #if GM / GM_Earth > 0.01:
     return "%.2f x Earth" % (GM/GM_Earth)

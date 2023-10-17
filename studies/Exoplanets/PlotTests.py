@@ -160,9 +160,9 @@ def Exoplanets():
 
   #Distance_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
   #Distance_Period(plt, ax, exoplanets)
-  #Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
+  Period_Radius(plt, ax, exoplanets, yticks=ticks_r_planets)
   #Period_Mass(plt, ax, exoplanets, yticks=ticks_m_planets + [10_000])
-  Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_flux + [100, 1000])
+  #Flux_Radius(plt, ax, exoplanets, yticks=ticks_r_planets, xticks=ticks_flux + [100, 1000])
   #Flux_Mass(plt, ax, exoplanets, yticks=ticks_m_planets, xticks=ticks_flux + [100, 1000])
   #Flux_Temperature(plt, ax, exoplanets, yticks = [-250, 0, 250, 500, 1000], xticks = ticks_flux + [100.0, 1000.0])
   #Mass_Density(plt, ax, exoplanets)
@@ -486,7 +486,7 @@ def Superearths():
   #def Mx3(x): return MtoEarth(x.GM) < 3 and 1 or 2
   #histogram2([Mx3(x) for x in data1], [Mx3(x) for x in data2], [1, 2])
 
-#Superearths()
+Superearths()
 
 #------------------------------------------------------------------------------
 
