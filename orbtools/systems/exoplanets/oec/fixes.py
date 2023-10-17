@@ -175,12 +175,6 @@ fixes = {
     "L": Star.LasLog10(-1.20665),
   },
 
-  #"Gliese 1002": None, # Fluxless, planets: 0
-    # #fix("Gliese 1002", "radius", RasSun(0.137))
-    # #fix("Gliese 1002", "T", 3024)
-    # #fix("Gliese 1002", "L", 0.001406)
-    # #Planet("Gliese 1002 a", MasEarth(1.08), orbit = Orbit("Gliese 1002", AU2m(0.0457)))
-    # #Planet("Gliese 1002 b", MasEarth(1.36), orbit = Orbit("Gliese 1002", AU2m(0.0738)))
   "Gliese 221": { # Fluxless, planets: 4
     "radius": 0.613,
     "T": 4324,
@@ -467,11 +461,13 @@ fixes = {
   "HIP 34222": None, # Fluxless, planets: 1
   "HIP 35173": None, # Fluxless, planets: 1
   "HIP 38594": None, # Fluxless, planets: 2
-  # #fix("HIP 41378 b", "GM", MasEarth(6.89))
-  # #fix("HIP 41378 c", "GM", MasEarth(4.4))
-  # #fix("HIP 41378 d", "GM", MasEarth(4.6))
-  # #fix("HIP 41378 e", "GM", MasEarth(12))
-  # #fix("HIP 41378 f", "GM", MasEarth(12))
+  # HIP 41378 planet masses (Wikipedia)
+    "HIP 41378 b": { "mass": MtoJupiter(MasEarth(6.89)) },
+    "HIP 41378 c": { "mass": MtoJupiter(MasEarth(4.4)) },
+    "HIP 41378 d": { "mass": MtoJupiter(MasEarth(4.6)) },
+    "HIP 41378 e": { "mass": MtoJupiter(MasEarth(12)) },
+    "HIP 41378 f": { "mass": MtoJupiter(MasEarth(12)) },
+    "HIP 41378 g": { "mass": MtoJupiter(MasEarth(7.0)) },
   "HIP 4845": None, # Fluxless, planets: 1
   "HIP 48714": None, # Fluxless, planets: 1
   "HIP 5158": None, # Fluxless, planets: 2
@@ -502,12 +498,13 @@ fixes = {
   "K2-128": None, # Fluxless, planets: 1
   "K2-130": None, # Fluxless, planets: 1
   "K2-131": None, # Fluxless, planets: 1
-  # #fix("K2-138 b", "GM", MasEarth(3.1))
-  # #fix("K2-138 c", "GM", MasEarth(6.3))
-  # #fix("K2-138 d", "GM", MasEarth(7.9))
-  # #fix("K2-138 e", "GM", MasEarth(13.0))
-  # #fix("K2-138 f", "GM", MasEarth(8.7))
-  # #fix("K2-138 g", "GM", MasEarth(8.94))
+  # K2-138 planet masses (Wikipedia)
+    "K2-138 b": { "mass": MtoJupiter(MasEarth(3.1)) },
+    "K2-138 c": { "mass": MtoJupiter(MasEarth(6.3)) },
+    "K2-138 d": { "mass": MtoJupiter(MasEarth(7.9)) },
+    "K2-138 e": { "mass": MtoJupiter(MasEarth(13.0)) },
+    "K2-138 f": { "mass": MtoJupiter(MasEarth(8.69)) },   # Less than
+    "K2-138 g": { "mass": MtoJupiter(MasEarth(25.47)) },  # Less than
   "K2-156": None, # Fluxless, planets: 1
   "K2-157": None, # Fluxless, planets: 1
   "K2-159": None, # Fluxless, planets: 1
@@ -605,10 +602,10 @@ fixes = {
     "T": 5271,
     "L": Star.LasLog10(-0.2960749),
   },
-  # #fix("K2-32 b", "GM", MasEarth(2.1))
-  # #fix("K2-32 c", "GM", MasEarth(15.0))
-  # #fix("K2-32 d", "GM", MasEarth(8.1))
-  # #fix("K2-32 e", "GM", MasEarth(6.7))
+    "K2-32 e": { "mass": MtoJupiter(MasEarth(2.1)) },
+    "K2-32 b": { "mass": MtoJupiter(MasEarth(15.0)) },
+    "K2-32 c": { "mass": MtoJupiter(MasEarth(8.1)) },
+    "K2-32 d": { "mass": MtoJupiter(MasEarth(6.7)) },
   "K2-41": None, # Fluxless, planets: 1
   #K2-50 # Fluxless, planets: 2
   "K2-58": { # Fluxless, planets: 3
@@ -635,39 +632,6 @@ fixes = {
   "K2-97": None, # Fluxless, planets: 1
 
   # #----------------------------------------------------------------------------
-
-  # #fix("Kepler-186 b", "GM", MasEarth(1.24))
-  # #fix("Kepler-186 c", "GM", MasEarth(2.1))
-  # #fix("Kepler-186 d", "GM", MasEarth(2.54))
-  # #fix("Kepler-186 e", "GM", MasEarth(2.15))
-  # #fix("Kepler-186 f", "GM", MasEarth(1.71))
-
-  # #fix("Kepler-22 b", "GM", MasJupiter(0.11))
-
-  # #fix("Kepler-32 b", "GM",  MasJupiter(0.011))
-  # #fix("Kepler-32 c", "GM",  MasJupiter(0.012))
-
-  # #fix("Kepler-442 b", "GM", MasEarth(2.3))
-
-  # #fix("Kepler-444 b", "GM", MasEarth(?))
-  # #fix("Kepler-444 c", "GM", MasEarth(?))
-  # #fix("Kepler-444 d", "GM", MasEarth(0.036))
-  # #fix("Kepler-444 e", "GM", MasEarth(0.034))
-  # #fix("Kepler-444 f", "GM", MasEarth(?))
-
-  # #fix("Kepler-452 b", "GM", MasEarth(5))
-
-  # #fix("Kepler-62 b", "GM",  MasEarth(2.1))
-  # #fix("Kepler-62 c", "GM",  MasEarth(0.1))
-  # #fix("Kepler-62 d", "GM",  MasEarth(5.5))
-  # #fix("Kepler-62 e", "GM",  MasEarth(4.5))
-  # #fix("Kepler-62 f", "GM",  MasEarth(2.8))
-
-  # #fix("Kepler-84 b", "GM",  MasJupiter(0.126))
-  # #fix("Kepler-84 c", "GM",  MasJupiter(0.064))
-  # #fix("Kepler-84 d", "GM",  MasEarth(?))
-  # #fix("Kepler-84 e", "GM",  MasEarth(?))
-  # #fix("Kepler-84 f", "GM",  MasEarth(?))
 
   #Kepler-108 B # Fluxless, planets: 2
   #Kepler-123 # Massless, planets 2
@@ -731,7 +695,17 @@ fixes = {
     "T": 5047.0,
     "L": Star.LasLog10(-0.4042719),
   },
+  #Kepler-186 planet masses (Wikipedia)
+  "Kepler-186": { "sp_type": "M1V" },
+    "Kepler-186 b": { "mass": MtoJupiter(MasEarth(1.24)) },
+    "Kepler-186 c": { "mass": MtoJupiter(MasEarth(2.1)) },
+    "Kepler-186 d": { "mass": MtoJupiter(MasEarth(2.54)) },
+    "Kepler-186 e": { "mass": MtoJupiter(MasEarth(2.15)) },
+    "Kepler-186 f": { "mass": MtoJupiter(MasEarth(1.71)) },
   #Kepler-196 # Massless, planets 2
+  # To be confirmed:
+    # "Kepler-22 b": { "mass": 0.11 },
+
   #Kepler-225 # Massless, planets 2
   #Kepler-248 # Massless, planets 2
   #Kepler-262 # Massless, planets 2
@@ -748,6 +722,12 @@ fixes = {
   #Kepler-311 # Massless, planets 2
   #Kepler-312 # Massless, planets 2
   #Kepler-315 # Massless, planets 2
+  #Kepler-32 planet masses (Wikipedia)
+    "Kepler-32 f": { },
+    "Kepler-32 e": { },
+    "Kepler-32 b": { "mass": 0.011 },
+    "Kepler-32 c": { "mass": 0.012 },
+    "Kepler-32 d": { },
   "Kepler-332": { # Massless, planets 3
     "mass": 0.808,
   },
@@ -803,21 +783,45 @@ fixes = {
     "T": 3269,
     "L": 3.08e-3,
   },
+  # Kepler-442 planet mass (Wikipedia)
+    "Kepler-442 b": { "mass": MtoJupiter(MasEarth(2.3)) },
+  # Kepler-444 A planet masses (Wikipedia)
+    "Kepler-444 b": { },
+    "Kepler-444 c": { },
+    "Kepler-444 d": { "mass": MtoJupiter(MasEarth(0.036)) },
+    "Kepler-444 e": { "mass": MtoJupiter(MasEarth(0.034)) },
+    "Kepler-444 d": { },
+
   "Kepler-450 A": { # Fluxless, planets: 3
     "radius": 1.5014101,
     "T": 6396.545,
     "L": Star.LasLog10(0.53147524),
   },
+  #Kepler-452 planet mass
+    "Kepler-452 b": { "mass": MtoJupiter(MasEarth(5)) },
   "Kepler-595": { # Fluxless, planets: 2
     "radius": 0.8210,
     "T": 5138.50,
     "L": Star.LasLog10(-0.3476832),
   },
+  # To be confirmed:
+    # #fix("Kepler-62 b", "GM",  MasEarth(2.1))
+    # #fix("Kepler-62 c", "GM",  MasEarth(0.1))
+    # #fix("Kepler-62 d", "GM",  MasEarth(5.5))
+    # #fix("Kepler-62 e", "GM",  MasEarth(4.5))
+    # #fix("Kepler-62 f", "GM",  MasEarth(2.8))
   "Kepler-82": { # Fluxless, planets: 5
     "radius": 0.955127,
     "T": 5309.190,
     "L": Star.LasLog10(-0.1850697),
   },
+  # Kepler-84 planet masses (Wikipedia)
+    "Kepler-84 b": { "mass": 0.126 },
+    "Kepler-84 c": { "mass": 0.064 },
+    "Kepler-84 d": {},
+    "Kepler-84 e": {},
+    "Kepler-84 f": {},
+
 
   #----------------------------------------------------------------------------
 

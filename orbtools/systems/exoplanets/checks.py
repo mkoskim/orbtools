@@ -12,11 +12,6 @@ from orbtools import *
 from orbtools.systems.exoplanets import *
 
 #------------------------------------------------------------------------------
-
-#masses["K2-16"].info()
-#exit()
-
-#------------------------------------------------------------------------------
 # Testing Luminosity calculation: we have certain set of stars with manually
 # added Luminosity, and we can compare the results of calculations
 #------------------------------------------------------------------------------
@@ -72,9 +67,9 @@ def showStars(data):
 
 def showPlanets(data):
   print("Planets:", len(data))
-  for planet in data:
+  for planet in sorted(data, key=lambda x: x.orbit.P):
     try:
-      print("%-20s M=%7.2f R=%7.2f" % (planet.name, MtoEarth(planet.GM or 0), RtoEarth(planet.radius or 0)),
+      print("%-20s P=%7.2f M=%7.2f R=%7.2f" % (planet.name, TtoDays(planet.orbit.P or 0), MtoEarth(planet.GM or 0), RtoEarth(planet.radius or 0)),
         #"D=%5.0f" % planet.density,
         #"P=%7.2f" % TtoDays(planet.orbit.P),
         #planet.flux and "F=%7.2f" % planet.flux or None,
@@ -83,6 +78,20 @@ def showPlanets(data):
     except:
       print("ERROR:", planet.name)
       exit()
+
+#------------------------------------------------------------------------------
+# Looking info
+#------------------------------------------------------------------------------
+
+def showInfo(name):
+  star = stars[name]
+
+  showStars([star])
+  print("Planets:")
+  showPlanets(star.satellites)
+
+#showInfo("Kepler-442")
+#exit()
 
 #------------------------------------------------------------------------------
 # Search stars missing luminosity, and list ones with most planets
@@ -112,17 +121,22 @@ def showMissing(star):
 
 def isFixable(star):
   unfixables = [
-    "HD 10180",     # Radii not known
-    "Kepler-90",    # Masses not known
-    "Gliese 667 C", # Planets not found
-    "tau Ceti",     # Radii not known
-    "Gliese 581",   # Radii not known
+    # System ........ Missing ........
+    "HD 10180",     # Radii
+    "Kepler-90",    # Masses
+    "Gliese 667 C", # Planets
+    "tau Ceti",     # Radii
+    "Gliese 581",   # Radii
     "HD 34445",     # Radii
     "HD 40307",     # Radii
     "GJ 163",       # Radii
     "HD 158259",    # Radii
     "HD 219134",    # Radii
     "Kepler-122",   # Mass
+    "Kepler-132",   # Mass
+    "Kepler-1388",  # Mass
+    "Kepler-150",   # Mass
+    "Kepler-154",   # Mass
     "Kepler-169",   # Mass
     "Kepler-238",   # Mass
     "Kepler-292",   # Mass
@@ -130,6 +144,7 @@ def isFixable(star):
     "Kepler-32",    # Mass
     "Kepler-444 A", # Mass
     "Kepler-55",    # Mass
+    "Kepler-62",    # Masses are less than (too large)
     "Kepler-84",    # Mass
     "55 Cancri A",  # Radii
     "DMPP-1",       # Radii

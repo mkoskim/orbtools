@@ -31,7 +31,7 @@ def doFix(data):
   if name not in fixes: return
 
   for field, value in fixes[name].items():
-    data[field] = fix(field, value, data[field])
+    data[field] = fix(field, value, field in data and data[field] or None)
 
 ################################################################################
 #
@@ -59,6 +59,8 @@ def doPlanet(planet, star):
   if name in masses: return
 
   incomplete = name in fixes and fixes[name] is None
+
+  if not incomplete: doFix(data)
 
   mass = data["mass"]
   radius =  data["radius"]

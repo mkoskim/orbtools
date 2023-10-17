@@ -38,5 +38,5 @@ def starInfo(name):
 
   print("- planets:", len(star.satellites))
 
-#starInfo("Kepler-403")
+#starInfo("Kepler-444 A")
 #exit()
